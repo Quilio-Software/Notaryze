@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="oyjBqG" name="Notaryze" projectType="guiapp" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" defines="JUCE_MODAL_LOOPS_PERMITTED=1">
+  <MAINGROUP id="zkUI0t" name="Notaryze">
+    <GROUP id="{73768C8C-40C5-4F1E-FE8B-5B7C47599EEB}" name="Source">
+      <FILE id="SUa7cA" name="SpecialStringProcessing.h" compile="0" resource="0"
+            file="Source/SpecialStringProcessing.h"/>
+      <FILE id="ALaiQy" name="AdvancedTableComponent.cpp" compile="1" resource="0"
+            file="Source/AdvancedTableComponent.cpp"/>
+      <FILE id="mI4QQS" name="Components.h" compile="0" resource="0" file="Source/Components.h"/>
+      <FILE id="YzzndG" name="ProfileScreen.h" compile="0" resource="0" file="Source/ProfileScreen.h"/>
+      <FILE id="vtCmAX" name="UtilityScreen.h" compile="0" resource="0" file="Source/UtilityScreen.h"/>
+      <FILE id="rwApKl" name="AdvancedTableComponent.h" compile="0" resource="0"
+            file="Source/AdvancedTableComponent.h"/>
+      <FILE id="ZyNP4R" name="ScreenManager.h" compile="0" resource="0" file="Source/ScreenManager.h"/>
+      <FILE id="Q56H6q" name="SignInScreen.h" compile="0" resource="0" file="Source/SignInScreen.h"/>
+      <FILE id="j2y00p" name="Styling.h" compile="0" resource="0" file="Source/Styling.h"/>
+      <FILE id="egvfgY" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="c9ZwfK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="nKUth2" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+    </GROUP>
+    <GROUP id="{AD508036-E313-4142-9980-A421CA88CE6B}" name="Resources">
+      <GROUP id="{2BE2EC92-6CC5-B3FB-12FC-BF7AE03F750E}" name="SignInScreen">
+        <FILE id="XedYku" name="quilioLogo_4x.png" compile="0" resource="1"
+              file="../../Downloads/quilioLogo_4x.png"/>
+        <FILE id="DEaXiR" name="logo.svg" compile="0" resource="1" file="Resources/SignInScreen/logo.svg"/>
+      </GROUP>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Notaryze"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Notaryze"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../juce-dev/juce-7/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../juce-dev/juce-7/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../juce-dev/juce-7/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../juce-dev/juce-7/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../juce-dev/juce-7/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../juce-dev/juce-7/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+</JUCERPROJECT>
