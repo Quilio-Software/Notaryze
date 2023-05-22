@@ -2,6 +2,7 @@
 
 #include <JuceHeader.h>
 #include "ScreenManager.h"
+#include "Notarization/Notarization.h"
 
 //==============================================================================
 /*
@@ -24,6 +25,8 @@ private:
     // Your private member variables go here...
     
     ScreenManager screenManager;
+    
+    NotarizationKernel notarizationKernel;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)

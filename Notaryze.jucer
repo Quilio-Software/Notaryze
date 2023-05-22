@@ -4,24 +4,53 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" defines="JUCE_MODAL_LOOPS_PERMITTED=1">
   <MAINGROUP id="zkUI0t" name="Notaryze">
     <GROUP id="{73768C8C-40C5-4F1E-FE8B-5B7C47599EEB}" name="Source">
-      <FILE id="SUa7cA" name="SpecialStringProcessing.h" compile="0" resource="0"
-            file="Source/SpecialStringProcessing.h"/>
-      <FILE id="ALaiQy" name="AdvancedTableComponent.cpp" compile="1" resource="0"
-            file="Source/AdvancedTableComponent.cpp"/>
-      <FILE id="mI4QQS" name="Components.h" compile="0" resource="0" file="Source/Components.h"/>
-      <FILE id="YzzndG" name="ProfileScreen.h" compile="0" resource="0" file="Source/ProfileScreen.h"/>
-      <FILE id="vtCmAX" name="UtilityScreen.h" compile="0" resource="0" file="Source/UtilityScreen.h"/>
-      <FILE id="rwApKl" name="AdvancedTableComponent.h" compile="0" resource="0"
-            file="Source/AdvancedTableComponent.h"/>
+      <GROUP id="{A7E88FC6-6FEE-DDE3-ED9D-1CC0121626ED}" name="AdvancedTable">
+        <FILE id="owztem" name="AdvancedTableComponent.cpp" compile="1" resource="0"
+              file="Source/AdvancedTable/AdvancedTableComponent.cpp"/>
+        <FILE id="o5v6zj" name="AdvancedTableComponent.h" compile="0" resource="0"
+              file="Source/AdvancedTable/AdvancedTableComponent.h"/>
+      </GROUP>
+      <GROUP id="{9370705B-51DA-CF89-392B-8A236E8AFDF2}" name="Notarization">
+        <FILE id="XOjHiz" name="ErrorHandling.h" compile="0" resource="0" file="Source/Notarization/ErrorHandling.h"/>
+        <FILE id="fIIHcw" name="Notarization.h" compile="0" resource="0" file="Source/Notarization/Notarization.h"/>
+      </GROUP>
+      <GROUP id="{F57C1437-EA30-20C1-848C-EC907A384BAE}" name="Styles">
+        <FILE id="QxqySS" name="Styling.h" compile="0" resource="0" file="Source/Styles/Styling.h"/>
+      </GROUP>
+      <GROUP id="{801BF4E1-A729-0148-8226-4A7A4FFE6660}" name="Helpers">
+        <FILE id="qqbWnt" name="Components.h" compile="0" resource="0" file="Source/Helpers/Components.h"/>
+        <FILE id="nnlHSD" name="FormatLibrary.h" compile="0" resource="0" file="Source/Helpers/FormatLibrary.h"/>
+        <FILE id="ePFKoq" name="SpecialStringProcessing.h" compile="0" resource="0"
+              file="Source/Helpers/SpecialStringProcessing.h"/>
+      </GROUP>
+      <GROUP id="{97D23C2D-A9CB-00E8-FD91-6963EF2B2476}" name="Screens">
+        <FILE id="UTVRuw" name="ProfileScreen.h" compile="0" resource="0" file="Source/Screens/ProfileScreen.h"/>
+        <FILE id="f80arz" name="SignInScreen.h" compile="0" resource="0" file="Source/Screens/SignInScreen.h"/>
+        <FILE id="juHMWm" name="UtilityScreen.h" compile="0" resource="0" file="Source/Screens/UtilityScreen.h"/>
+      </GROUP>
       <FILE id="ZyNP4R" name="ScreenManager.h" compile="0" resource="0" file="Source/ScreenManager.h"/>
-      <FILE id="Q56H6q" name="SignInScreen.h" compile="0" resource="0" file="Source/SignInScreen.h"/>
-      <FILE id="j2y00p" name="Styling.h" compile="0" resource="0" file="Source/Styling.h"/>
       <FILE id="egvfgY" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="c9ZwfK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="nKUth2" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
     </GROUP>
     <GROUP id="{AD508036-E313-4142-9980-A421CA88CE6B}" name="Resources">
+      <GROUP id="{C7D30B06-70B5-71E4-23B8-024A7F96DA35}" name="Images">
+        <FILE id="SgPHx6" name="dragndroprect.png" compile="0" resource="1"
+              file="Resources/Images/dragndroprect.png"/>
+        <FILE id="ZksZes" name="statusLoadingIcon.png" compile="0" resource="1"
+              file="Resources/Images/statusLoadingIcon.png"/>
+        <FILE id="agllte" name="trashIcon.png" compile="0" resource="1" file="Resources/Images/trashIcon.png"/>
+        <FILE id="Ugibqd" name="profilePicCircle.png" compile="0" resource="1"
+              file="Resources/Images/profilePicCircle.png"/>
+      </GROUP>
+      <GROUP id="{C3ACE745-E61C-4220-B98F-A79881B3E01D}" name="Fonts">
+        <FILE id="LZXsjv" name="Avenir Next.ttc" compile="0" resource="1" file="Resources/Fonts/Avenir Next.ttc"/>
+        <FILE id="DxeIfG" name="PretendardVariable.ttf" compile="0" resource="1"
+              file="Resources/Fonts/PretendardVariable.ttf"/>
+        <FILE id="ZXvGur" name="UncutSans-Variable.ttf" compile="0" resource="1"
+              file="Resources/Fonts/UncutSans-Variable.ttf"/>
+      </GROUP>
       <GROUP id="{2BE2EC92-6CC5-B3FB-12FC-BF7AE03F750E}" name="SignInScreen">
         <FILE id="XedYku" name="quilioLogo_4x.png" compile="0" resource="1"
               file="../../Downloads/quilioLogo_4x.png"/>
