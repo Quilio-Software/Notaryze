@@ -52,8 +52,8 @@
               file="Resources/Fonts/UncutSans-Variable.ttf"/>
       </GROUP>
       <GROUP id="{2BE2EC92-6CC5-B3FB-12FC-BF7AE03F750E}" name="SignInScreen">
-        <FILE id="XedYku" name="quilioLogo_4x.png" compile="0" resource="1"
-              file="../../Downloads/quilioLogo_4x.png"/>
+        <FILE id="wIvgmd" name="quilioLogo_4x.png" compile="0" resource="1"
+              file="Resources/SignInScreen/quilioLogo_4x.png"/>
         <FILE id="DEaXiR" name="logo.svg" compile="0" resource="1" file="Resources/SignInScreen/logo.svg"/>
       </GROUP>
     </GROUP>
