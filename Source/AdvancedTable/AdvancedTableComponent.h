@@ -36,11 +36,17 @@ public:
     }
 };
 
+
+//TODO: Fix issues with lack of plurality... dataElement should be something like xmlVector
+//Also, what in the world is the distinction between vector and array, from a high level perspective?
+//They are storage elements at the end of the day, regardless of what operations they allow.
 class DataModel : public juce::XmlElement
 {
     std::vector<juce::XmlElement*> dataElement;
     
 public:
+    
+    enum Columns { ID, ITEM, TYPE, STATUS, CLEAR };
     
     DataModel (juce::String columnModelName) : juce::XmlElement (columnModelName)
     {
@@ -54,6 +60,26 @@ public:
         dataElement.back()->setAttribute ("Type", newType);
         dataElement.back()->setAttribute ("Status", newStatus);
         dataElement.back()->setAttribute ("Clear", newClear);
+    }
+    
+    void removeItemByName (juce::String itemToRemove)
+    {
+        for (auto it = dataElement.begin(); it != dataElement.end(); ++it)
+        {
+            if ((juce::String) ((*it)->getAttributeValue (ITEM)) == itemToRemove)
+            {
+                dataElement.erase (it);
+                break; // Optional, if you only want to remove the first matching element
+            }
+        }
+    }
+    
+    void removeItemByIndex (const int indexToRemove)
+    {
+        //TODO: Fix weird double removal thing here
+        removeChildElement (getChildElement(indexToRemove), true);
+        dataElement.erase (dataElement.begin() + indexToRemove);
+        DBG ("Data Element List now has " + juce::String (dataElement.size()) + " elements");
     }
 };
 
@@ -138,12 +164,17 @@ public:
             }
             else if (isMouseDown)
             {
-                
+                clearAllData();
             }
             
             g.drawFittedText ("CLEAR", area, juce::Justification::centred, 1);
             g.drawRoundedRectangle (roundedRectArea.toFloat(), 4, 1.0f);
         }
+    }
+    
+    void clearAllData()
+    {
+        
     }
 };
 
@@ -424,7 +455,8 @@ public:
         g.fillRect (x + width - 1, y, 1, height);
     }
     
-    void drawCenteredFilledSquare (juce::Graphics& g, const int& componentX, const int& componentY, const int& componentWidth, const int& componentHeight, const int& paddingTop, const int& paddingBottom, const juce::Colour& colour = juce::Colours::green) {
+    void drawCenteredFilledSquare (juce::Graphics& g, const int& componentX, const int& componentY, const int& componentWidth, const int& componentHeight, const int& paddingTop, const int& paddingBottom, const juce::Colour& colour = juce::Colours::green)
+    {
         // Calculate the center position of the component
         int centerX = componentX + (componentWidth / 2);
         int centerY = componentY + (componentHeight / 2);
@@ -445,7 +477,18 @@ public:
         g.setColour(juce::LookAndFeel::getDefaultLookAndFeel().findColour(juce::ListBox::backgroundColourId));
         g.fillRect(componentX + componentWidth - 1, componentY, 1, componentHeight);
     }
-
+    
+    void cellClicked (int rowNumber, int columnId, const juce::MouseEvent&) override
+    {
+        //TODO: Add Mouse position check to ensure it's within the bounds of the trash icon
+        if (columnId == CLEAR) //Then we've hit the trash icon
+        {
+            auto childXMLElement = dataList->getChildElement (rowNumber);
+            DBG ("Just removed element " + juce::String (childXMLElement->getAttributeValue (2)));
+            dataList->removeItemByIndex (rowNumber);
+            updateTable();
+        }
+    }
     
     //This function has to do with cell drawing
     void paintCell (juce::Graphics& g, int rowNumber, int columnId,
@@ -478,11 +521,7 @@ public:
             float iconWidth = trashIconImage.getWidth();
             float iconHeight = trashIconImage.getHeight();
             
-   //         g.drawText ("CLEAR", 0, 0, width, height, juce::Justification::centred);
             g.drawImageWithin (trashIconImage, width / 2.0f - 9.8 * 0.5, height / 2.0f - 12 * 0.5, 9.8, 12, juce::Justification::centred);
-
-            
-            //we want to draw the trash image here, positioned perfectly.
         }
         else
         {

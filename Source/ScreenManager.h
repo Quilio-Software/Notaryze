@@ -61,7 +61,6 @@ public:
             }
         };
         
-        
         profileScreen.onBack    = [&] { setCurrentScreen (UTILITY); };
         profileScreen.onSignOut = [&] { setCurrentScreen (SIGN_IN); };
         
