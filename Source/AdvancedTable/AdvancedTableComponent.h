@@ -141,7 +141,7 @@ public:
         
         if (canSeeHeader)
         {
-            if (columnName != "Clear")
+            if (columnName != "Clear" && columnName != "Status")
             {
                 auto highlightColour = header.findColour (juce::TableHeaderComponent::highlightColourId);
                 
@@ -173,7 +173,39 @@ public:
                 //Todo: Find a way to MAKE IT NOT BE 2X WHAT IT ACTUALLY IS WTFFFFF.
                 g.drawFittedText (columnName, area, juce::Justification::centredLeft, 1);
             }
-            else
+            else if (columnName == "Status")
+            {
+                auto highlightColour = header.findColour (juce::TableHeaderComponent::highlightColourId);
+                
+                if (isMouseDown)
+                    g.fillAll (highlightColour);
+                else if (isMouseOver)
+                    g.fillAll (highlightColour.withMultipliedAlpha (0.625f));
+                
+                
+                //Set table header bounds
+                area.reduce (4, 0);
+                
+                if ((columnFlags & (juce::TableHeaderComponent::sortedForwards | juce::TableHeaderComponent::sortedBackwards)) != 0)
+                {
+                    juce::Path sortArrow;
+                    sortArrow.addTriangle (0.0f, 0.0f,
+                                           0.5f, (columnFlags & juce::TableHeaderComponent::sortedForwards) != 0 ? -0.8f : 0.8f,
+                                           1.0f, 0.0f);
+                    
+                    g.setColour (header.findColour (juce::TableHeaderComponent::backgroundColourId));
+                    g.fillPath (sortArrow, sortArrow.getTransformToScaleToFit (area.removeFromRight (height / 2).reduced (2).toFloat(), true));
+                }
+                
+                
+                //Draw table header text
+                g.setColour (columnHeaderColour);
+                g.setFont (poppinsSemiBoldTypeface);
+                g.setFont (24.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
+                //Todo: Find a way to MAKE IT NOT BE 2X WHAT IT ACTUALLY IS WTFFFFF.
+                g.drawFittedText (columnName, area, juce::Justification::centred, 1);
+            }
+            else if (columnName == "Clear")
             {
                 juce::Rectangle<float> roundedRectArea (width * 0.25f * 0.5f, height * 0.25f, width * 0.75f, height * 0.5f);
                 
@@ -182,13 +214,15 @@ public:
                 //            {
                 //
                 //            }
+
+
                 
                 if (isMouseDown) //Clear button in the Header has been clicked
                 {
                     clearAllData();
                 }
 
-                g.setColour (columnHeaderColour);
+                g.setColour (juce::Colour::fromString ("#ffF2571D"));
                 g.setFont (poppinsSemiBoldTypeface);
                 g.setFont (24.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
                 g.drawFittedText ("CLEAR", area, juce::Justification::centred, 1);
@@ -260,7 +294,7 @@ public:
     
     juce::String getStatus (juce::File file)
     {
-        return "BLAH";
+        return "Signed";
     }
 
     AdvancedTableComponent (std::vector<ColumnData> columns, std::vector<RowData> data)
@@ -289,7 +323,7 @@ public:
         table.setOutlineThickness (1);
         table.getHeader().setSortColumnId (1, true);
         table.setMultipleSelectionEnabled (true);
-        table.setRowHeight (36.0f);
+        table.setRowHeight (32.0f);
         table.setHeaderHeight (36.0f);
         addAndMakeVisible (table);
         
@@ -518,27 +552,40 @@ public:
 
         
         juce::Colour rowSelectionColour = juce::Colour::fromString ("#ff000A1A");
-        juce::Colour oddRowColour = juce::Colour::fromString ("#ff000A1A");
+        juce::Colour oddRowColour = juce::Colour::fromString ("#ff291523");
         juce::Colour evenRowColour = juce::Colour::fromString ("#ff000A1A");
 
         if (rowNumber % 2)
-            g.fillAll (alternateColour);
+            g.fillAll (evenRowColour);
+        else
+            g.fillAll (oddRowColour);
     }
-    
-    
     
     //Paint Methods
     void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const juce::Colour& colour = juce::Colours::green, const float& cornerSize = 10.0f) {
-        // Set up the rectangle parameters with padding
-        juce::Rectangle<float> textBounds (2 + 5, 7.5, width - 4 - 10, 20);
-
-        // Draw the rounded rectangle with padding
-        g.setColour (colour);
-        g.drawRoundedRectangle (textBounds.reduced (1), cornerSize, 1.0f);
-
         // Draw the text with padding
         juce::Font font (10.0f);
         g.setFont (font);
+
+        // Set up the rectangle parameters with padding
+
+        float textWidth = font.getStringWidth (text);
+
+        juce::Rectangle<float> textBounds (7, 6, width - 14, 20);
+
+
+
+
+        // Calculate the x origin (left position) of the text
+        float xOrigin = textBounds.getX() + (textBounds.getWidth() - textWidth) / 2.0f;
+
+        //TODO: Fix this god awful positioning
+        juce::Rectangle<float> rectangleBounds (xOrigin - textWidth / 4.0f - 1, 6, textWidth + 16, height - 12);
+
+        // Draw the rounded rectangle with padding
+        g.setColour (colour);
+        g.drawRoundedRectangle (rectangleBounds, cornerSize, 1.0f);
+
 
         g.drawText (text, textBounds.reduced (5), juce::Justification::centred, true);
 
