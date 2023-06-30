@@ -91,12 +91,14 @@ public:
 
 class TableComponentStyling : public juce::LookAndFeel_V4
 {
+    juce::Colour columnHeaderColour = juce::Colours::white;
+
 public:
     TableComponentStyling()
     {
         //First we set the colour
         setColour (juce::ListBox::backgroundColourId, juce::Colour::fromString ("#ff000A1A"));
-        setColour (juce::TableHeaderComponent::textColourId, juce::Colours::white); //This sets the table text color
+        setColour (juce::TableHeaderComponent::textColourId, juce::Colour::fromString ("#ffbfbfbf")); //This sets the table text color
         setColour (juce::TableHeaderComponent::outlineColourId, juce::Colours::transparentBlack); //Not yet sure what this does
         setColour (juce::ListBox::outlineColourId, juce::Colours::transparentBlack); //This has to do with the rounded rect outline of the table.
     
@@ -128,8 +130,8 @@ public:
         
         
     }
-    
-    
+
+    juce::Typeface::Ptr poppinsSemiBoldTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::PoppinsSemiBold_ttf, BinaryData::PoppinsSemiBold_ttfSize);
     void drawTableHeaderColumn (juce::Graphics& g, juce::TableHeaderComponent& header,
                                                 const juce::String& columnName, int /*columnId*/,
                                                 int width, int height, bool isMouseOver, bool isMouseDown,
@@ -165,8 +167,10 @@ public:
                 
                 
                 //Draw table header text
-                g.setColour (header.findColour (juce::TableHeaderComponent::textColourId));
-                g.setFont (juce::Font ((float) height * 0.5f, juce::Font::bold));
+                g.setColour (columnHeaderColour);
+                g.setFont (poppinsSemiBoldTypeface);
+                g.setFont (24.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
+                //Todo: Find a way to MAKE IT NOT BE 2X WHAT IT ACTUALLY IS WTFFFFF.
                 g.drawFittedText (columnName, area, juce::Justification::centredLeft, 1);
             }
             else
@@ -183,7 +187,10 @@ public:
                 {
                     clearAllData();
                 }
-                
+
+                g.setColour (columnHeaderColour);
+                g.setFont (poppinsSemiBoldTypeface);
+                g.setFont (24.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
                 g.drawFittedText ("CLEAR", area, juce::Justification::centred, 1);
                 g.drawRoundedRectangle (roundedRectArea.toFloat(), 4, 1.0f);
             }
@@ -306,14 +313,25 @@ public:
         int columnIndex = 1;
         for (auto* columnXml : columnList->getChildIterator())
         {
+            juce::TableHeaderComponent::ColumnPropertyFlags propertyFlags;
+
+            if (columnIndex == 3)
+            {
+                propertyFlags = juce::TableHeaderComponent::notResizableOrSortable;
+            }
+            else propertyFlags = juce::TableHeaderComponent::notResizable;
+
             table.getHeader().addColumn (columnXml->getStringAttribute ("Name"),
                                          columnIndex,
                                          columnXml->getIntAttribute ("Width"),
                                          50,
                                          400,
-                                         juce::TableHeaderComponent::defaultFlags);
+                                         propertyFlags);
             columnIndex++;
         }
+
+        table.setMultipleSelectionEnabled (false);
+        table.setClickingTogglesRowSelection (false);
         
         setFramesPerSecond (60);
     }
@@ -353,6 +371,7 @@ public:
         {
             auto filename = rowXml->getStringAttribute ("Item");
             
+#ifdef JUCE_OSX
             if (isCodeSigning)
             {
                 auto response = codesignVerbose (filename, devName, devID);
@@ -363,6 +382,7 @@ public:
                 auto response = productsignVerbose (filename, devName, devID);
                 DBG ("Response: " + response);
             }
+#endif
             
             rowXml->setAttribute ("Status", "PROCESSING");
         }
@@ -495,9 +515,13 @@ public:
     {
         auto alternateColour = getLookAndFeel().findColour (juce::ListBox::backgroundColourId)
                                                .interpolatedWith (getLookAndFeel().findColour (juce::ListBox::textColourId), 0.03f);
-        if (rowIsSelected)
-            g.fillAll (juce::Colours::lightblue);
-        else if (rowNumber % 2)
+
+        
+        juce::Colour rowSelectionColour = juce::Colour::fromString ("#ff000A1A");
+        juce::Colour oddRowColour = juce::Colour::fromString ("#ff000A1A");
+        juce::Colour evenRowColour = juce::Colour::fromString ("#ff000A1A");
+
+        if (rowNumber % 2)
             g.fillAll (alternateColour);
     }
     
@@ -601,14 +625,15 @@ public:
         }
         else
         {
-            g.setColour (rowIsSelected ? juce::Colours::darkblue : getLookAndFeel().findColour (juce::ListBox::textColourId));
-            g.setFont (font);
+            g.setColour(getLookAndFeel().findColour (juce::TableHeaderComponent::textColourId));
+            g.setFont(poppinsRegularTypeface);
+            g.setFont(24.0f); //TODO: MAKE THIS ALSO NOT BE FUCKING 2X WTF
             
             if (auto* rowElement = dataList->getChildElement (rowNumber))
             {
                 auto text = rowElement->getStringAttribute (getAttributeNameForColumnId (columnId));
-                g.setColour (getLookAndFeel().findColour (juce::TableHeaderComponent::textColourId));
-                g.drawText (text, 2, 0, width - 4, height, juce::Justification::centredLeft, true);
+
+                g.drawText (text, /*2*/ 5, 0, width - 4, height, juce::Justification::centredLeft, true);
             }
             
             g.setColour (getLookAndFeel().findColour (juce::ListBox::backgroundColourId));

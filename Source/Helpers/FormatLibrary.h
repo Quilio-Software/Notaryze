@@ -10,7 +10,7 @@
 
 #pragma once
 
-typedef std::vector<juce::String> StringVector;
+using StringVector = std::vector<juce::String>;
 
 class FormatLibrary
 {
@@ -24,7 +24,7 @@ public:
         EXECUTABLE,
     };
     
-    static StringVector getFormats(Types type)
+    static StringVector getFormats (Types type)
     {
         StringVector formats;
 
@@ -35,7 +35,11 @@ public:
         else if (type == INSTALLER)
             formats = { ".pkg", ".dmg", ".zip" };
         else if (type == EXECUTABLE)
+#ifdef JUCE_OSX
             formats = { ".app" };
+#elif JUCE_WINDOWS
+            formats = { ".exe" };
+#endif
         else
             DBG("Format doesn't exist");
 

@@ -21,8 +21,11 @@ void AdvancedTableComponent::filesDropped (const juce::StringArray& files, int x
         {
             auto file = juce::File (filePath);
             addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
-            setTableState (HAS_ITEMS);
         }
+        if (dataList->getNumChildElements() > 0)
+            setTableState (HAS_ITEMS);
+        else
+            setTableState (NO_ITEMS);
     }
 }
 

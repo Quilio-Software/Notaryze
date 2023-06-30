@@ -3,7 +3,7 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-    setSize (680, 640);
+    setSize (680, 600);
     
     addAndMakeVisible (screenManager);
     screenManager.setCurrentScreen (SIGN_IN);

@@ -399,6 +399,7 @@ public:
         {
             font = juce::Font (getBoldTypeface());
             g.setFont (font);
+            g.setFont (24.0f);
             g.setColour (button.findColour (button.getToggleState() ? juce::TextButton::textColourOnId
                                                                     : juce::TextButton::textColourOffId)
                                .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
@@ -407,6 +408,7 @@ public:
         {
             font = juce::Font (getRegularTypeface());
             g.setFont (font);
+            g.setFont (24.0f);
             g.setColour (button.findColour (button.getToggleState() ? juce::TextButton::textColourOnId
                                                                     : juce::TextButton::textColourOffId)
                                .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));

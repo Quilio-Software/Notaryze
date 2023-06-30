@@ -126,10 +126,10 @@ public:
         setImages (profileButton, quilioLogoImage, quilioLogoImage);
         
         std::vector<AdvancedTableComponent::ColumnData> columns = {
-            {"Item", 219},
-            {"Type", 220},
-            {"Status", 80},
-            {"Clear", 79}
+            {"Item", 271},
+            {"Type", 134},
+            {"Status", 155 - 40},
+            {"Clear", 616 - 155 - 134 - 271}
         };
         
         std::vector<AdvancedTableComponent::RowData> codesigndata = {};
@@ -206,7 +206,10 @@ public:
         if (key.getKeyCode() == juce::KeyPress::tabKey)
         {
             toggleSigningTableType();
+            return true;
         }
+
+        return false;
     }
     
     
@@ -262,8 +265,8 @@ public:
     
     void resized() override
     {
-        codeSignButton.setBounds (20, 110, 115, 40);
-        productSignButton.setBounds (143, 110, 133, 40);
+        codeSignButton.setBounds (20, 100, 115, 40);
+        productSignButton.setBounds (143, 100, 133, 40);
         
         uploadButton.setBounds (50, 512, 136, 54);
         startButton.setBounds (536, 512, 112, 54);
