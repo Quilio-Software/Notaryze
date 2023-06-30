@@ -9,7 +9,11 @@
 */
 
 #pragma once
+#ifdef JUCE_WINDOWS
+#include <io.h>
+#elif JUCE_OSX
 #include <unistd.h>
+#endif
 #include <filesystem>
 #include <thread>
 #include "ErrorHandling.h"
@@ -35,7 +39,13 @@ inline int notarize (const juce::File file, const juce::String& email, const juc
 
     DBG (command);
     
-    FILE* pipe = popen (command.toUTF8(), "r");
+    FILE* pipe;
+       #ifdef JUCE_WINDOWS
+        pipe = _popen (command.toUTF8(), "r");
+    #elif JUCE_OSX
+        pipe = popen (command.toUTF8(), "r");
+    #endif
+
     if (!pipe)
     {
         return -1;
@@ -52,7 +62,11 @@ inline int notarize (const juce::File file, const juce::String& email, const juc
     }
      
     // Close the pipe
-    pclose (pipe);
+    #ifdef JUCE_WINDOWS
+        _pclose (pipe);
+    #elif JUCE_OSX
+        pclose (pipe);
+    #endif
     
     // Return immediately
     return 0;
@@ -75,7 +89,14 @@ inline juce::String runCommandVerbose (const juce::String& command)
     // Modify the command to redirect stderr to stdout
     juce::String modifiedCommand = command + " 2>&1";
 
-    FILE* pipe = popen (modifiedCommand.toRawUTF8(), "r");
+    FILE* pipe;
+    
+#ifdef JUCE_WINDOWS
+    pipe = _popen(modifiedCommand.toRawUTF8(), "r");
+#elif JUCE_OSX
+    pipe = popen(modifiedCommand.toRawUTF8(), "r");
+#endif
+
     if (!pipe)
     {
         std::cout << "Error executing command: " << command << std::endl;
@@ -86,7 +107,11 @@ inline juce::String runCommandVerbose (const juce::String& command)
     FILE* output = fdopen (fileno(pipe), "r");
     if (!output)
     {
-        pclose(pipe);
+    #ifdef JUCE_WINDOWS
+        _pclose (pipe);
+    #elif JUCE_OSX
+        pclose (pipe);
+    #endif
         std::cout << "Error redirecting output for command: " << command << std::endl;
         return {};
     }
@@ -97,7 +122,11 @@ inline juce::String runCommandVerbose (const juce::String& command)
         outputStream << buffer;
     }
 
-    pclose(pipe);
+    #ifdef JUCE_WINDOWS
+        _pclose (pipe);
+    #elif JUCE_OSX
+        pclose (pipe);
+    #endif
 
     return juce::String(outputStream.str());
 }

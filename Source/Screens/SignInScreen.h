@@ -50,6 +50,8 @@ public:
         }
         
         juce::TextEditor::keyPressed (key);
+
+        return false;
     }
     
     std::function<void()> onDownKey;
