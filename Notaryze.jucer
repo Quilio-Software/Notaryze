@@ -36,25 +36,92 @@
     </GROUP>
     <GROUP id="{AD508036-E313-4142-9980-A421CA88CE6B}" name="Resources">
       <GROUP id="{C7D30B06-70B5-71E4-23B8-024A7F96DA35}" name="Images">
+        <GROUP id="{57A0EFB5-CC80-CFAE-F24E-4B1597541A5D}" name="Backgrounds">
+          <FILE id="wS3gLj" name="UtilityScreenBackground.png" compile="0" resource="1"
+                file="Resources/Images/Backgrounds/UtilityScreenBackground.png"/>
+        </GROUP>
+        <GROUP id="{FFE05418-B81A-4033-3BF2-EF96A9C3F923}" name="Table">
+          <FILE id="OXUPJM" name="Table_FileHover.png" compile="0" resource="1"
+                file="Resources/Images/Table/Table_FileHover.png"/>
+          <FILE id="QGdCMJ" name="Table_FilesUploaded.png" compile="0" resource="1"
+                file="Resources/Images/Table/Table_FilesUploaded.png"/>
+          <FILE id="RczAeG" name="Table_NoFiles.png" compile="0" resource="1"
+                file="Resources/Images/Table/Table_NoFiles.png"/>
+        </GROUP>
+        <GROUP id="{CB12E306-9071-6AA1-D16A-A992A93727AC}" name="checkbox">
+          <FILE id="uhbKpv" name="checkbox_ActiveHover.png" compile="0" resource="1"
+                file="Resources/Images/checkbox/checkbox_ActiveHover.png"/>
+          <FILE id="o46tgL" name="checkbox_Default.png" compile="0" resource="1"
+                file="Resources/Images/checkbox/checkbox_Default.png"/>
+          <FILE id="xt2oU6" name="checkbox_InactiveHover.png" compile="0" resource="1"
+                file="Resources/Images/checkbox/checkbox_InactiveHover.png"/>
+          <FILE id="mt8BJb" name="checkbox_ON.png" compile="0" resource="1" file="Resources/Images/checkbox/checkbox_ON.png"/>
+        </GROUP>
         <FILE id="SgPHx6" name="dragndroprect.png" compile="0" resource="1"
               file="Resources/Images/dragndroprect.png"/>
         <FILE id="ZksZes" name="statusLoadingIcon.png" compile="0" resource="1"
               file="Resources/Images/statusLoadingIcon.png"/>
+        <FILE id="PJuJpm" name="QuilioLogoLongForm.png" compile="0" resource="1"
+              file="Resources/Images/QuilioLogoLongForm.png"/>
         <FILE id="agllte" name="trashIcon.png" compile="0" resource="1" file="Resources/Images/trashIcon.png"/>
         <FILE id="Ugibqd" name="profilePicCircle.png" compile="0" resource="1"
               file="Resources/Images/profilePicCircle.png"/>
       </GROUP>
       <GROUP id="{C3ACE745-E61C-4220-B98F-A79881B3E01D}" name="Fonts">
-        <FILE id="LZXsjv" name="Avenir Next.ttc" compile="0" resource="1" file="Resources/Fonts/Avenir Next.ttc"/>
-        <FILE id="DxeIfG" name="PretendardVariable.ttf" compile="0" resource="1"
-              file="Resources/Fonts/PretendardVariable.ttf"/>
-        <FILE id="ZXvGur" name="UncutSans-Variable.ttf" compile="0" resource="1"
-              file="Resources/Fonts/UncutSans-Variable.ttf"/>
+        <GROUP id="{F8A19393-9E35-35C2-AD6C-10C98280A545}" name="Avenir">
+          <FILE id="ud9EFK" name="Avenir Next.ttc" compile="0" resource="1" file="Resources/Fonts/Avenir/Avenir Next.ttc"/>
+        </GROUP>
+        <GROUP id="{69E62B37-9FE7-AEF0-0C97-3A201EF318FC}" name="Pretendard">
+          <FILE id="Chdzgv" name="PretendardVariable.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Pretendard/PretendardVariable.ttf"/>
+        </GROUP>
+        <GROUP id="{9744DD2C-2779-932B-7721-F28025E3A2A7}" name="UncutSans">
+          <FILE id="TOtUxI" name="UncutSans-Variable.ttf" compile="0" resource="1"
+                file="Resources/Fonts/UncutSans/UncutSans-Variable.ttf"/>
+        </GROUP>
+        <GROUP id="{BE9E1E16-9601-801B-750D-6A6ACCF2BBA2}" name="Poppins">
+          <FILE id="vBtuzG" name="OFL.txt" compile="0" resource="1" file="Resources/Fonts/Poppins/OFL.txt"/>
+          <FILE id="PynDCM" name="Poppins-Black.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-Black.ttf"/>
+          <FILE id="L9XsFH" name="Poppins-BlackItalic.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-BlackItalic.ttf"/>
+          <FILE id="wJhgsq" name="Poppins-Bold.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-Bold.ttf"/>
+          <FILE id="spWi8t" name="Poppins-BoldItalic.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-BoldItalic.ttf"/>
+          <FILE id="cizxCR" name="Poppins-ExtraBold.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-ExtraBold.ttf"/>
+          <FILE id="xW4gDX" name="Poppins-ExtraBoldItalic.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-ExtraBoldItalic.ttf"/>
+          <FILE id="JPQ4ZD" name="Poppins-ExtraLight.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-ExtraLight.ttf"/>
+          <FILE id="Lh0usT" name="Poppins-ExtraLightItalic.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-ExtraLightItalic.ttf"/>
+          <FILE id="FibgIW" name="Poppins-Italic.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-Italic.ttf"/>
+          <FILE id="pwth65" name="Poppins-Light.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-Light.ttf"/>
+          <FILE id="huZqgH" name="Poppins-LightItalic.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-LightItalic.ttf"/>
+          <FILE id="AgdmQg" name="Poppins-Medium.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-Medium.ttf"/>
+          <FILE id="HcKbLY" name="Poppins-MediumItalic.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-MediumItalic.ttf"/>
+          <FILE id="yJ1Dja" name="Poppins-Regular.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-Regular.ttf"/>
+          <FILE id="UmJMgI" name="Poppins-SemiBold.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-SemiBold.ttf"/>
+          <FILE id="Qicaky" name="Poppins-SemiBoldItalic.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-SemiBoldItalic.ttf"/>
+          <FILE id="Xfxdyw" name="Poppins-Thin.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-Thin.ttf"/>
+          <FILE id="VmCRsh" name="Poppins-ThinItalic.ttf" compile="0" resource="1"
+                file="Resources/Fonts/Poppins/Poppins-ThinItalic.ttf"/>
+        </GROUP>
       </GROUP>
       <GROUP id="{2BE2EC92-6CC5-B3FB-12FC-BF7AE03F750E}" name="SignInScreen">
         <FILE id="wIvgmd" name="quilioLogo_4x.png" compile="0" resource="1"
               file="Resources/SignInScreen/quilioLogo_4x.png"/>
-        <FILE id="DEaXiR" name="logo.svg" compile="0" resource="1" file="Resources/SignInScreen/logo.svg"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>

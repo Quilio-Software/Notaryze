@@ -62,6 +62,12 @@ public:
         dataElement.back()->setAttribute ("Clear", newClear);
     }
     
+    void clear()
+    {
+        dataElement.clear();
+        deleteAllChildElements();
+    }
+    
     void removeItemByName (juce::String itemToRemove)
     {
         for (auto it = dataElement.begin(); it != dataElement.end(); ++it)
@@ -88,9 +94,18 @@ class TableComponentStyling : public juce::LookAndFeel_V4
 public:
     TableComponentStyling()
     {
+        //First we set the colour
         setColour (juce::ListBox::backgroundColourId, juce::Colour::fromString ("#ff000A1A"));
-        setColour (juce::TableHeaderComponent::textColourId, juce::Colours::white);
+        setColour (juce::TableHeaderComponent::textColourId, juce::Colours::white); //This sets the table text color
+        setColour (juce::TableHeaderComponent::outlineColourId, juce::Colours::transparentBlack); //Not yet sure what this does
+        setColour (juce::ListBox::outlineColourId, juce::Colours::transparentBlack); //This has to do with the rounded rect outline of the table.
+    
+        //Then we set the font
+        
     }
+    
+    bool canSeeHeader = false;
+    void setHeaderVisibility (bool visibility) {canSeeHeader = visibility;}
     
     void drawTableHeaderBackground (juce::Graphics& g, juce::TableHeaderComponent& header) override
     {
@@ -122,60 +137,60 @@ public:
     {
         juce::Rectangle<int> area (width, height);
         
-        if (columnName != "Clear")
+        if (canSeeHeader)
         {
-            auto highlightColour = header.findColour (juce::TableHeaderComponent::highlightColourId);
-            
-            if (isMouseDown)
-                g.fillAll (highlightColour);
-            else if (isMouseOver)
-                g.fillAll (highlightColour.withMultipliedAlpha (0.625f));
-            
-            
-            //Set table header bounds
-            area.reduce (4, 0);
-            
-            if ((columnFlags & (juce::TableHeaderComponent::sortedForwards | juce::TableHeaderComponent::sortedBackwards)) != 0)
+            if (columnName != "Clear")
             {
-                juce::Path sortArrow;
-                sortArrow.addTriangle (0.0f, 0.0f,
-                                       0.5f, (columnFlags & juce::TableHeaderComponent::sortedForwards) != 0 ? -0.8f : 0.8f,
-                                       1.0f, 0.0f);
+                auto highlightColour = header.findColour (juce::TableHeaderComponent::highlightColourId);
                 
-                g.setColour (header.findColour (juce::TableHeaderComponent::backgroundColourId));
-                g.fillPath (sortArrow, sortArrow.getTransformToScaleToFit (area.removeFromRight (height / 2).reduced (2).toFloat(), true));
-            }
-            
-            
-            //Draw table header text
-            g.setColour (header.findColour (juce::TableHeaderComponent::textColourId));
-            g.setFont (juce::Font ((float) height * 0.5f, juce::Font::bold));
-            g.drawFittedText (columnName, area, juce::Justification::centredLeft, 1);
-        }
-        else
-        {
-
-            juce::Rectangle<float> roundedRectArea (width * 0.25f * 0.5f, height * 0.25f, width * 0.75f, height * 0.5f);
-            
-            //Handle different clear button colors here
-            if (isMouseOver)
-            {
+                if (isMouseDown)
+                    g.fillAll (highlightColour);
+                else if (isMouseOver)
+                    g.fillAll (highlightColour.withMultipliedAlpha (0.625f));
                 
+                
+                //Set table header bounds
+                area.reduce (4, 0);
+                
+                if ((columnFlags & (juce::TableHeaderComponent::sortedForwards | juce::TableHeaderComponent::sortedBackwards)) != 0)
+                {
+                    juce::Path sortArrow;
+                    sortArrow.addTriangle (0.0f, 0.0f,
+                                           0.5f, (columnFlags & juce::TableHeaderComponent::sortedForwards) != 0 ? -0.8f : 0.8f,
+                                           1.0f, 0.0f);
+                    
+                    g.setColour (header.findColour (juce::TableHeaderComponent::backgroundColourId));
+                    g.fillPath (sortArrow, sortArrow.getTransformToScaleToFit (area.removeFromRight (height / 2).reduced (2).toFloat(), true));
+                }
+                
+                
+                //Draw table header text
+                g.setColour (header.findColour (juce::TableHeaderComponent::textColourId));
+                g.setFont (juce::Font ((float) height * 0.5f, juce::Font::bold));
+                g.drawFittedText (columnName, area, juce::Justification::centredLeft, 1);
             }
-            else if (isMouseDown)
+            else
             {
-                clearAllData();
+                juce::Rectangle<float> roundedRectArea (width * 0.25f * 0.5f, height * 0.25f, width * 0.75f, height * 0.5f);
+                
+                //Handle different clear button colors here
+                //            if (isMouseOver)
+                //            {
+                //
+                //            }
+                
+                if (isMouseDown) //Clear button in the Header has been clicked
+                {
+                    clearAllData();
+                }
+                
+                g.drawFittedText ("CLEAR", area, juce::Justification::centred, 1);
+                g.drawRoundedRectangle (roundedRectArea.toFloat(), 4, 1.0f);
             }
-            
-            g.drawFittedText ("CLEAR", area, juce::Justification::centred, 1);
-            g.drawRoundedRectangle (roundedRectArea.toFloat(), 4, 1.0f);
         }
     }
     
-    void clearAllData()
-    {
-        
-    }
+    std::function<void()> clearAllData;
 };
 
 class AdvancedTableComponent : public juce::AnimatedAppComponent,
@@ -244,6 +259,14 @@ public:
     AdvancedTableComponent (std::vector<ColumnData> columns, std::vector<RowData> data)
     {
         setLookAndFeel (&tableStyle);
+        
+        //When clicking the "Clear" button on the top right, we want to clear the table data.
+        tableStyle.clearAllData = [&]()
+        {
+            dataList->clear();
+            updateTable();
+            setTableState (NO_ITEMS);
+        };
         
         // Create data model
         
@@ -362,12 +385,65 @@ public:
         }
     }
     
+    enum TableState {NO_ITEMS, DRAGGING, HAS_ITEMS};
+    TableState tableState = NO_ITEMS;
+    
+    juce::Image tableBackgroundNoItems = juce::ImageFileFormat::loadFrom (BinaryData::Table_NoFiles_png, BinaryData::Table_NoFiles_pngSize);
+    juce::Image tableBackgroundDragging = juce::ImageFileFormat::loadFrom (BinaryData::Table_FileHover_png, BinaryData::Table_FileHover_pngSize);
+    juce::Image tableBackgroundHasItems = juce::ImageFileFormat::loadFrom (BinaryData::Table_FilesUploaded_png, BinaryData::Table_FilesUploaded_pngSize);
+    
     void paint (juce::Graphics& g) override
     {
         g.setOpacity (1.0f);
 
         // Fill the entire component with a solid color
         g.fillAll (juce::Colour::fromString ("#ff000A1A"));
+    }
+    
+    juce::Typeface::Ptr poppinsRegularTypeface = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsRegular_ttf, BinaryData::PoppinsRegular_ttfSize);
+
+    TableState getTableState() { return tableState; }
+    void setTableState (TableState newState)
+    {
+        tableState = newState;
+        if (getTableFillState())
+            tableStyle.setHeaderVisibility (true);
+        else
+            tableStyle.setHeaderVisibility (false);
+        
+        repaint();
+    }
+    
+    bool getTableFillState()
+    {
+        return tableState == HAS_ITEMS || dataList->getNumChildElements() > 0;
+    }
+    
+    bool getIsDraggingToEmptyTable()
+    {
+        return (tableState == DRAGGING && dataList->getNumChildElements() == 0);
+    }
+    
+    void paintOverChildren (juce::Graphics& g) override
+    {
+        if (tableState == NO_ITEMS)
+            g.drawImage (tableBackgroundNoItems, juce::Rectangle<float> (0, 0, getWidth(), getHeight()));
+        else if (tableState == DRAGGING)
+            g.drawImage (tableBackgroundDragging, juce::Rectangle<float> (0, 0, getWidth(), getHeight()));
+        else if (tableState == HAS_ITEMS)
+            g.drawImage (tableBackgroundHasItems, juce::Rectangle<float> (0, 0, getWidth(), getHeight()));
+        
+        
+        if (tableState == NO_ITEMS || getIsDraggingToEmptyTable())
+        {
+            juce::String text ("drop files to upload");
+            juce::Rectangle<int> textArea (0, 0, getWidth(), getHeight());
+            g.setColour (juce::Colours::white);
+            juce::Font font (poppinsRegularTypeface);
+            font.setHeight (24.0f);
+            g.setFont (font);
+            g.drawFittedText (text, textArea, juce::Justification::centred, 1);
+        }
     }
     
     

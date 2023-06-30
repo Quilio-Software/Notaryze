@@ -133,15 +133,12 @@ inline juce::String productsignVerbose (const juce::File& file, const juce::Stri
     return result;
 }
 
-
 //PRT this adds the (signed) suffix
 inline int staple (const juce::String& filename)
 {
     juce::String input_filename = filename + " (signed).pkg";
     return runCommand ("xcrun stapler staple " + filename);
 }
-
-
 
 inline RESULT_CODE RunProcess (juce::File file, juce::String email, juce::String password, juce::String teamID, juce::String name, NotaryState notaryState)
 {

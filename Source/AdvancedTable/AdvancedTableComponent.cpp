@@ -21,6 +21,7 @@ void AdvancedTableComponent::filesDropped (const juce::StringArray& files, int x
         {
             auto file = juce::File (filePath);
             addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
+            setTableState (HAS_ITEMS);
         }
     }
 }
@@ -56,6 +57,7 @@ bool AdvancedTableComponent::isInterestedInFileDrag (const juce::StringArray& fi
     {
         if (checkFileTypeIsValid (juce::File (file), getAllowedFileTypes()))
         {
+            setTableState (DRAGGING);
             return true;
         }
     }

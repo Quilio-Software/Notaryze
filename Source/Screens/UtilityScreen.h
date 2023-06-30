@@ -14,6 +14,46 @@
 #include "../Helpers/FormatLibrary.h"
 
 
+class SVGObject
+{
+    juce::MemoryBlock svgData;
+    int numBytes = 0;
+    
+    juce::DrawableComposite drawable;
+    juce::DrawableImage drawableImage;
+    
+    juce::AffineTransform transform;
+    
+    float opacity = 1.0f;
+    
+    juce::MemoryBlock getSvgData (const char* filename)
+    {
+        juce::Identifier dataName (filename);
+        juce::Identifier sizeName (filename);
+        juce::MemoryBlock svgData;
+        const char* namedResourceName = BinaryData::getNamedResource (filename, numBytes);
+        
+        DBG ("Just loaded " + juce::String (numBytes) + " bytes of: " + juce::String (filename));
+        
+        svgData.append (namedResourceName, numBytes);;
+        return svgData;
+    }
+    
+public:
+    SVGObject (const char* filename)
+    {
+        svgData = getSvgData (filename);
+        juce::Image image = juce::ImageFileFormat::loadFrom (svgData.getData(), svgData.getSize());
+        drawableImage.setImage (image);
+        drawable.addChildComponent (drawableImage);
+    }
+    
+    void draw (juce::Graphics& g, juce::Rectangle<int> bounds)
+    {
+        drawable.setBounds (bounds);
+        drawable.draw (g, opacity, transform);
+    }
+};
 
 enum TableState
 {
@@ -27,14 +67,15 @@ class UtilityScreen : public Screen
     RoundedOutlineButtonStyling roundedOutlineStyling;
     UnderlinedButtonStyling underlinedButtonStyling;
     
+    juce::Image quilioLogoFullFormImage = juce::ImageFileFormat::loadFrom (BinaryData::QuilioLogoLongForm_png, BinaryData::QuilioLogoLongForm_pngSize);
     juce::Image quilioLogoImage = juce::ImageFileFormat::loadFrom (BinaryData::quilioLogo_4x_png, BinaryData::quilioLogo_4x_pngSize);
     
     juce::ImageButton quilioLogoButton;
     juce::ImageButton profileButton;
     
-    juce::TextButton codeSignButton {"CODE SIGN"}, productSignButton {"PRODUCT SIGN"};
-    juce::TextButton uploadButton {"UPLOAD"};
-    juce::TextButton startButton {"START"};
+    juce::TextButton codeSignButton {"Code Sign"}, productSignButton {"Product Sign"};
+    juce::TextButton uploadButton {"Upload"};
+    juce::TextButton startButton {"Start"};
     
     std::unique_ptr<AdvancedTableComponent> codeSignTable, productSignTable;
     
@@ -66,6 +107,8 @@ public:
     //    quilioLogoButton = std::make_unique<juce::DrawableButton>();
     //    profileButton = std::make_unique<juce::DrawableButton>();
         
+        
+        
         codeSignButton.setToggleable (true);
         productSignButton.setToggleable (true);
         codeSignButton.setClickingTogglesState (true);
@@ -79,7 +122,7 @@ public:
         addAndMakeVisible (quilioLogoButton);
         addAndMakeVisible (profileButton);
         
-        setImages (quilioLogoButton, quilioLogoImage, quilioLogoImage);
+        setImages (quilioLogoButton, quilioLogoFullFormImage, quilioLogoFullFormImage);
         setImages (profileButton, quilioLogoImage, quilioLogoImage);
         
         std::vector<AdvancedTableComponent::ColumnData> columns = {
@@ -138,6 +181,40 @@ public:
         addAndMakeVisible (nameLabel);
         nameLabel.setFont (juce::Font (20.0));
         nameLabel.setColour (juce::Label::textColourId, juce::Colour::fromString ("#ffA6A6A6"));
+        nameLabel.setJustificationType (juce::Justification::right);
+    }
+    
+    void toggleSigningTableType()
+    {
+        //Switch to Table and update button state
+        if (currentTableState == CODE_SIGN)
+        {
+            switchToTable (PRODUCT_SIGN);
+            productSignButton.setToggleState (true, juce::dontSendNotification);
+            codeSignButton.setToggleState (false, juce::dontSendNotification);
+        }
+        else if (currentTableState == PRODUCT_SIGN)
+        {
+            switchToTable (CODE_SIGN);
+            productSignButton.setToggleState (false, juce::dontSendNotification);
+            codeSignButton.setToggleState (true, juce::dontSendNotification);
+        }
+    }
+    
+    bool keyPressed (const juce::KeyPress& key) override
+    {
+        if (key.getKeyCode() == juce::KeyPress::tabKey)
+        {
+            toggleSigningTableType();
+        }
+    }
+    
+    
+    juce::Image backgroundImage = juce::ImageFileFormat::loadFrom (BinaryData::UtilityScreenBackground_png, BinaryData::UtilityScreenBackground_pngSize);
+    void paint (juce::Graphics& g) override
+    {
+        juce::Rectangle<float> area = getBounds().toFloat();
+        g.drawImage (backgroundImage, area);
     }
     
     juce::String removeDotAndCapitalize (juce::String inputString)
@@ -185,8 +262,8 @@ public:
     
     void resized() override
     {
-        codeSignButton.setBounds (20, 100, 115, 40);
-        productSignButton.setBounds (143, 100, 133, 40);
+        codeSignButton.setBounds (20, 110, 115, 40);
+        productSignButton.setBounds (143, 110, 133, 40);
         
         uploadButton.setBounds (50, 512, 136, 54);
         startButton.setBounds (536, 512, 112, 54);

@@ -23,10 +23,7 @@ class ProfileScreen : public Screen
     juce::String email {"abhishek.shivakumar@gmail.com"};
     juce::String devID {"sdlkfjhsdlkfj"};
     
-    
     juce::Label emailLabel, devIDLabel;
-    
-
     
     juce::Image profilePictureImage;// = juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircle_png, BinaryData::profilePicCircle_pngSize);
     

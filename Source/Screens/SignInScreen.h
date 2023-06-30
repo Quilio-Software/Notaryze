@@ -15,6 +15,7 @@ class PaddedTextEditor : public juce::TextEditor
 {
     juce::Font textEditorFont {20.0f};
     juce::Colour emptyTextColour {juce::Colour::fromString ("#ff8C8C8C")};
+    juce::Colour textBoxColourWhenActive {juce::Colour::fromString ("ffC69BF1")};
 
 public:
     PaddedTextEditor (juce::String textToShowWhenEmpty) : juce::TextEditor (textToShowWhenEmpty)
@@ -25,6 +26,8 @@ public:
         setFont (textEditorFont);
         
         setWantsKeyboardFocus (true);
+        
+        setColour (TextEditor::focusedOutlineColourId, textBoxColourWhenActive);
     }
     
     ~PaddedTextEditor()
@@ -79,8 +82,15 @@ class SignInScreen : public Screen, public juce::TextEditor::Listener
     //    std::unique_ptr<juce::Drawable> quilioLogoSVG;
     //    std::unique_ptr<juce::DrawableButton> quilioLogoButton;
     
+    juce::Image quilioLogoFullFormImage = juce::ImageFileFormat::loadFrom (BinaryData::QuilioLogoLongForm_png, BinaryData::QuilioLogoLongForm_pngSize);
     juce::Image quilioLogoImage = juce::ImageFileFormat::loadFrom (BinaryData::quilioLogo_4x_png, BinaryData::quilioLogo_4x_pngSize);
+    
+    juce::Image keepMeSignedInSquareDefaultImage = juce::ImageFileFormat::loadFrom (BinaryData::checkbox_Default_png, BinaryData::checkbox_Default_pngSize);
+    juce::Image keepMeSignedInSquareHoverImage = juce::ImageFileFormat::loadFrom (BinaryData::checkbox_InactiveHover_png, BinaryData::checkbox_InactiveHover_pngSize);
+    juce::Image keepMeSignedInSquareOnImage = juce::ImageFileFormat::loadFrom (BinaryData::checkbox_ON_png, BinaryData::checkbox_ON_pngSize);
+    
     juce::ImageButton quilioLogoButton;
+    juce::ImageButton keepMeSignedInButton;
     
     PaddedTextEditor passEditor {"Pass"}, emailEditor {"Email"}, teamIdEditor {"Team ID"}, nameEditor {"Name"};
     juce::OwnedArray<PaddedTextEditor> textEditors {{ &nameEditor, &emailEditor, &teamIdEditor, &passEditor }};
@@ -101,12 +111,17 @@ public:
         
         addAndMakeVisible (submitButton);
 
-        setImages (quilioLogoButton, quilioLogoImage, quilioLogoImage);
+        setImages (quilioLogoButton, quilioLogoFullFormImage, quilioLogoFullFormImage);
+        
+        keepMeSignedInButton.setToggleable (true);
+        keepMeSignedInButton.setClickingTogglesState (true);
+        setImages (keepMeSignedInButton, keepMeSignedInSquareDefaultImage, keepMeSignedInSquareOnImage);
         
         submitButton.setHasFocusOutline (false);
         submitButton.onClick = [&] { onSubmit(); };
         
         addAndMakeVisible (quilioLogoButton);
+        addAndMakeVisible (keepMeSignedInButton);
         
         nameEditor.onDownKey = [&] {emailEditor.grabKeyboardFocus(); };
         emailEditor.onDownKey = [&] {teamIdEditor.grabKeyboardFocus(); };
@@ -255,6 +270,8 @@ public:
 
         submitButton.setBounds (162, 427, 355, 54);
         
-        quilioLogoButton.setBounds (32, 30, 40, 40);
+        quilioLogoButton.setBounds (32, 30, 80, 40);
+        
+        keepMeSignedInButton.setBounds (251, 499, 20, 20);
     }
 };

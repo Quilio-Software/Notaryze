@@ -11,9 +11,33 @@
 #pragma once
 #include <JuceHeader.h>
 
-class QuilioLoginLookAndFeel : public juce::LookAndFeel_V4
+class PoppinsLookAndFeel : public juce::LookAndFeel_V4
+{
+    juce::Typeface::Ptr regularTypeface = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsRegular_ttf, BinaryData::PoppinsRegular_ttfSize);
+    juce::Typeface::Ptr  boldTypeface = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsBold_ttf, BinaryData::PoppinsBold_ttfSize);
+    
+public:
+    
+    PoppinsLookAndFeel()
+    {
+        
+    }
+    
+    juce::Typeface::Ptr getBoldTypeface()
+    {
+        return boldTypeface;
+    }
+    
+    juce::Typeface::Ptr getRegularTypeface()
+    {
+        return regularTypeface;
+    }
+};
+
+class QuilioLoginLookAndFeel : public PoppinsLookAndFeel
 {
 public:
+    
     
     QuilioLoginLookAndFeel()
     {
@@ -24,13 +48,15 @@ public:
         
         setColour (juce::TextEditor::textColourId, juce::Colour::fromString ("#ffEFEFEF"));
 
-        
         setColour (juce::TextButton::buttonColourId, juce::Colour::fromString ("#ff9C49E7"));
         setColour (juce::TextButton::textColourOffId, juce::Colour::fromString ("#ffEFEFEF"));
         setColour (juce::TextButton::buttonOnColourId, juce::Colour::fromString ("#ffC69BF1"));
         setColour (juce::TextButton::textColourOnId, juce::Colour::fromString ("#ffC69BF1"));
         
         setColour (juce::ComboBox::outlineColourId, juce::Colour::fromString ("#ff9C49E7"));
+        
+  //      juce::Font poppinsRegularFont (poppinsRegularTypeface);
+        setDefaultSansSerifTypeface (getRegularTypeface());
     }
     
     void drawButtonBackground (juce::Graphics& g,
@@ -118,7 +144,7 @@ public:
 };
 
 
-class RoundedFillButtonStyling : public juce::LookAndFeel_V4
+class RoundedFillButtonStyling : public PoppinsLookAndFeel
 {
 public:
     
@@ -224,7 +250,7 @@ public:
     }
 };
 
-class RoundedOutlineButtonStyling : public juce::LookAndFeel_V4
+class RoundedOutlineButtonStyling : public PoppinsLookAndFeel
 {
 public:
     
@@ -296,7 +322,7 @@ public:
 };
 
 
-class UnderlinedButtonStyling : public juce::LookAndFeel_V4
+class UnderlinedButtonStyling : public PoppinsLookAndFeel
 {
 public:
     
@@ -316,6 +342,8 @@ public:
         setColour (juce::TextButton::textColourOnId, juce::Colour::fromString ("#ffC69BF1"));
         
         setColour (juce::ComboBox::outlineColourId, juce::Colour::fromString ("#ff9C49E7"));
+        
+        setDefaultSansSerifTypeface (getBoldTypeface());
     }
     
     void drawButtonBackground (juce::Graphics& g,
@@ -358,7 +386,6 @@ public:
         }
         else
         {
-            
             if (button.getToggleState())
                 drawCenteredLine (g, 100, 3.0, juce::Colours::purple, button);
         }
@@ -367,11 +394,25 @@ public:
     void drawButtonText (juce::Graphics& g, juce::TextButton& button,
                          bool /*shouldDrawButtonAsHighlighted*/, bool /*shouldDrawButtonAsDown*/) override
     {
-        juce::Font font (getTextButtonFont (button, button.getHeight()));
-        g.setFont (font);
-        g.setColour (button.findColour (button.getToggleState() ? juce::TextButton::textColourOnId
-                                                                : juce::TextButton::textColourOffId)
-                           .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
+        juce::Font font;
+        if (button.getToggleState ()) //if button is down
+        {
+            font = juce::Font (getBoldTypeface());
+            g.setFont (font);
+            g.setColour (button.findColour (button.getToggleState() ? juce::TextButton::textColourOnId
+                                                                    : juce::TextButton::textColourOffId)
+                               .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
+        }
+        else
+        {
+            font = juce::Font (getRegularTypeface());
+            g.setFont (font);
+            g.setColour (button.findColour (button.getToggleState() ? juce::TextButton::textColourOnId
+                                                                    : juce::TextButton::textColourOffId)
+                               .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
+        }
+        
+
 
         const int yIndent = juce::jmin (4, button.proportionOfHeight (0.3f));
         const int cornerSize = juce::jmin (button.getHeight(), button.getWidth()) / 2;
