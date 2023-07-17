@@ -316,6 +316,9 @@ public:
         else if (tableState == HAS_ITEMS)
             g.drawImage (tableBackgroundHasItems, juce::Rectangle<float> (0, 0, getWidth(), getHeight()));
                 
+        
+        DBG (tableState);
+        
         if (tableState == NO_ITEMS || getIsDraggingToEmptyTable())
         {
             juce::String text ("drop files to upload");
@@ -333,11 +336,6 @@ public:
         numRows = dataList->getNumChildElements();
         table.updateContent();
         resized();
-        
-        if (numRows > 0)
-            setTableState (HAS_ITEMS);
-        else
-            setTableState (NO_ITEMS);
     }
     
     ///==================================================================================

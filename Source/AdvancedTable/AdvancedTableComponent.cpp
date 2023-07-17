@@ -21,11 +21,12 @@ void AdvancedTableComponent::filesDropped (const juce::StringArray& files, int x
         {
             auto file = juce::File (filePath);
             addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
+            
+            if (numRows > 0)
+                setTableState (HAS_ITEMS);
+            else
+                setTableState (NO_ITEMS);
         }
-        if (dataList->getNumChildElements() > 0)
-            setTableState (HAS_ITEMS);
-        else
-            setTableState (NO_ITEMS);
     }
 }
 
@@ -38,11 +39,6 @@ void AdvancedTableComponent::browseForFileToUpload()
         juce::File file (chooser.getResult());
         addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
     }
-    
-    if (dataList->getNumChildElements() > 0)
-        setTableState (HAS_ITEMS);
-    else
-        setTableState (NO_ITEMS);
 }
 
 bool AdvancedTableComponent::checkFileTypeIsValid (juce::File file, StringVector allowedFileTypes)
@@ -154,6 +150,8 @@ void AdvancedTableComponent::update()
     {
         currentStatusIconRotationInRadians += statusIconRotationIncrementInRadians;
     }
+    
+    repaint();
     
     updateRowStatuses();
 }
