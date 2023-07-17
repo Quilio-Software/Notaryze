@@ -15,228 +15,11 @@
 #include <JuceHeader.h>
 #include "../Notarization/Notarization.h"
 #include "../Helpers/FormatLibrary.h"
+#include "DataModel.h"
+#include "TableStyling.h"
 
 #include <Security/SecStaticCode.h>
 
-// A table requires a column model and a data model
-class ColumnModel : public juce::XmlElement
-{
-    std::vector<juce::XmlElement*> columnElement;
-    
-public:
-    
-    ColumnModel (juce::String columnModelName) : juce::XmlElement (columnModelName)
-    {
-    }
-    
-    void addColumn (juce::String columnName, int width)
-    {
-        columnElement.push_back (createNewChildElement (columnName));
-        columnElement.back()->setAttribute ("ColumnId", (int) columnElement.size());
-        columnElement.back()->setAttribute ("Name", columnName);
-        columnElement.back()->setAttribute ("Width", width);
-    }
-};
-
-
-//TODO: Fix issues with lack of plurality... dataElement should be something like xmlVector
-//Also, what in the world is the distinction between vector and array, from a high level perspective?
-//They are storage elements at the end of the day, regardless of what operations they allow.
-class DataModel : public juce::XmlElement
-{
-    std::vector<juce::XmlElement*> dataElement;
-    
-public:
-    
-    enum Columns { ID, ITEM, TYPE, STATUS, CLEAR };
-    
-    DataModel (juce::String columnModelName) : juce::XmlElement (columnModelName)
-    {
-    }
-    
-    void addProperty (juce::String propertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear)
-    {
-        dataElement.push_back (createNewChildElement (propertyName));
-        dataElement.back()->setAttribute ("ColumnId", (int) dataElement.size());
-        dataElement.back()->setAttribute ("Item", newItem);
-        dataElement.back()->setAttribute ("Type", newType);
-        dataElement.back()->setAttribute ("Status", newStatus);
-        dataElement.back()->setAttribute ("Clear", newClear);
-    }
-    
-    void clear()
-    {
-        dataElement.clear();
-        deleteAllChildElements();
-    }
-    
-    void removeItemByName (juce::String itemToRemove)
-    {
-        for (auto it = dataElement.begin(); it != dataElement.end(); ++it)
-        {
-            if ((juce::String) ((*it)->getAttributeValue (ITEM)) == itemToRemove)
-            {
-                dataElement.erase (it);
-                break; // Optional, if you only want to remove the first matching element
-            }
-        }
-    }
-    
-    void removeItemByIndex (const int indexToRemove)
-    {
-        //TODO: Fix weird double removal thing here
-        removeChildElement (getChildElement(indexToRemove), true);
-        dataElement.erase (dataElement.begin() + indexToRemove);
-        DBG ("Data Element List now has " + juce::String (dataElement.size()) + " elements");
-    }
-};
-
-class TableComponentStyling : public juce::LookAndFeel_V4
-{
-    juce::Colour columnHeaderColour = juce::Colours::white;
-
-public:
-    TableComponentStyling()
-    {
-        //First we set the colour
-        setColour (juce::ListBox::backgroundColourId, juce::Colour::fromString ("#ff000A1A"));
-        setColour (juce::TableHeaderComponent::textColourId, juce::Colour::fromString ("#ffbfbfbf")); //This sets the table text color
-        setColour (juce::TableHeaderComponent::outlineColourId, juce::Colours::transparentBlack); //Not yet sure what this does
-        setColour (juce::ListBox::outlineColourId, juce::Colours::transparentBlack); //This has to do with the rounded rect outline of the table.
-    
-        //Then we set the font
-        
-    }
-    
-    bool canSeeHeader = false;
-    void setHeaderVisibility (bool visibility) {canSeeHeader = visibility;}
-    
-    void drawTableHeaderBackground (juce::Graphics& g, juce::TableHeaderComponent& header) override
-    {
-        auto r = header.getLocalBounds();
-        auto outlineColour = header.findColour (juce::TableHeaderComponent::outlineColourId);
-
-        
-        outlineColour = juce::Colours::red;
-        
-        g.setColour (outlineColour);
-//        g.fillRect (r.removeFromBottom (1));
-
-        g.setColour (header.findColour (juce::TableHeaderComponent::backgroundColourId));
-//        g.fillRect (r);
-
-        g.setColour (outlineColour);
-
-//        for (int i = header.getNumColumns (true); --i >= 0;)
-//            g.fillRect (header.getColumnPosition (i).removeFromRight (1));
-        
-        
-    }
-
-    juce::Typeface::Ptr poppinsSemiBoldTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::PoppinsSemiBold_ttf, BinaryData::PoppinsSemiBold_ttfSize);
-    juce::Typeface::Ptr poppinsRegularTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::PoppinsRegular_ttf, BinaryData::PoppinsRegular_ttfSize);
-    void drawTableHeaderColumn (juce::Graphics& g, juce::TableHeaderComponent& header,
-                                                const juce::String& columnName, int /*columnId*/,
-                                                int width, int height, bool isMouseOver, bool isMouseDown,
-                                                int columnFlags) override
-    {
-        juce::Rectangle<int> area (width, height);
-        
-        if (canSeeHeader)
-        {
-            if (columnName != "Clear" && columnName != "Status")
-            {
-                auto highlightColour = header.findColour (juce::TableHeaderComponent::highlightColourId);
-                
-                if (isMouseDown)
-                    g.fillAll (highlightColour);
-                else if (isMouseOver)
-                    g.fillAll (highlightColour.withMultipliedAlpha (0.625f));
-                
-                
-                //Set table header bounds
-                area.reduce (4, 0);
-                
-                if ((columnFlags & (juce::TableHeaderComponent::sortedForwards | juce::TableHeaderComponent::sortedBackwards)) != 0)
-                {
-                    juce::Path sortArrow;
-                    sortArrow.addTriangle (0.0f, 0.0f,
-                                           0.5f, (columnFlags & juce::TableHeaderComponent::sortedForwards) != 0 ? -0.8f : 0.8f,
-                                           1.0f, 0.0f);
-                    
-                    g.setColour (header.findColour (juce::TableHeaderComponent::backgroundColourId));
-                    g.fillPath (sortArrow, sortArrow.getTransformToScaleToFit (area.removeFromRight (height / 2).reduced (2).toFloat(), true));
-                }
-                
-                
-                //Draw table header text
-                g.setColour (columnHeaderColour);
-                g.setFont (poppinsRegularTypeface);
-                g.setFont (24.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
-                //Todo: Find a way to MAKE IT NOT BE 2X WHAT IT ACTUALLY IS WTFFFFF.
-                g.drawFittedText (columnName, area, juce::Justification::centredLeft, 1);
-            }
-            else if (columnName == "Status")
-            {
-                auto highlightColour = header.findColour (juce::TableHeaderComponent::highlightColourId);
-                
-                if (isMouseDown)
-                    g.fillAll (highlightColour);
-                else if (isMouseOver)
-                    g.fillAll (highlightColour.withMultipliedAlpha (0.625f));
-                
-                
-                //Set table header bounds
-                area.reduce (4, 0);
-                
-                if ((columnFlags & (juce::TableHeaderComponent::sortedForwards | juce::TableHeaderComponent::sortedBackwards)) != 0)
-                {
-                    juce::Path sortArrow;
-                    sortArrow.addTriangle (0.0f, 0.0f,
-                                           0.5f, (columnFlags & juce::TableHeaderComponent::sortedForwards) != 0 ? -0.8f : 0.8f,
-                                           1.0f, 0.0f);
-                    
-                    g.setColour (header.findColour (juce::TableHeaderComponent::backgroundColourId));
-                    g.fillPath (sortArrow, sortArrow.getTransformToScaleToFit (area.removeFromRight (height / 2).reduced (2).toFloat(), true));
-                }
-                
-                
-                //Draw table header text
-                g.setColour (columnHeaderColour);
-                g.setFont (poppinsRegularTypeface);
-                g.setFont (24.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
-                //Todo: Find a way to MAKE IT NOT BE 2X WHAT IT ACTUALLY IS WTFFFFF.
-                g.drawFittedText (columnName, area, juce::Justification::centred, 1);
-            }
-            else if (columnName == "Clear")
-            {
-                //TODO: Convert this manual postiioning to some sort of relative positioning
-                juce::Rectangle<float> roundedRectArea (8, 8, 41, 18);//(width * 0.25f * 0.5f, height * 0.25f, width * 0.75f, height * 0.5f);
-                
-                //Handle different clear button colors here
-                //            if (isMouseOver)
-                //            {
-                //
-                //            }
-
-
-                
-                if (isMouseDown) //Clear button in the Header has been clicked
-                {
-                    clearAllData();
-                }
-
-                g.setColour (juce::Colour::fromString ("#ffF2571D"));
-                g.setFont (poppinsRegularTypeface);
-                g.setFont (18.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
-                g.drawFittedText ("CLEAR", juce::Rectangle<int> (area.getX(), area.getY(), 33, 14), juce::Justification::centred, 1);
-                g.drawRoundedRectangle (roundedRectArea.toFloat(), 4, 1.0f);
-            }
-        }
-    }
-    
-    std::function<void()> clearAllData;
-};
 
 class AdvancedTableComponent : public juce::AnimatedAppComponent,
                                public juce::TableListBoxModel,
@@ -284,6 +67,8 @@ public:
     {
         AdvancedTableComponent (columns, std::vector<RowData> ());
     }
+    
+    void update() override;
     
     //File operations
     void filesDropped (const juce::StringArray& files, int x, int y) override;
@@ -461,13 +246,9 @@ public:
     {
         DBG ("Row " + rowID + " has been set to notarize.");
         auto row = getRow (rowID);
-        
         auto filename = row->getStringAttribute ("Item");
-        
         auto response = codesignVerbose (filename, devName, devID);
-        
         DBG ("Response: " + response);
-        
         row->setAttribute ("Status", "PROCESSING");
         updateTable();
     }
@@ -475,73 +256,17 @@ public:
     void signRow (juce::String rowIdentifier)
     {
         auto* rowToSign = getRow (rowIdentifier);
-        
         rowToSign->setAttribute ("Status", "PROCESSING");
         updateTable();
     }
     
     
-    //Signing happens here
-    void notarizeTable (juce::String devName, juce::String devID, bool isCodeSigning)
-    {
-#ifdef JUCE_MAC
-        for (auto* rowXml : dataList->getChildIterator())
-        {
-            auto filename = rowXml->getStringAttribute ("Item");
-            if (isCodeSigning)
-            {
-                DBG ("ATTEMPTING CODESIGN");
-                auto response = codesignVerbose (filename, devName, devID);
-                DBG ("Response: " + response);
-                
-                if (response != "Success")
-                {
-                    rowXml->setAttribute ("Status", "Fail");
-                }
-                else
-                {
-                    //TODO: Add codesign check stage here
-                    rowXml->setAttribute ("Status", "Signed");
-                }
-            }
-            else
-            {
-                DBG ("ATTEMPTING PRODUCTSIGN");
-                auto response = productsignVerbose (filename, devName, devID);
-                DBG ("Response: " + response);
-                
-                if (response != "Success")
-                {
-                    rowXml->setAttribute ("Status", "Fail");
-                }
-                else
-                {
-                    //TODO: Add codesign check stage here
-                    rowXml->setAttribute ("Status", "Signed");
-                }
-            }
-        }
-#endif
-        updateTable();
-    }
+    void notarizeTable (juce::String devName, juce::String devID, bool isCodeSigning);
     
     float currentStatusIconRotationInRadians = 0.0f;
     float statusIconRotationIncrementInRadians = 0.1f;
     
-    //Animation related behavior
-    void update() override
-    {
-        if (currentStatusIconRotationInRadians >= juce::MathConstants<float>::pi * 2.0f)
-        {
-            currentStatusIconRotationInRadians = 0.0f;
-        }
-        else
-        {
-            currentStatusIconRotationInRadians += statusIconRotationIncrementInRadians;
-        }
-        
-        updateRowStatuses();
-    }
+
     
     enum TableState {NO_ITEMS, DRAGGING, HAS_ITEMS};
     TableState tableState = NO_ITEMS;
@@ -631,26 +356,9 @@ public:
     }
     
     //Table Population
-    void addRow (juce::String newPropertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear)
-    {
-        //check if file already exists, to avoid adding duplicates
-        for (auto* rowXml : dataList->getChildIterator())
-        {
-            if (newItem == rowXml->getStringAttribute ("Item"))
-            {
-                //Item already exists
-                return;
-            }
-        }
-
-        dataList->addProperty (newPropertyName, newItem, newType, newStatus, newClear);
-        updateTable();
-    }
+    void addRow (juce::String newPropertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear);
     
-    int getNumRows() override
-    {
-        return numRows;
-    }
+    int getNumRows() override { return numRows; }
 
     void paintRowBackground (juce::Graphics& g, int rowNumber, int /*width*/, int /*height*/, bool rowIsSelected) override
     {
@@ -732,21 +440,25 @@ public:
         g.fillRect(componentX + componentWidth - 1, componentY, 1, componentHeight);
     }
     
-    void cellClicked (int rowNumber, int columnId, const juce::MouseEvent&) override
+    void cellClicked (int rowIndex, int columnId, const juce::MouseEvent&) override
     {
         //TODO: Add Mouse position check to ensure it's within the bounds of the trash icon
         if (columnId == CLEAR) //Then we've hit the trash icon
         {
-            auto childXMLElement = dataList->getChildElement (rowNumber);
+            auto childXMLElement = dataList->getChildElement (rowIndex);
             DBG ("Just removed element " + juce::String (childXMLElement->getAttributeValue (2)));
-            dataList->removeItemByIndex (rowNumber);
+            removeRow (rowIndex);
             updateTable();
         }
     }
     
+    void removeRow (int rowIndex)
+    {
+        dataList->removeItemByIndex (rowIndex);
+    }
     
-    void drawStatusCell (juce::Graphics& g, int rowNumber, int columnId,
-                         int width, int height, bool rowIsSelected)
+    
+    void drawStatusCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
     {
         if (auto* rowElement = dataList->getChildElement (rowNumber))
         {
@@ -769,8 +481,7 @@ public:
         }
     }
     
-    void drawClearCell (juce::Graphics& g, int rowNumber, int columnId,
-                         int width, int height, bool rowIsSelected)
+    void drawClearCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
     {
         //draw the trash can image... or position a button?
         float iconWidth = trashIconImage.getWidth();
@@ -868,15 +579,9 @@ public:
         return widest + 8;
     }
 
-    int getSelection (const int rowNumber) const
-    {
-        return dataList->getChildElement (rowNumber)->getIntAttribute ("Select");
-    }
-
-    void setSelection (const int rowNumber, const int newSelection)
-    {
-        dataList->getChildElement (rowNumber)->setAttribute ("Select", newSelection);
-    }
+    //Selection
+    int getSelection (const int rowNumber) const { return dataList->getChildElement (rowNumber)->getIntAttribute ("Select"); }
+    void setSelection (const int rowNumber, const int newSelection) { dataList->getChildElement (rowNumber)->setAttribute ("Select", newSelection); }
 
     juce::String getText (const int columnNumber, const int rowNumber) const
     {
@@ -946,8 +651,7 @@ private:
     class SelectionColumnCustomComponent    : public Component
     {
     public:
-        SelectionColumnCustomComponent (AdvancedTableComponent& td)
-            : owner (td)
+        SelectionColumnCustomComponent (AdvancedTableComponent& td) : owner (td)
         {
             addAndMakeVisible (toggleButton);
 

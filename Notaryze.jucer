@@ -14,6 +14,8 @@
               file="Source/AdvancedTable/AdvancedTableComponent.cpp"/>
         <FILE id="o5v6zj" name="AdvancedTableComponent.h" compile="0" resource="0"
               file="Source/AdvancedTable/AdvancedTableComponent.h"/>
+        <FILE id="xEj1VL" name="DataModel.h" compile="0" resource="0" file="Source/AdvancedTable/DataModel.h"/>
+        <FILE id="tCkQNz" name="TableStyling.h" compile="0" resource="0" file="Source/AdvancedTable/TableStyling.h"/>
       </GROUP>
       <GROUP id="{9370705B-51DA-CF89-392B-8A236E8AFDF2}" name="Notarization">
         <FILE id="XOjHiz" name="ErrorHandling.h" compile="0" resource="0" file="Source/Notarization/ErrorHandling.h"/>

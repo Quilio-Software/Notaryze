@@ -12,7 +12,7 @@
 #include "AdvancedTableComponent.h"
 #include "../Helpers/SpecialStringProcessing.h"
 
-
+/* FILE RELATED STUFF */
 void AdvancedTableComponent::filesDropped (const juce::StringArray& files, int x, int y)
 {
     for (auto filePath : files)
@@ -68,4 +68,92 @@ bool AdvancedTableComponent::isInterestedInFileDrag (const juce::StringArray& fi
         }
     }
     return false;
+}
+/*        */
+
+
+
+/*  ROW OPERATIONS  */
+void AdvancedTableComponent::addRow (juce::String newPropertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear)
+{
+    //check if file already exists, to avoid adding duplicates
+    for (auto* rowXml : dataList->getChildIterator())
+    {
+        if (newItem == rowXml->getStringAttribute ("Item"))
+        {
+            //Item already exists
+            return;
+        }
+    }
+
+    dataList->addProperty (newPropertyName, newItem, newType, newStatus, newClear);
+    updateTable();
+}
+
+
+/* BATCH OPERATIONS */
+//Signing happens here
+void AdvancedTableComponent::notarizeTable (juce::String devName, juce::String devID, bool isCodeSigning)
+{
+#ifdef JUCE_MAC
+    for (auto* rowXml : dataList->getChildIterator())
+    {
+        auto filename = rowXml->getStringAttribute ("Item");
+        if (isCodeSigning)
+        {
+            DBG ("ATTEMPTING CODESIGN");
+            auto response = codesignVerbose (filename, devName, devID);
+            DBG ("Response: " + response);
+            
+            if (response != "Success")
+            {
+                rowXml->setAttribute ("Status", "Fail");
+            }
+            else
+            {
+                //TODO: Add codesign check stage here
+                rowXml->setAttribute ("Status", "Signed");
+            }
+        }
+        else
+        {
+            DBG ("ATTEMPTING PRODUCTSIGN");
+            auto response = productsignVerbose (filename, devName, devID);
+            DBG ("Response: " + response);
+            
+            if (response != "Success")
+            {
+                rowXml->setAttribute ("Status", "Fail");
+            }
+            else
+            {
+                //TODO: Add codesign check stage here
+                rowXml->setAttribute ("Status", "Signed");
+            }
+        }
+    }
+#endif
+    updateTable();
+}
+
+
+
+
+
+
+
+/* STATE Related  */
+//Animation related behavior
+void AdvancedTableComponent::update()
+{
+    if (currentStatusIconRotationInRadians >= juce::MathConstants<float>::pi * 2.0f)
+    {
+        currentStatusIconRotationInRadians = 0.0f;
+    }
+    else
+    {
+        currentStatusIconRotationInRadians += statusIconRotationIncrementInRadians;
+    }
+    
+    updateRowStatuses();
 }
