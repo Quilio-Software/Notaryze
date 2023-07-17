@@ -5,6 +5,10 @@
               cppLanguageStandard="17">
   <MAINGROUP id="zkUI0t" name="Notaryze">
     <GROUP id="{73768C8C-40C5-4F1E-FE8B-5B7C47599EEB}" name="Source">
+      <GROUP id="{13268295-19AD-FED7-E4BC-D1275827DAEA}" name="CredentialManager">
+        <FILE id="iJV6gm" name="KeychainManager.h" compile="0" resource="0"
+              file="Source/CredentialManager/KeychainManager.h"/>
+      </GROUP>
       <GROUP id="{A7E88FC6-6FEE-DDE3-ED9D-1CC0121626ED}" name="AdvancedTable">
         <FILE id="owztem" name="AdvancedTableComponent.cpp" compile="1" resource="0"
               file="Source/AdvancedTable/AdvancedTableComponent.cpp"/>

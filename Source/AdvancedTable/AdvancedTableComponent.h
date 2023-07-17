@@ -16,6 +16,8 @@
 #include "../Notarization/Notarization.h"
 #include "../Helpers/FormatLibrary.h"
 
+#include <Security/SecStaticCode.h>
+
 // A table requires a column model and a data model
 class ColumnModel : public juce::XmlElement
 {
@@ -132,6 +134,7 @@ public:
     }
 
     juce::Typeface::Ptr poppinsSemiBoldTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::PoppinsSemiBold_ttf, BinaryData::PoppinsSemiBold_ttfSize);
+    juce::Typeface::Ptr poppinsRegularTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::PoppinsRegular_ttf, BinaryData::PoppinsRegular_ttfSize);
     void drawTableHeaderColumn (juce::Graphics& g, juce::TableHeaderComponent& header,
                                                 const juce::String& columnName, int /*columnId*/,
                                                 int width, int height, bool isMouseOver, bool isMouseDown,
@@ -168,7 +171,7 @@ public:
                 
                 //Draw table header text
                 g.setColour (columnHeaderColour);
-                g.setFont (poppinsSemiBoldTypeface);
+                g.setFont (poppinsRegularTypeface);
                 g.setFont (24.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
                 //Todo: Find a way to MAKE IT NOT BE 2X WHAT IT ACTUALLY IS WTFFFFF.
                 g.drawFittedText (columnName, area, juce::Justification::centredLeft, 1);
@@ -200,14 +203,15 @@ public:
                 
                 //Draw table header text
                 g.setColour (columnHeaderColour);
-                g.setFont (poppinsSemiBoldTypeface);
+                g.setFont (poppinsRegularTypeface);
                 g.setFont (24.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
                 //Todo: Find a way to MAKE IT NOT BE 2X WHAT IT ACTUALLY IS WTFFFFF.
                 g.drawFittedText (columnName, area, juce::Justification::centred, 1);
             }
             else if (columnName == "Clear")
             {
-                juce::Rectangle<float> roundedRectArea (width * 0.25f * 0.5f, height * 0.25f, width * 0.75f, height * 0.5f);
+                //TODO: Convert this manual postiioning to some sort of relative positioning
+                juce::Rectangle<float> roundedRectArea (8, 8, 41, 18);//(width * 0.25f * 0.5f, height * 0.25f, width * 0.75f, height * 0.5f);
                 
                 //Handle different clear button colors here
                 //            if (isMouseOver)
@@ -223,9 +227,9 @@ public:
                 }
 
                 g.setColour (juce::Colour::fromString ("#ffF2571D"));
-                g.setFont (poppinsSemiBoldTypeface);
-                g.setFont (24.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
-                g.drawFittedText ("CLEAR", area, juce::Justification::centred, 1);
+                g.setFont (poppinsRegularTypeface);
+                g.setFont (18.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
+                g.drawFittedText ("CLEAR", juce::Rectangle<int> (area.getX(), area.getY(), 33, 14), juce::Justification::centred, 1);
                 g.drawRoundedRectangle (roundedRectArea.toFloat(), 4, 1.0f);
             }
         }
@@ -292,9 +296,81 @@ public:
     void setAllowedFileTypes (StringVector fileTypesToAllow) { allowedFileTypes = fileTypesToAllow; }
     void setAllowedFileTypes (FormatLibrary::Types fileType) { allowedFileTypes = FormatLibrary::getFormats (fileType); }
     
+    /*
     juce::String getStatus (juce::File file)
     {
-        return "Signed";
+        juce::String command = "xcrun notary -v --info " + file.getFullPathName();
+        juce::String status = "Not signed";
+        std::string output;
+
+        FILE* pipe = popen(command.toRawUTF8(), "r");
+        if (pipe)
+        {
+            char buffer[128];
+            while (fgets(buffer, sizeof(buffer), pipe) != nullptr)
+            {
+                output += buffer;
+            }
+
+            pclose(pipe);
+        }
+        else
+        {
+            std::cout << "Failed to run command: " << command << std::endl;
+            return "Error";
+        }
+
+        if (!output.empty())
+        {
+            status = "Signed";
+        }
+
+        return status;
+    }
+     */
+    
+    void updateRowStatuses()
+    {
+        int numRows = dataList->getNumChildElements();
+        
+        for (auto* rowXml : dataList->getChildIterator())
+        {
+            auto status = rowXml->getStringAttribute ("Status");
+            rowXml->setAttribute ("Status", status);
+        }
+        updateTable();
+    }
+    
+    juce::String getStatus (juce::File file)
+    {
+        juce::String command = "codesign -dv -- \"" + file.getFullPathName() + "\"";
+        juce::String status = "Not signed";
+        std::string output;
+
+        FILE* pipe = popen (command.toRawUTF8(), "r");
+        if (pipe)
+        {
+            char buffer[128];
+            while (fgets (buffer, sizeof(buffer), pipe) != nullptr)
+            {
+                output += buffer;
+            }
+
+            pclose (pipe);
+
+            // Check the output for signing information
+            if (output.find ("signed") != std::string::npos)
+            {
+                status = "Signed";
+            }
+        }
+        else
+        {
+            std::cout << "Failed to run command: " << command << std::endl;
+            status = "Error";
+        }
+
+        return status;
     }
 
     AdvancedTableComponent (std::vector<ColumnData> columns, std::vector<RowData> data)
@@ -306,7 +382,12 @@ public:
         {
             dataList->clear();
             updateTable();
-            setTableState (NO_ITEMS);
+            
+            //TODO: Move the stuff below into updatetable
+            if (dataList->getNumChildElements() > 0)
+                setTableState (HAS_ITEMS);
+            else
+                setTableState (NO_ITEMS);
         };
         
         // Create data model
@@ -399,27 +480,48 @@ public:
         updateTable();
     }
     
+    
+    //Signing happens here
     void notarizeTable (juce::String devName, juce::String devID, bool isCodeSigning)
     {
+#ifdef JUCE_MAC
         for (auto* rowXml : dataList->getChildIterator())
         {
             auto filename = rowXml->getStringAttribute ("Item");
-            
-#ifdef JUCE_OSX
             if (isCodeSigning)
             {
+                DBG ("ATTEMPTING CODESIGN");
                 auto response = codesignVerbose (filename, devName, devID);
                 DBG ("Response: " + response);
+                
+                if (response != "Success")
+                {
+                    rowXml->setAttribute ("Status", "Fail");
+                }
+                else
+                {
+                    //TODO: Add codesign check stage here
+                    rowXml->setAttribute ("Status", "Signed");
+                }
             }
             else
             {
+                DBG ("ATTEMPTING PRODUCTSIGN");
                 auto response = productsignVerbose (filename, devName, devID);
                 DBG ("Response: " + response);
+                
+                if (response != "Success")
+                {
+                    rowXml->setAttribute ("Status", "Fail");
+                }
+                else
+                {
+                    //TODO: Add codesign check stage here
+                    rowXml->setAttribute ("Status", "Signed");
+                }
             }
-#endif
-            
-            rowXml->setAttribute ("Status", "PROCESSING");
         }
+#endif
         updateTable();
     }
     
@@ -437,6 +539,8 @@ public:
         {
             currentStatusIconRotationInRadians += statusIconRotationIncrementInRadians;
         }
+        
+        updateRowStatuses();
     }
     
     enum TableState {NO_ITEMS, DRAGGING, HAS_ITEMS};
@@ -486,8 +590,7 @@ public:
             g.drawImage (tableBackgroundDragging, juce::Rectangle<float> (0, 0, getWidth(), getHeight()));
         else if (tableState == HAS_ITEMS)
             g.drawImage (tableBackgroundHasItems, juce::Rectangle<float> (0, 0, getWidth(), getHeight()));
-        
-        
+                
         if (tableState == NO_ITEMS || getIsDraggingToEmptyTable())
         {
             juce::String text ("drop files to upload");
@@ -500,12 +603,16 @@ public:
         }
     }
     
-    
     void updateTable()
     {
         numRows = dataList->getNumChildElements();
         table.updateContent();
         resized();
+        
+        if (numRows > 0)
+            setTableState (HAS_ITEMS);
+        else
+            setTableState (NO_ITEMS);
     }
     
     ///==================================================================================
@@ -637,44 +744,58 @@ public:
         }
     }
     
+    
+    void drawStatusCell (juce::Graphics& g, int rowNumber, int columnId,
+                         int width, int height, bool rowIsSelected)
+    {
+        if (auto* rowElement = dataList->getChildElement (rowNumber))
+        {
+            auto statusText = rowElement->getStringAttribute (getAttributeNameForColumnId (columnId));
+            if (statusText == "PROCESSING")
+            {
+                float iconWidth = statusLoadingIconImage.getWidth();
+                float iconHeight = statusLoadingIconImage.getHeight();
+                
+                auto rotationalTransform = juce::AffineTransform::rotation (currentStatusIconRotationInRadians, iconWidth / 2.0f, iconHeight / 2.0f)
+                .translated (200, height / 2.0f - iconHeight / 2.0f);
+                
+                g.fillAll(juce::Colours::red);
+                g.drawImageTransformed (statusLoadingIconImage, rotationalTransform, false);
+            }
+            else
+            {
+                drawStatusPill (g, statusText, 162, 179, width, height);
+            }
+        }
+    }
+    
+    void drawClearCell (juce::Graphics& g, int rowNumber, int columnId,
+                         int width, int height, bool rowIsSelected)
+    {
+        //draw the trash can image... or position a button?
+        float iconWidth = trashIconImage.getWidth();
+        float iconHeight = trashIconImage.getHeight();
+        
+        g.drawImageWithin (trashIconImage, width / 2.0f - 9.8 * 0.5, height / 2.0f - 12 * 0.5, 9.8, 12, juce::Justification::centred);
+    }
+    
     //This function has to do with cell drawing
     void paintCell (juce::Graphics& g, int rowNumber, int columnId,
                     int width, int height, bool rowIsSelected) override
     {
         if (columnId == STATUS) //columnID 3 is status
         {
-            if (auto* rowElement = dataList->getChildElement (rowNumber))
-            {
-                auto text = rowElement->getStringAttribute (getAttributeNameForColumnId (columnId));
-                if (text == "PROCESSING")
-                {
-                    float iconWidth = statusLoadingIconImage.getWidth();
-                    float iconHeight = statusLoadingIconImage.getHeight();
-                    
-                    auto rotationalTransform = juce::AffineTransform::rotation (currentStatusIconRotationInRadians, iconWidth / 2.0f, iconHeight / 2.0f)
-                    .translated (0, height / 2.0f - iconHeight / 2.0f);
-                    
-                    g.drawImageTransformed (statusLoadingIconImage, rotationalTransform, false);
-                }
-                else
-                {
-                    drawStatusPill (g, text, 162, 179, width, height);
-                }
-            }
+            drawStatusCell (g, rowNumber, columnId, width, height, rowIsSelected);
         }
         else if (columnId == CLEAR) //If we're on the Clear Column
         {
-            //draw the trash can image... or position a button?
-            float iconWidth = trashIconImage.getWidth();
-            float iconHeight = trashIconImage.getHeight();
-            
-            g.drawImageWithin (trashIconImage, width / 2.0f - 9.8 * 0.5, height / 2.0f - 12 * 0.5, 9.8, 12, juce::Justification::centred);
+            drawClearCell (g, rowNumber, columnId, width, height, rowIsSelected);
         }
         else
         {
-            g.setColour(getLookAndFeel().findColour (juce::TableHeaderComponent::textColourId));
-            g.setFont(poppinsRegularTypeface);
-            g.setFont(24.0f); //TODO: MAKE THIS ALSO NOT BE FUCKING 2X WTF
+            g.setColour (getLookAndFeel().findColour (juce::TableHeaderComponent::textColourId));
+            g.setFont (poppinsRegularTypeface);
+            g.setFont (24.0f); //TODO: MAKE THIS ALSO NOT BE FUCKING 2X WTF
             
             if (auto* rowElement = dataList->getChildElement (rowNumber))
             {

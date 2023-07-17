@@ -35,10 +35,12 @@ public:
         else if (type == INSTALLER)
             formats = { ".pkg", ".dmg", ".zip" };
         else if (type == EXECUTABLE)
-#ifdef JUCE_OSX
+#ifdef JUCE_MAC
             formats = { ".app" };
 #elif JUCE_WINDOWS
             formats = { ".exe" };
+#else
+            formats = {};
 #endif
         else
             DBG("Format doesn't exist");

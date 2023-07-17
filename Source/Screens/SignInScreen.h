@@ -10,6 +10,7 @@
 
 #pragma once
 #include "../Helpers/Components.h"
+#include "../CredentialManager/KeychainManager.h"
 
 class PaddedTextEditor : public juce::TextEditor
 {
@@ -68,6 +69,12 @@ public:
     {
     }
     
+    
+    void saveToKeychain()
+    {
+        
+    }
+    
     juce::String getName() const { return name; }
     juce::String getEmail() const { return email; }
     juce::String getDevID() const { return devID; }
@@ -99,7 +106,7 @@ class SignInScreen : public Screen, public juce::TextEditor::Listener
     
 public:
     
-    std::function<void()> onSubmit = []{};
+    std::function<void(bool)> onSubmit = [](bool value){};
     
     SignInScreen()
     {
@@ -120,7 +127,10 @@ public:
         setImages (keepMeSignedInButton, keepMeSignedInSquareDefaultImage, keepMeSignedInSquareOnImage);
         
         submitButton.setHasFocusOutline (false);
-        submitButton.onClick = [&] { onSubmit(); };
+        submitButton.onClick = [&]
+        {
+            onSubmit (keepMeSignedInButton.getToggleState());
+        };
         
         addAndMakeVisible (quilioLogoButton);
         addAndMakeVisible (keepMeSignedInButton);
@@ -256,6 +266,10 @@ public:
         g.setFont (28.0f);
         g.setColour (juce::Colours::white);
         g.drawFittedText ("Sign in with your \n Apple Developer Account", 162, 79, 335, 84, juce::Justification::centred, 2);
+        
+        g.setFont (24.0f);
+        g.setColour (juce::Colours::white);
+        g.drawFittedText ("Keep me signed in", 279.5, 497, 148, 24, juce::Justification::centred, 1);
     }
         
     void paint (juce::Graphics& g) override

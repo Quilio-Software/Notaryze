@@ -31,15 +31,18 @@ void AdvancedTableComponent::filesDropped (const juce::StringArray& files, int x
 
 void AdvancedTableComponent::browseForFileToUpload()
 {
-    juce::FileChooser chooser ("Select a file to open...",
-                                    {},
-                                    ""); // No wildcard pattern
+    juce::FileChooser chooser ("Select a file to open...", {}, ""); // No wildcard pattern
 
-    if (chooser.browseForFileToOpen())
+    if (chooser.browseForFileToOpen()) //If file is selected
     {
         juce::File file (chooser.getResult());
         addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
     }
+    
+    if (dataList->getNumChildElements() > 0)
+        setTableState (HAS_ITEMS);
+    else
+        setTableState (NO_ITEMS);
 }
 
 bool AdvancedTableComponent::checkFileTypeIsValid (juce::File file, StringVector allowedFileTypes)

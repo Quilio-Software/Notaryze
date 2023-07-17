@@ -40,6 +40,8 @@ public:
     }
     
     std::unique_ptr<ProfileData> profileData;
+    
+
 
     ScreenManager()
     {
@@ -48,11 +50,13 @@ public:
         addChildComponent (profileScreen);
         
         //When we get past the login screen, we arrive at the utility screen.
-        signInScreen.onSubmit   = [&]
+        signInScreen.onSubmit = [&](bool value)
         {
-            if (signInScreen.isDataComplete())
+            if (signInScreen.isDataComplete()) //If all the data has been filled out as necessary
             {
                 profileData = std::make_unique<ProfileData> (signInScreen.getProfileData());
+                
+                profileData->saveToKeychain();
                 
                 utilityScreen.setDevName (profileData->getName());
                 utilityScreen.setDevID (profileData->getDevID());

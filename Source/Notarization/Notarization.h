@@ -40,7 +40,7 @@ inline int notarize (const juce::File file, const juce::String& email, const juc
     DBG (command);
     
     FILE* pipe;
-       #ifdef JUCE_WINDOWS
+    #ifdef JUCE_WINDOWS
         pipe = _popen (command.toUTF8(), "r");
     #elif JUCE_OSX
         pipe = popen (command.toUTF8(), "r");
@@ -93,7 +93,7 @@ inline juce::String runCommandVerbose (const juce::String& command)
     
 #ifdef JUCE_WINDOWS
     pipe = _popen(modifiedCommand.toRawUTF8(), "r");
-#elif JUCE_OSX
+#elif JUCE_MAC
     pipe = popen(modifiedCommand.toRawUTF8(), "r");
 #endif
 
@@ -109,7 +109,7 @@ inline juce::String runCommandVerbose (const juce::String& command)
     {
     #ifdef JUCE_WINDOWS
         _pclose (pipe);
-    #elif JUCE_OSX
+    #elif JUCE_MAC
         pclose (pipe);
     #endif
         std::cout << "Error redirecting output for command: " << command << std::endl;
@@ -124,7 +124,7 @@ inline juce::String runCommandVerbose (const juce::String& command)
 
     #ifdef JUCE_WINDOWS
         _pclose (pipe);
-    #elif JUCE_OSX
+    #elif JUCE_MAC
         pclose (pipe);
     #endif
 
@@ -139,7 +139,7 @@ inline int codesign (const juce::String& filename, const juce::String& name, con
 }
 
 
-
+//TODO: Make response an object with variables: 1. Message 2. SuccessState (Pass / Fail)
 inline juce::String codesignVerbose (const juce::String& filename, const juce::String& name, const juce::String& teamID)
 {
     // Keep in mind the " (" demarcation, necessary to maintain spacing.
