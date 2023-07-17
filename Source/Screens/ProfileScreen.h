@@ -27,6 +27,8 @@ class ProfileScreen : public Screen
     
     juce::Image profilePictureImage;// = juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircle_png, BinaryData::profilePicCircle_pngSize);
     
+    juce::Image profilePicCircleImageHover =  juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircleHover_png, BinaryData::profilePicCircleHover_pngSize);
+    
     juce::Image loadImage (const std::string& imageName)
     {
         std::string imageIdentifier = imageName + "_png";
@@ -50,6 +52,17 @@ public:
     {
 //        addAndMakeVisible (*quilioLogoButton);
         addAndMakeVisible (profilePictureButton);
+        profilePictureButton.onClick = [&]
+        {
+            juce::FileChooser chooser{ "Please load a file" };
+            if (chooser.browseForFileToOpen ())
+            {
+                auto file = chooser.getResult();
+                
+            }
+        };
+        
+//        profilePictureButton.setImages (profilePictureButtonImageDefault, profilePictureButtonImageHover, profilePictureButtonImageDown);
         addAndMakeVisible (backButton);
         addAndMakeVisible (signOutButton);
         
@@ -72,7 +85,7 @@ public:
         signOutButton.setColour (juce::TextButton::textColourOnId, juce::Colour::fromString ("#ffF2571D"));
         
         profilePictureImage = loadImage ("profilePicCircle");
-        setImages (profilePictureButton, profilePictureImage);
+        profilePictureButton.setImages (true, true, true, profilePictureImage, 1.0f, {}, profilePicCircleImageHover, 1.0f, {}, profilePicCircleImageHover, 1.0f, {});
     }
     
     void paint (juce::Graphics& g) override

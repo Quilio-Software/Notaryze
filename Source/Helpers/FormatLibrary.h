@@ -22,6 +22,7 @@ public:
         AUDIO,
         INSTALLER,
         EXECUTABLE,
+        IMAGE
     };
     
     static StringVector getFormats (Types type)
@@ -34,6 +35,8 @@ public:
             formats = { ".mp3", ".wav", ".aiff", ".ogg" };
         else if (type == INSTALLER)
             formats = { ".pkg", ".dmg", ".zip" };
+        else if (type == IMAGE)
+            formats = { ".jpeg", ".png", ".jpg"};
         else if (type == EXECUTABLE)
 #ifdef JUCE_MAC
             formats = { ".app" };
