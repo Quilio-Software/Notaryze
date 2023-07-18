@@ -375,7 +375,8 @@ public:
     }
     
     //Paint Methods
-    void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const juce::Colour& colour = juce::Colours::green, const float& cornerSize = 10.0f) {
+    void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const juce::Colour& colour = juce::Colours::green, const float& cornerSize = 10.0f)
+    {
         // Draw the text with padding
         juce::Font font (10.0f);
         g.setFont (font);
@@ -386,9 +387,6 @@ public:
 
         juce::Rectangle<float> textBounds (7, 6, width - 14, 20);
 
-
-
-
         // Calculate the x origin (left position) of the text
         float xOrigin = textBounds.getX() + (textBounds.getWidth() - textWidth) / 2.0f;
 
@@ -398,8 +396,7 @@ public:
         // Draw the rounded rectangle with padding
         g.setColour (colour);
         g.drawRoundedRectangle (rectangleBounds, cornerSize, 1.0f);
-
-
+        
         g.drawText (text, textBounds.reduced (5), juce::Justification::centred, true);
 
         // Center the rounded rectangle vertically within the row
