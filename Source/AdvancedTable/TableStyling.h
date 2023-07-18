@@ -149,7 +149,7 @@ public:
                 g.setColour (juce::Colour::fromString ("#ffF2571D"));
                 g.setFont (poppinsRegularTypeface);
                 g.setFont (18.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
-                g.drawFittedText ("CLEAR", juce::Rectangle<int> (area.getX(), area.getY(), 33, 14), juce::Justification::centred, 1);
+                g.drawText ("CLEAR", roundedRectArea.toFloat(), juce::Justification::centred, 1);
                 g.drawRoundedRectangle (roundedRectArea.toFloat(), 4, 1.0f);
             }
         }
