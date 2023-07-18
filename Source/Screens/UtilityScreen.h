@@ -72,6 +72,8 @@ class UtilityScreen : public Screen
     
     juce::ImageButton quilioLogoButton;
     juce::ImageButton profileButton;
+    juce::Image profilePicCircleImageDefault =  juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircle_png, BinaryData::profilePicCircle_pngSize);
+    juce::Image profilePicCircleImageHover =  juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircleHover_png, BinaryData::profilePicCircleHover_pngSize);
     
     juce::TextButton codeSignButton {"Code Sign"}, productSignButton {"Product Sign"};
     juce::TextButton uploadButton {"Upload"};
@@ -123,7 +125,7 @@ public:
         addAndMakeVisible (profileButton);
         
         setImages (quilioLogoButton, quilioLogoFullFormImage, quilioLogoFullFormImage);
-        setImages (profileButton, quilioLogoImage, quilioLogoImage);
+        profileButton.setImages (true, true, true, profilePicCircleImageDefault, 1.0f, {}, profilePicCircleImageHover, 1.0f, {}, profilePicCircleImageHover, 1.0f, {});
         
         std::vector<AdvancedTableComponent::ColumnData> columns = {
             {"Item", 271},
@@ -274,7 +276,7 @@ public:
         codeSignTable->setBounds (32, 180, 616, 302);
         productSignTable->setBounds (32, 180, 616, 302);
         
-        quilioLogoButton.setBounds (32, 30, 80, 40);
+        quilioLogoButton.setBounds (32, 30, 73, 40);
         profileButton.setBounds (598, 26, 48, 48);
         
         nameLabel.setBounds (412, 38, 172, 24);
