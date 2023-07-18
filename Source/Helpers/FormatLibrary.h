@@ -22,6 +22,8 @@ public:
         AUDIO,
         INSTALLER,
         EXECUTABLE,
+        IMAGE,
+        TEXT,
     };
     
     static StringVector getFormats (Types type)
@@ -33,7 +35,11 @@ public:
         else if (type == AUDIO)
             formats = { ".mp3", ".wav", ".aiff", ".ogg" };
         else if (type == INSTALLER)
+#ifdef JUCE_MAC
             formats = { ".pkg", ".dmg", ".zip" };
+#elif JUCE_WINDOWS
+            formats = {".exe"};
+#endif
         else if (type == EXECUTABLE)
 #ifdef JUCE_MAC
             formats = { ".app" };
@@ -42,9 +48,30 @@ public:
 #else
             formats = {};
 #endif
+        else if (type == TEXT)
+        {
+            formats = {".txt", ".rtf", ".pdf", ".otf"};
+        }
         else
-            DBG("Format doesn't exist");
+            DBG ("Format doesn't exist");
 
         return formats;
+    }
+    
+    Types getFormatType (juce::String fileExtension)
+    {
+        for (int formatTypeID = 0; formatTypeID < 5; ++formatTypeID)
+        {
+            auto formatType = static_cast<Types> (formatTypeID);
+            auto formatExtensions = getFormats (formatType);
+            
+            for (auto formatExtension : formatExtensions)
+            {
+                if (fileExtension == formatExtension)
+                {
+                    return formatType;
+                }
+            }
+        }
     }
 };
