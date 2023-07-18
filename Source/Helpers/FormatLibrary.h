@@ -40,6 +40,8 @@ public:
 #elif JUCE_WINDOWS
             formats = {".exe"};
 #endif
+        else if (type == IMAGE)
+            formats = { ".jpeg", ".png", ".jpg"};
         else if (type == EXECUTABLE)
 #ifdef JUCE_MAC
             formats = { ".app" };
