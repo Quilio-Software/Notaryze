@@ -70,9 +70,9 @@ public:
 
         auto baseColour = backgroundColour;//.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
                                           //.withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f);
-
-        if (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted)
-            baseColour = baseColour.contrasting (shouldDrawButtonAsDown ? 0.2f : 0.05f);
+        
+        
+        // button states
 
         g.setColour (baseColour);
 
@@ -84,26 +84,46 @@ public:
         if (flatOnLeft || flatOnRight || flatOnTop || flatOnBottom)
         {
             juce::Path path;
-            path.addRoundedRectangle (bounds.getX(), bounds.getY(),
-                                      bounds.getWidth(), bounds.getHeight(),
-                                      cornerSize, cornerSize,
-                                      ! (flatOnLeft  || flatOnTop),
-                                      ! (flatOnRight || flatOnTop),
-                                      ! (flatOnLeft  || flatOnBottom),
-                                      ! (flatOnRight || flatOnBottom));
+//            path.addRoundedRectangle (bounds.getX(), bounds.getY(),
+//                                      bounds.getWidth(), bounds.getHeight(),
+//                                      cornerSize, cornerSize,
+//                                      ! (flatOnLeft  || flatOnTop),
+//                                      ! (flatOnRight || flatOnTop),
+//                                      ! (flatOnLeft  || flatOnBottom),
+//                                      ! (flatOnRight || flatOnBottom));
 
-            g.fillPath (path);
+//            g.fillPath (path);
 
-            g.setColour (button.findColour (juce::ComboBox::outlineColourId));
-            g.strokePath (path, juce::PathStrokeType (1.0f));
+//            g.setColour (button.findColour (juce::ComboBox::outlineColourId));
+//            g.strokePath (path, juce::PathStrokeType (1.0f));
+            
+
         }
         else
         {
             g.fillRoundedRectangle (bounds, cornerSize);
-
-            g.setColour (button.findColour (juce::ComboBox::outlineColourId));
-            g.drawRoundedRectangle (bounds, cornerSize, 1.0f);
+            
+//            g.setColour (button.findColour (juce::ComboBox::outlineColourId));
+//            g.drawRoundedRectangle (bounds, cornerSize, 1.0f);
+            
         }
+        
+        juce::Colour hoverAndDownColour = juce::Colour (156, 73, 231);
+        juce::Colour hoverOutlineColour = juce::Colour (239, 239, 239);
+        
+        if (shouldDrawButtonAsDown)
+        {
+            //            baseColour = hoverColour;
+            juce::DropShadow hoverShadow = juce::DropShadow (hoverOutlineColour, 2, juce::Point<int> (2, 2));
+            hoverShadow.drawForRectangle (g, juce::Rectangle<int> (bounds.getX(), bounds.getY()));
+        }
+        else if (shouldDrawButtonAsHighlighted)
+        {
+            baseColour = hoverAndDownColour;
+            g.setColour (hoverOutlineColour.withAlpha (0.35f));
+            g.drawRoundedRectangle (bounds, cornerSize, 2);
+        }
+        
     }
     
     void fillTextEditorBackground (juce::Graphics& g, int width, int height, juce::TextEditor& textEditor) override
@@ -153,7 +173,7 @@ public:
         setColour (juce::TextEditor::backgroundColourId, juce::Colour::fromString ("#ff000A1A"));
         
         setColour (juce::TextEditor::outlineColourId, juce::Colour::fromString ("#ff9C49E7"));
-        setColour (juce::TextEditor::focusedOutlineColourId, juce::Colour::fromString ("#ff9C49E7"));
+//        setColour (juce::TextEditor::focusedOutlineColourId, juce::Colour::fromString ("#ff9C49E7"));
         
         setColour (juce::TextEditor::textColourId, juce::Colour::fromString ("#ffEFEFEF"));
 
@@ -175,11 +195,9 @@ public:
         auto cornerSize = 6.0f;
         auto bounds = button.getLocalBounds().toFloat().reduced (0.5f, 0.5f);
 
-        auto baseColour = backgroundColour;//.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+        auto baseColour = juce::Colour (156, 73, 231);//.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
                                           //.withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f);
 
-        if (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted)
-            baseColour = baseColour.contrasting (shouldDrawButtonAsDown ? 0.2f : 0.05f);
 
         g.setColour (baseColour);
 
@@ -187,7 +205,12 @@ public:
         auto flatOnRight  = button.isConnectedOnRight();
         auto flatOnTop    = button.isConnectedOnTop();
         auto flatOnBottom = button.isConnectedOnBottom();
+        
+        juce::Colour downStateColour = juce::Colour (191, 191, 191);
 
+        g.fillRoundedRectangle (bounds, cornerSize);
+
+        
         if (flatOnLeft || flatOnRight || flatOnTop || flatOnBottom)
         {
             juce::Path path;
@@ -206,11 +229,26 @@ public:
         }
         else
         {
-            g.fillRoundedRectangle (bounds, cornerSize);
+//            g.fillRoundedRectangle (bounds, cornerSize);
+            juce::Colour hoverColour = juce::Colour (239, 239, 239);
+            if (shouldDrawButtonAsDown)
+            {
+            // add shadows
+            }
+            else if (shouldDrawButtonAsHighlighted)
+            {
+                // downstate currently does not register
+                g.setColour (hoverColour.withAlpha (0.35f));
+                g.drawRoundedRectangle (bounds, cornerSize, 2.0f);
+            }
+// TODO:    Add a disabled state
+            
+//            g.setColour (juce::Colours::transparentBlack);
 
-            g.setColour (button.findColour (juce::ComboBox::outlineColourId));
-            g.drawRoundedRectangle (bounds, cornerSize, 1.0f);
         }
+
+        
+        
     }
     
     void fillTextEditorBackground (juce::Graphics& g, int width, int height, juce::TextEditor& textEditor) override
@@ -284,16 +322,16 @@ public:
         auto baseColour = backgroundColour;//.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
                                           //.withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f);
 
-        if (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted)
-            baseColour = baseColour.contrasting (shouldDrawButtonAsDown ? 0.2f : 0.05f);
-
-        g.setColour (baseColour);
+        
 
         auto flatOnLeft   = button.isConnectedOnLeft();
         auto flatOnRight  = button.isConnectedOnRight();
         auto flatOnTop    = button.isConnectedOnTop();
         auto flatOnBottom = button.isConnectedOnBottom();
 
+        float lineThickness = 1.0f;
+        juce::Colour fontColour = juce::Colour (239, 239, 239);
+        
         if (flatOnLeft || flatOnRight || flatOnTop || flatOnBottom)
         {
             juce::Path path;
@@ -310,13 +348,23 @@ public:
             g.setColour (button.findColour (juce::ComboBox::outlineColourId));
             g.strokePath (path, juce::PathStrokeType (1.0f));
         }
+
         else
         {
+            if (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted)
+            {
+                lineThickness = 2.0f;
+                // downstate currently does not register
+                fontColour = (shouldDrawButtonAsDown ? juce::Colour (191, 191, 191) : fontColour);
+            }
+// TODO:    Add a disabled state
+
             g.setColour (juce::Colours::transparentBlack);
             g.fillRoundedRectangle (bounds, cornerSize);
 
+
             g.setColour (button.findColour (juce::ComboBox::outlineColourId));
-            g.drawRoundedRectangle (bounds, cornerSize, 1.0f);
+            g.drawRoundedRectangle (bounds, cornerSize, lineThickness);
         }
     }
 };

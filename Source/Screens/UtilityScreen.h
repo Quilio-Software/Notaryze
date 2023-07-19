@@ -270,8 +270,8 @@ public:
         codeSignButton.setBounds (20, 100, 115, 40);
         productSignButton.setBounds (143, 100, 133, 40);
         
-        uploadButton.setBounds (50, 512, 136, 54);
-        startButton.setBounds (536, 512, 112, 54);
+        uploadButton.setBounds (32, 514, 136, 54);
+        startButton.setBounds (536, 514, 112, 54);
         
         codeSignTable->setBounds (32, 180, 616, 302);
         productSignTable->setBounds (32, 180, 616, 302);
