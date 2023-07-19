@@ -198,7 +198,6 @@ public:
         auto baseColour = juce::Colour (156, 73, 231);//.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
                                           //.withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f);
 
-
         g.setColour (baseColour);
 
         auto flatOnLeft   = button.isConnectedOnLeft();
@@ -242,13 +241,8 @@ public:
                 g.drawRoundedRectangle (bounds, cornerSize, 2.0f);
             }
 // TODO:    Add a disabled state
-            
 //            g.setColour (juce::Colours::transparentBlack);
-
         }
-
-        
-        
     }
     
     void fillTextEditorBackground (juce::Graphics& g, int width, int height, juce::TextEditor& textEditor) override
