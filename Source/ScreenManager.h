@@ -23,6 +23,11 @@ enum ScreenID
 class ScreenManager : public juce::Component
 {
 public:
+    
+    //Declare profile data first
+    std::shared_ptr<ProfileData> profileData;
+    
+    
     SignInScreen signInScreen;
     UtilityScreen utilityScreen;
     ProfileScreen profileScreen;
@@ -39,12 +44,14 @@ public:
     {
     }
     
-    std::unique_ptr<ProfileData> profileData;
-    
-
-
     ScreenManager()
     {
+        profileData = std::make_shared<ProfileData>();
+        profileScreen.setProfileData (profileData);
+        utilityScreen.setProfileData (profileData);
+        profileScreen.updateProfilePicture();
+        utilityScreen.updateProfilePicture();
+        
         addChildComponent (signInScreen);
         addChildComponent (utilityScreen);
         addChildComponent (profileScreen);
@@ -54,7 +61,11 @@ public:
         {
             if (signInScreen.isDataComplete()) //If all the data has been filled out as necessary
             {
-                profileData = std::make_unique<ProfileData> (signInScreen.getProfileData());
+                profileData = std::make_shared<ProfileData> (signInScreen.getProfileData());
+                profileScreen.setProfileData (profileData);
+                utilityScreen.setProfileData (profileData);
+                profileScreen.updateProfilePicture();
+                utilityScreen.updateProfilePicture();
                 
                 profileData->saveToKeychain();
                 
@@ -70,6 +81,32 @@ public:
         
         utilityScreen.onLogo    = [&] { launchWebpage (quilioWebsiteURL); };
         utilityScreen.onProfile = [&] { setCurrentScreen (PROFILE); };
+        
+        //On start, set profile pictures
+        profileScreen.updateProfilePicture();
+        utilityScreen.updateProfilePicture();
+        
+        
+        profileScreen.chooseProfilePicture = [&]
+        {
+            juce::FileChooser chooser{ "Please load a file" };
+            if (chooser.browseForFileToOpen ())
+            {
+                auto file = chooser.getResult(); //We have chosen an image
+                //Ensure that it is an image
+                if (FormatLibrary::isImage (file))
+                {
+                    profileData->setProfilePicture (file);
+                    //Then load image file into profilePictureImage
+                    profileScreen.updateProfilePicture();
+                    utilityScreen.updateProfilePicture();
+                }
+                else
+                {
+                    DBG ("File is not an image");
+                }
+            }
+        };
     }
     
     ~ScreenManager() {}

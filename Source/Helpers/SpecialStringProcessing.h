@@ -20,3 +20,5 @@ juce::String removeDotAndCapitalize (juce::String inputString)
 
     return withoutDot;
 }
+
+

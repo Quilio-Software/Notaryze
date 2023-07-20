@@ -59,27 +59,7 @@ public:
     std::function<void()> onUpKey;
 };
 
-class ProfileData
-{
-    juce::String name, email, devID, password;
-    
-public:
-    ProfileData (juce::String newName, juce::String newEmail, juce::String newDevID, juce::String newPassword)
-        : name (newName), email (newEmail), devID (newDevID), password (newPassword)
-    {
-    }
-    
-    
-    void saveToKeychain()
-    {
-        
-    }
-    
-    juce::String getName() const { return name; }
-    juce::String getEmail() const { return email; }
-    juce::String getDevID() const { return devID; }
-    juce::String getPassword() const { return password; }
-};
+
 
 
 class SignInScreen : public Screen, public juce::TextEditor::Listener

@@ -60,6 +60,25 @@ public:
         return formats;
     }
     
+    static bool checkFormat (const juce::File& file, Types type)
+    {
+        StringVector formats = getFormats(type);
+        juce::String fileExtension = file.getFileExtension();
+
+        for (const auto& format : formats)
+        {
+            if (fileExtension.equalsIgnoreCase(format))
+                return true;
+        }
+
+        return false;
+    }
+    
+    static bool isImage (const juce::File& file)
+    {
+        return checkFormat (file, IMAGE);
+    }
+    
     Types getFormatType (juce::String fileExtension)
     {
         for (int formatTypeID = 0; formatTypeID < 5; ++formatTypeID)

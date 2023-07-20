@@ -73,8 +73,8 @@ class UtilityScreen : public Screen
     
     juce::ImageButton quilioLogoButton;
     juce::ImageButton profileButton;
-    juce::Image profilePicCircleImageDefault =  juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircle_png, BinaryData::profilePicCircle_pngSize);
-    juce::Image profilePicCircleImageHover =  juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircleHover_png, BinaryData::profilePicCircleHover_pngSize);
+    
+    juce::Image profilePicCircleImageDefault;
     
     juce::TextButton codeSignButton {"Code Sign"}, productSignButton {"Product Sign"};
     juce::TextButton uploadButton {"Upload"};
@@ -93,6 +93,15 @@ class UtilityScreen : public Screen
     
 public:
     
+    std::shared_ptr<ProfileData> profileData;
+    void setProfileData (std::shared_ptr<ProfileData>& newProfileData) { profileData = newProfileData; }
+    
+    void updateProfilePicture()
+    {
+        profileButton.setImages (true, true, true, profileData->getProfilePicture(), 1.0f, {}, profileData->getProfilePicture(), 1.0f, {}, profileData->getProfilePicture(), 1.0f, {});
+        resized();
+        repaint();
+    }
     void setDevName (juce::String newDevName)
     {
         devName = newDevName;
@@ -127,7 +136,7 @@ public:
         addAndMakeVisible (profileButton);
         
         setImages (quilioLogoButton, quilioLogoFullFormImage, quilioLogoFullFormImage);
-        profileButton.setImages (true, true, true, profilePicCircleImageDefault, 1.0f, {}, profilePicCircleImageHover, 1.0f, {}, profilePicCircleImageHover, 1.0f, {});
+        profileButton.setImages (true, true, true, profilePicCircleImageDefault, 1.0f, {}, profilePicCircleImageDefault, 1.0f, {}, profilePicCircleImageDefault, 1.0f, {});
         
         std::vector<AdvancedTableComponent::ColumnData> columns = {
             {"Item", 271},

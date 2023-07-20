@@ -73,4 +73,43 @@ public:
     }
 };
 
+//TODO: Move this to profile data // alongside keychain stuff I think
+class ProfileData
+{
+    juce::String name, email, devID, password;
+    juce::Image profileImage;
+    
+public:
+    ProfileData (juce::String newName, juce::String newEmail, juce::String newDevID, juce::String newPassword)
+        : name (newName), email (newEmail), devID (newDevID), password (newPassword)
+    {
+        profileImage = juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircle_png, BinaryData::profilePicCircle_pngSize);
+    }
+    
+    ProfileData() : name (""), email (""), devID (""), password ("")
+    {
+        profileImage = juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircle_png, BinaryData::profilePicCircle_pngSize);
+    }
+    
+    void saveToKeychain()
+    {
+        
+    }
+    
+    void setProfilePicture (juce::File& file)
+    {
+        profileImage = juce::ImageFileFormat::loadFrom (file);
+    }
+    
+    juce::Image& getProfilePicture()
+    {
+        return profileImage;
+    }
+    
+    juce::String getName() const { return name; }
+    juce::String getEmail() const { return email; }
+    juce::String getDevID() const { return devID; }
+    juce::String getPassword() const { return password; }
+};
+
 
