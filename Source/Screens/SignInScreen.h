@@ -284,7 +284,7 @@ public:
         teamIdEditor.setBounds (162, 303, 355, 46);
         passEditor.setBounds (162, 365, 355, 46);
 
-        submitButton.setBounds (162, 427, 355, 54);
+        submitButton.setBounds (162, 423, 355, 54);
         
         quilioLogoButton.setBounds (32, 30, 80, 40);
         

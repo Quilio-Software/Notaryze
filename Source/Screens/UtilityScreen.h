@@ -65,6 +65,7 @@ class UtilityScreen : public Screen
 {
     RoundedFillButtonStyling roundedFillStyling;
     RoundedOutlineButtonStyling roundedOutlineStyling;
+    SignOutStopClearButtonStyling signOutStopClearButtonStyling;
     UnderlinedButtonStyling underlinedButtonStyling;
     
     juce::Image quilioLogoFullFormImage = juce::ImageFileFormat::loadFrom (BinaryData::QuilioLogoLongForm_png, BinaryData::QuilioLogoLongForm_pngSize);
@@ -77,7 +78,9 @@ class UtilityScreen : public Screen
     
     juce::TextButton codeSignButton {"Code Sign"}, productSignButton {"Product Sign"};
     juce::TextButton uploadButton {"Upload"};
+    bool uploadButtonDisabled;
     juce::TextButton startButton {"Start"};
+    bool startButtonDisabled;
     
     std::unique_ptr<AdvancedTableComponent> codeSignTable, productSignTable;
     
@@ -113,6 +116,7 @@ public:
         
         codeSignButton.setToggleable (true);
         productSignButton.setToggleable (true);
+        uploadButton.setToggleable (true);
         codeSignButton.setClickingTogglesState (true);
         productSignButton.setClickingTogglesState (true);
         
@@ -277,7 +281,7 @@ public:
         productSignTable->setBounds (32, 180, 616, 302);
         
         quilioLogoButton.setBounds (32, 30, 73, 40);
-        profileButton.setBounds (598, 26, 48, 48);
+        profileButton.setBounds (600, 26, 48, 48);
         
         nameLabel.setBounds (412, 38, 172, 24);
     }
