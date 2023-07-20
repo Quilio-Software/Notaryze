@@ -129,7 +129,10 @@
               file="Resources/Images/QuilioLogoLongForm.png"/>
         <FILE id="BOL3PS" name="statusLoadingIcon.png" compile="0" resource="1"
               file="Resources/Images/statusLoadingIcon.png"/>
-        <FILE id="B5KEo3" name="trashIcon.png" compile="0" resource="1" file="Resources/Images/trashIcon.png"/>
+        <FILE id="cl2T0A" name="trashIcon_Default.svg" compile="0" resource="1"
+              file="Resources/Images/trashIcon_Default.svg"/>
+        <FILE id="qgOFSb" name="trashIcon_Hover.svg" compile="0" resource="1"
+              file="Resources/Images/trashIcon_Hover.svg"/>
       </GROUP>
       <GROUP id="{C153D24A-31D8-DBC2-9D6C-974BE2835838}" name="SignInScreen">
         <FILE id="DaqudD" name="quilioLogo_4x.png" compile="0" resource="1"

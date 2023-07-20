@@ -29,9 +29,10 @@ class AdvancedTableComponent : public juce::AnimatedAppComponent,
 {
     TableComponentStyling tableStyle;
     
-    juce::Image statusLoadingIconImage = juce::ImageFileFormat::loadFrom (BinaryData::statusLoadingIcon_png, BinaryData::statusLoadingIcon_pngSize);
-    juce::Image trashIconImage = juce::ImageFileFormat::loadFrom (BinaryData::trashIcon_png, BinaryData::trashIcon_pngSize);
-    
+
+
+
+
     enum ColumnNames
     {
         NONE,
@@ -63,9 +64,24 @@ public:
         return dataList.get();
     }
     
+    
+    juce::Image statusLoadingIconImage = juce::ImageFileFormat::loadFrom (BinaryData::statusLoadingIcon_png, BinaryData::statusLoadingIcon_pngSize);
+    // Load SVG as a Drawable
+    juce::DrawableComposite drawableComposite;
+    std::unique_ptr<juce::Drawable> trashIconDefaultDrawable = juce::Drawable::createFromImageData (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
+    std::unique_ptr<juce::Drawable> trashIconHoverDrawable = juce::Drawable::createFromImageData (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
+
     AdvancedTableComponent (std::vector<ColumnData> columns)
     {
         AdvancedTableComponent (columns, std::vector<RowData> ());
+
+        // Optionally, you can set the opacity or other properties of the drawable
+        trashIconDefaultDrawable->setAlpha (1.0f);
+        trashIconHoverDrawable->setAlpha (1.0f);
+        
+        // Add the drawables to the drawableComposite
+        drawableComposite.addAndMakeVisible (trashIconDefaultDrawable.get());
+        drawableComposite.addAndMakeVisible (trashIconHoverDrawable.get());
     }
     
     void update() override;
@@ -129,7 +145,7 @@ public:
     juce::String getStatus (juce::File file)
     {
         juce::String command = "codesign -dv -- \"" + file.getFullPathName() + "\"";
-        juce::String status = "Not signed";
+        juce::String status = "Unsigned";
         std::string output;
 
         FILE* pipe = popen (command.toRawUTF8(), "r");
@@ -374,12 +390,40 @@ public:
             g.fillAll (oddRowColour);
     }
     
+    
+    
+    
     //Paint Methods
-    void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const juce::Colour& colour = juce::Colours::green, const float& cornerSize = 10.0f)
+    void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const float& cornerSize = 10.0f)
     {
+        juce::Colour colour;
+
+        std::unordered_map<juce::String, juce::Colour> statusToColour
+        {
+            {"Uploading", juce::Colour::fromString ("#ffDEE833")},
+            {"Unsigned", juce::Colour::fromString ("#ff2D72E1")},
+            {"Signed", juce::Colour::fromString ("#ff34A700")},
+            {"Success", juce::Colour::fromString ("#ff34A700")},
+            {"Error", juce::Colours::red }
+        };
+
+        auto it = statusToColour.find(text);
+        if (it != statusToColour.end())
+        {
+            colour = it->second;
+        }
+        else
+        {
+            // handle the case when the text is not found in the map
+            // for example, you might want to assign a default colour
+            colour = juce::Colours::black;
+        }
+
         // Draw the text with padding
         juce::Font font (10.0f);
         g.setFont (font);
+        
+        int padding = 8;
 
         // Set up the rectangle parameters with padding
 
@@ -388,10 +432,13 @@ public:
         juce::Rectangle<float> textBounds (7, 6, width - 14, 20);
 
         // Calculate the x origin (left position) of the text
-        float xOrigin = textBounds.getX() + (textBounds.getWidth() - textWidth) / 2.0f;
+        float xOrigin = (width - textWidth) / 2.0f - padding; // + (textBounds.getWidth() - textWidth) / 2.0f;
+        
+  //      g.fillAll (juce::Colours::blue);
 
         //TODO: Fix this god awful positioning
-        juce::Rectangle<float> rectangleBounds (xOrigin - textWidth / 4.0f - 1, 6, textWidth + 16, height - 12);
+        // It looks like the offset amount changes based on the text there...
+        juce::Rectangle<float> rectangleBounds (xOrigin, 6, textWidth + 2 * padding, height - 12);
 
         // Draw the rounded rectangle with padding
         g.setColour (colour);
@@ -453,6 +500,7 @@ public:
     }
     
     
+    
     void drawStatusCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
     {
         if (auto* rowElement = dataList->getChildElement (rowNumber))
@@ -478,11 +526,16 @@ public:
     
     void drawClearCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
     {
-        //draw the trash can image... or position a button?
-        float iconWidth = trashIconImage.getWidth();
-        float iconHeight = trashIconImage.getHeight();
+
         
-        g.drawImageWithin (trashIconImage, width / 2.0f - 9.8 * 0.5, height / 2.0f - 12 * 0.5, 9.8, 12, juce::Justification::centred);
+        //draw the trash can image... or position a button?
+//        float iconWidth = trashIconImage.getWidth();
+//        float iconHeight = trashIconImage.getHeight();
+        
+        // Draw the drawableComposite and its child drawables
+        drawableComposite.paint(g);
+        
+//        g.drawImageWithin (trashIconImage, width / 2.0f - 9.8 * 0.5, height / 2.0f - 12 * 0.5, 9.8, 12, juce::Justification::centred);
     }
     
     //This function has to do with cell drawing
