@@ -103,7 +103,7 @@ void AdvancedTableComponent::notarizeTable (juce::String devName, juce::String d
             
             if (response != "Success")
             {
-                rowXml->setAttribute ("Status", "Fail");
+                rowXml->setAttribute ("Status", "Error");
             }
             else
             {
@@ -119,7 +119,7 @@ void AdvancedTableComponent::notarizeTable (juce::String devName, juce::String d
             
             if (response != "Success")
             {
-                rowXml->setAttribute ("Status", "Fail");
+                rowXml->setAttribute ("Status", "Error");
             }
             else
             {

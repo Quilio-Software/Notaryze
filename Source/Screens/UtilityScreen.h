@@ -112,8 +112,6 @@ public:
     //    quilioLogoButton = std::make_unique<juce::DrawableButton>();
     //    profileButton = std::make_unique<juce::DrawableButton>();
         
-        
-        
         codeSignButton.setToggleable (true);
         productSignButton.setToggleable (true);
         uploadButton.setToggleable (true);
