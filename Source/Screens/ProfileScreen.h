@@ -14,7 +14,8 @@
 class ProfileScreen : public Screen
 {
     RoundedOutlineButtonStyling roundedOutlineButtonStyle;
-    
+    SignOutStopClearButtonStyling signOutStopClearButtonStyling;
+
     std::unique_ptr<juce::DrawableButton> quilioLogoButton;
     juce::ImageButton profilePictureButton;
     juce::TextButton backButton {"Back"}, signOutButton {"Sign out"};
@@ -78,7 +79,7 @@ public:
         signOutButton.onClick = [&] { onSignOut(); };
         
         backButton.setLookAndFeel (&roundedOutlineButtonStyle);
-        signOutButton.setLookAndFeel (&roundedOutlineButtonStyle);
+        signOutButton.setLookAndFeel (&signOutStopClearButtonStyling);
         
         signOutButton.setColour (juce::ComboBox::outlineColourId, juce::Colour::fromString ("#ffF2571D"));
         signOutButton.setColour (juce::TextButton::textColourOffId, juce::Colour::fromString ("#ffF2571D"));
