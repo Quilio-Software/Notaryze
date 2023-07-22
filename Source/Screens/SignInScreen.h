@@ -104,6 +104,8 @@ class SignInScreen : public Screen, public juce::TextEditor::Listener
     PaddedTextEditor passEditor {"Pass"}, emailEditor {"Email"}, teamIdEditor {"Team ID"}, nameEditor {"Name"};
     juce::OwnedArray<PaddedTextEditor> textEditors {{ &nameEditor, &emailEditor, &teamIdEditor, &passEditor }};
     
+    juce::GlowEffect glow;
+    
 public:
     
     std::function<void(bool)> onSubmit = [](bool value){};
@@ -119,7 +121,7 @@ public:
         }
         
         addAndMakeVisible (submitButton);
-
+        
         setImages (quilioLogoButton, quilioLogoFullFormImage, quilioLogoFullFormImage);
         
         keepMeSignedInButton.setToggleable (true);
@@ -271,7 +273,14 @@ public:
         g.setColour (juce::Colours::white);
         g.drawFittedText ("Keep me signed in", 279.5, 497, 148, 24, juce::Justification::centred, 1);
     }
-        
+    
+    void printBoundsDBG (juce::Button* component, juce::Image* snapshot)
+    {
+        juce::Rectangle<int> bounds = component->getBounds();
+        bounds = snapshot->getBounds();
+        DBG("Bounds of the component: x=" << bounds.getX() << ", y=" << bounds.getY() << ", width=" << bounds.getWidth() << ", height=" << bounds.getHeight());
+    }
+    
     void paint (juce::Graphics& g) override
     {
         Screen::paint (g);

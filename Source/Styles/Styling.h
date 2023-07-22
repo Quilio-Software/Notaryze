@@ -44,9 +44,14 @@ class QuilioLoginLookAndFeel : public PoppinsLookAndFeel
 {
 public:
     
-    
+
     QuilioLoginLookAndFeel()
     {
+        // setting effect properties
+        glowEffect.setGlowProperties (24.0f, juce::Colour (217, 217, 217));
+        juce::DropShadow dropShadow (juce::Colour (0, 0, 0), 10.0f, {0, 0});
+        dropShadowEffect.setShadowProperties (dropShadow);
+        
         setColour (juce::TextEditor::backgroundColourId, juce::Colour::fromString ("#ff000A1A"));
         
         setColour (juce::TextEditor::outlineColourId, juce::Colour::fromString ("#ff9C49E7"));
@@ -73,37 +78,35 @@ public:
     {
         auto cornerSize = 6.0f;
         auto bounds = button.getLocalBounds().toFloat().reduced (0.5f, 0.5f);
-
+        
         auto baseColour = backgroundColour;//.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
-                                          //.withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f);
+        //.withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f);
         
         
         // button states
-
+        
         g.setColour (baseColour);
-
+        
         auto flatOnLeft   = button.isConnectedOnLeft();
         auto flatOnRight  = button.isConnectedOnRight();
         auto flatOnTop    = button.isConnectedOnTop();
         auto flatOnBottom = button.isConnectedOnBottom();
-
+        
         if (flatOnLeft || flatOnRight || flatOnTop || flatOnBottom)
         {
             juce::Path path;
-//            path.addRoundedRectangle (bounds.getX(), bounds.getY(),
-//                                      bounds.getWidth(), bounds.getHeight(),
-//                                      cornerSize, cornerSize,
-//                                      ! (flatOnLeft  || flatOnTop),
-//                                      ! (flatOnRight || flatOnTop),
-//                                      ! (flatOnLeft  || flatOnBottom),
-//                                      ! (flatOnRight || flatOnBottom));
-
-//            g.fillPath (path);
-
-//            g.setColour (button.findColour (juce::ComboBox::outlineColourId));
-//            g.strokePath (path, juce::PathStrokeType (1.0f));
+            //            path.addRoundedRectangle (bounds.getX(), bounds.getY(),
+            //                                      bounds.getWidth(), bounds.getHeight(),
+            //                                      cornerSize, cornerSize,
+            //                                      ! (flatOnLeft  || flatOnTop),
+            //                                      ! (flatOnRight || flatOnTop),
+            //                                      ! (flatOnLeft  || flatOnBottom),
+            //                                      ! (flatOnRight || flatOnBottom));
             
-
+            //            g.fillPath (path);
+            
+            //            g.setColour (button.findColour (juce::ComboBox::outlineColourId));
+            //            g.strokePath (path, juce::PathStrokeType (1.0f));
         }
         else
         {
@@ -112,17 +115,29 @@ public:
         
         juce::Colour hoverAndDownColour = juce::Colour (156, 73, 231);
         juce::Colour hoverOutlineColour = juce::Colour (239, 239, 239);
-        
+//        removeGlowEffect (&button);
         if (shouldDrawButtonAsDown)
         {
-            // add blur
+            applyShadowEffect (&button);
         }
         else if (shouldDrawButtonAsHighlighted)
         {
             baseColour = hoverAndDownColour;
             g.setColour (hoverOutlineColour.withAlpha (0.35f));
             g.drawRoundedRectangle (bounds, cornerSize, 2);
+            
+            applyGlowEffect (&button);
         }
+    }
+    
+    void applyShadowEffect (juce::Button* button)
+    {
+        button->setComponentEffect (&dropShadowEffect);
+    }
+    
+    void applyGlowEffect (juce::Button* button)
+    {
+        button-> setComponentEffect (&glowEffect);
     }
     
     void drawButtonText (juce::Graphics& g, juce::TextButton& button,
@@ -188,6 +203,10 @@ public:
             }
         }
     }
+    
+private:
+    juce::GlowEffect glowEffect;
+    juce::DropShadowEffect dropShadowEffect;
 };
 
 
