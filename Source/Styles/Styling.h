@@ -47,11 +47,6 @@ public:
 
     QuilioLoginLookAndFeel()
     {
-        // setting effect properties
-        glowEffect.setGlowProperties (24.0f, juce::Colour (217, 217, 217));
-        juce::DropShadow dropShadow (juce::Colour (0, 0, 0), 10.0f, {0, 0});
-        dropShadowEffect.setShadowProperties (dropShadow);
-        
         setColour (juce::TextEditor::backgroundColourId, juce::Colour::fromString ("#ff000A1A"));
         
         setColour (juce::TextEditor::outlineColourId, juce::Colour::fromString ("#ff9C49E7"));
@@ -118,26 +113,13 @@ public:
 //        removeGlowEffect (&button);
         if (shouldDrawButtonAsDown)
         {
-            applyShadowEffect (&button);
         }
         else if (shouldDrawButtonAsHighlighted)
         {
             baseColour = hoverAndDownColour;
             g.setColour (hoverOutlineColour.withAlpha (0.35f));
             g.drawRoundedRectangle (bounds, cornerSize, 2);
-            
-            applyGlowEffect (&button);
         }
-    }
-    
-    void applyShadowEffect (juce::Button* button)
-    {
-        button->setComponentEffect (&dropShadowEffect);
-    }
-    
-    void applyGlowEffect (juce::Button* button)
-    {
-        button-> setComponentEffect (&glowEffect);
     }
     
     void drawButtonText (juce::Graphics& g, juce::TextButton& button,
@@ -205,8 +187,6 @@ public:
     }
     
 private:
-    juce::GlowEffect glowEffect;
-    juce::DropShadowEffect dropShadowEffect;
 };
 
 

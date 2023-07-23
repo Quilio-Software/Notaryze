@@ -281,10 +281,44 @@ public:
         DBG("Bounds of the component: x=" << bounds.getX() << ", y=" << bounds.getY() << ", width=" << bounds.getWidth() << ", height=" << bounds.getHeight());
     }
     
+    juce::GlowEffect glowEffect;
+    juce::Image applyGlowEffect()
+    {
+        // create component snapshot, translate image
+        juce::Rectangle<int> area (-12, -12, submitButton.getWidth() + 24, submitButton.getHeight() + 24);
+        juce::Image snapshot = submitButton.createComponentSnapshot (area, false);
+        juce::Graphics snapshotGraphics (snapshot);
+        
+        glowEffect.setGlowProperties (24.0f, juce::Colour (217, 217, 217).withAlpha (0.1f));
+        glowEffect.applyEffect (snapshot, snapshotGraphics, 0.2f, 1.0f);
+        
+        return snapshot;
+    }
+    
+    juce::Image applyDropShadowEffect()
+    {
+        juce::Rectangle<int> area (-12, -12, submitButton.getWidth() + 24, submitButton.getHeight() + 24);
+        juce::Image snapshot = submitButton.createComponentSnapshot (area, false);
+        juce::Graphics snapshotGraphics (snapshot);
+        
+        juce::DropShadow dropShadow (juce::Colour(0, 0, 0).withAlpha (0.0f), 4.0f, {0, 0});
+        juce::DropShadowEffect dropShadowEffect;
+        dropShadowEffect.setShadowProperties (dropShadow);
+        dropShadowEffect.applyEffect (snapshot, snapshotGraphics, 2.0f, 1.0f);
+        
+        return snapshot;
+    }
+    
+    
     void paint (juce::Graphics& g) override
     {
         Screen::paint (g);
+        
+        juce::Image buttonSnap = applyGlowEffect();
+        juce::AffineTransform moveButton;
+        moveButton = juce::AffineTransform::translation (submitButton.getX() - 12, submitButton.getY() - 12);
     }
+
     
     void resized() override
     {
