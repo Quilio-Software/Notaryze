@@ -390,7 +390,48 @@ public:
             g.fillAll (oddRowColour);
     }
     
-    
+    void drawToolTip (juce::Graphics& g, const juce::String& text, float x, float y, float width, float height)
+    {
+        std::unordered_map<juce::String, juce::String> statusToToolTip
+        {
+            {"Unsigned", "File upload in progress"},
+            {"Uploading", "Signed by <Dev name>"},
+            {"Signed", "Signed by <Dev name>"},
+            {"Success", "Not signed in"},
+            {"Error state 1", "Product sign failed"},
+            {"Error state 2", "Notarization failed"},
+            {"Error state 3", "Staple failed"},
+            {"Error state 4", "Staple failed"},
+            {"Error state 5", "Code sign failed"},
+            {"Error state 6", "Connection error"},
+            {"Error state 7", "Timed out"},
+            {"Error state 8", "Placeholder"},
+            {"Signing in progress", "Signing in progress"}
+        };
+        
+        auto toolTipMessage = statusToToolTip.find(text);
+        
+        // 2 px above status pill
+        
+        juce::Colour fontColour = juce::Colour (89, 89, 89);
+        juce::Typeface::Ptr lightTypeFace = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsLight_ttf, BinaryData::PoppinsLight_ttfSize);
+
+        juce::Colour rectangleFillColour = juce::Colour (239, 239, 239);
+        juce::Colour rectangleOutlineColour = juce::Colour (217, 217, 217);
+        
+        juce::Rectangle<float> toolTipRectangle (0.0f, 0.0f, 59.0f, 20.0f);
+        g.setColour (rectangleFillColour);
+        g.fillRoundedRectangle (toolTipRectangle, 4.0f);
+        
+        g.setColour (rectangleOutlineColour);
+        g.drawRoundedRectangle (toolTipRectangle, 4.0f, 1.0f);
+        
+        // add text
+        g.setFont (lightTypeFace);
+        g.setColour (fontColour);
+        juce::Rectangle<int> fontRectangle (8, 4, 43, 12);
+        g.drawFittedText ("", fontRectangle, juce::Justification::centred, 1);
+    }
     
     
     //Paint Methods

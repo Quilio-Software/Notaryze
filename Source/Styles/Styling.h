@@ -16,6 +16,7 @@ class PoppinsLookAndFeel : public juce::LookAndFeel_V4
     juce::Typeface::Ptr regularTypeface = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsRegular_ttf, BinaryData::PoppinsRegular_ttfSize);
     juce::Typeface::Ptr  boldTypeface = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsBold_ttf, BinaryData::PoppinsBold_ttfSize);
     juce::Typeface::Ptr mediumTypeFace = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsMedium_ttf, BinaryData::PoppinsMedium_ttfSize);
+    juce::Typeface::Ptr lightTypeFace = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsLight_ttf, BinaryData::PoppinsLight_ttfSize);
     
 public:
     
@@ -29,7 +30,7 @@ public:
         return boldTypeface;
     }
     
-    juce::Typeface::Ptr getRegularTypeface()
+    juce::Typeface::Ptr getRegularTypeFace()
     {
         return regularTypeface;
     }
@@ -37,6 +38,10 @@ public:
     juce::Typeface::Ptr getMediumTypeFace()
     {
         return mediumTypeFace;
+    }
+    juce::Typeface::Ptr getLightTypeFace()
+    {
+        return lightTypeFace;
     }
 };
 
@@ -62,7 +67,7 @@ public:
         setColour (juce::ComboBox::outlineColourId, juce::Colour::fromString ("#ff9C49E7"));
         
   //      juce::Font poppinsRegularFont (poppinsRegularTypeface);
-        setDefaultSansSerifTypeface (getRegularTypeface());
+        setDefaultSansSerifTypeface (getRegularTypeFace());
     }
     
     void drawButtonBackground (juce::Graphics& g,
@@ -77,9 +82,7 @@ public:
         auto baseColour = backgroundColour;//.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
         //.withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f);
         
-        
         // button states
-        
         g.setColour (baseColour);
         
         auto flatOnLeft   = button.isConnectedOnLeft();
@@ -125,7 +128,7 @@ public:
     void drawButtonText (juce::Graphics& g, juce::TextButton& button,
                                          bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override
     {
-        juce::Font font (getRegularTypeface());
+        juce::Font font (getLightTypeFace());
         
         if (shouldDrawButtonAsDown)
         {
@@ -189,6 +192,83 @@ public:
 private:
 };
 
+class KeepMeSignedInButtonStyling : public juce::Component, public PoppinsLookAndFeel
+{
+public:
+    KeepMeSignedInButtonStyling()
+    {
+    }
+    
+    juce::Colour defaultOutlineColour = juce::Colour (156, 73, 231);
+    juce::Colour blackFillColour = juce::Colour (0, 10, 26);
+    juce::Colour enabledFillColour = juce::Colour (138, 24, 225);
+    juce::Colour fontColour = juce::Colour (239, 239, 239);
+    
+    void drawToggleButton (juce::Graphics& g, juce::ToggleButton& button,
+                                           bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override
+    {
+        auto fontSize = 20.0f;
+        auto tickWidth = 20;
+        
+        drawTickBox (g, button, 6.0f, 6.0f,
+                     tickWidth, tickWidth,
+                     button.getToggleState(),
+                     button.isEnabled(),
+                     shouldDrawButtonAsHighlighted,
+                     shouldDrawButtonAsDown);
+
+        g.setColour (fontColour);
+        g.setFont (getLightTypeFace());
+        g.setFont (fontSize);
+        juce::Rectangle<int> textBox (34, 4, 148, 24);
+        g.drawFittedText (button.getButtonText(), textBox, juce::Justification::centred, 1, 1.0f);
+        
+        if (shouldDrawButtonAsHighlighted)
+        {
+            g.setColour (defaultOutlineColour.withAlpha (0.1f));
+            g.fillRoundedRectangle (button.getLocalBounds().toFloat(), 4.0f);
+        }
+    }
+    
+    void drawTickBox (juce::Graphics& g, juce::Component& component,
+                                      float x, float y, float w, float h,
+                                      const bool ticked,
+                                      const bool isEnabled,
+                                      const bool shouldDrawButtonAsHighlighted,
+                                      const bool shouldDrawButtonAsDown) override
+    {
+        
+        juce::Rectangle<float> tickBounds (x, y, w, h);
+        
+        if (ticked)
+        {
+            if (shouldDrawButtonAsHighlighted)
+            {
+                g.setColour (enabledFillColour);
+                g.fillRoundedRectangle (tickBounds, 4.0f);
+                
+                g.setColour (defaultOutlineColour);
+                g.drawRoundedRectangle (tickBounds, 4.0f, 1.0f);
+            }
+            else
+            {
+                g.setColour (defaultOutlineColour);
+                g.fillRoundedRectangle (tickBounds, 4.0f);
+            }
+            g.setColour (fontColour);
+            auto tick = getTickShape (1.0f);
+            g.fillPath (tick, tick.getTransformToScaleToFit (tickBounds.reduced (4, 5).toFloat(), false));
+        }
+        else
+        {
+            g.setColour (blackFillColour);
+            g.fillRoundedRectangle (tickBounds, 4.0f);
+            
+            g.setColour (defaultOutlineColour);
+            g.drawRoundedRectangle (tickBounds, 4.0f, 1.0f);
+        }
+    }
+};
 
 class RoundedFillButtonStyling : public PoppinsLookAndFeel
 {
@@ -269,7 +349,7 @@ public:
     void drawButtonText (juce::Graphics& g, juce::TextButton& button,
                                          bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override
     {
-        juce::Font font (getRegularTypeface());
+        juce::Font font (getRegularTypeFace());
         
         if (shouldDrawButtonAsDown)
         {
@@ -418,7 +498,7 @@ public:
     void drawButtonText (juce::Graphics& g, juce::TextButton& button,
                                          bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override
     {
-        juce::Font font (getRegularTypeface());
+        juce::Font font (getRegularTypeFace());
         
         if (shouldDrawButtonAsDown)
         {
@@ -533,7 +613,7 @@ public:
     void drawButtonText (juce::Graphics& g, juce::TextButton& button,
                                          bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override
     {
-        juce::Font font (getRegularTypeface());
+        juce::Font font (getRegularTypeFace());
         
         if (shouldDrawButtonAsDown)
         {
@@ -644,7 +724,7 @@ public:
         }
         else
         {
-            font = juce::Font (getRegularTypeface());
+            font = juce::Font (getRegularTypeFace());
             g.setFont (font);
             g.setFont (24.0f);
             g.setColour (button.findColour (button.getToggleState() ? juce::TextButton::textColourOnId

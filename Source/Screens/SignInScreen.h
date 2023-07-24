@@ -85,6 +85,7 @@ public:
 class SignInScreen : public Screen, public juce::TextEditor::Listener
 {
     QuilioLoginLookAndFeel signInStyling;
+    KeepMeSignedInButtonStyling keepMeSignedInButtonStyling;
     
     juce::TextButton submitButton {"Sign in"};
 
@@ -94,12 +95,8 @@ class SignInScreen : public Screen, public juce::TextEditor::Listener
     juce::Image quilioLogoFullFormImage = juce::ImageFileFormat::loadFrom (BinaryData::QuilioLogoLongForm_png, BinaryData::QuilioLogoLongForm_pngSize);
     juce::Image quilioLogoImage = juce::ImageFileFormat::loadFrom (BinaryData::quilioLogo_4x_png, BinaryData::quilioLogo_4x_pngSize);
     
-    juce::Image keepMeSignedInSquareDefaultImage = juce::ImageFileFormat::loadFrom (BinaryData::checkbox_Default_png, BinaryData::checkbox_Default_pngSize);
-    juce::Image keepMeSignedInSquareHoverImage = juce::ImageFileFormat::loadFrom (BinaryData::checkbox_InactiveHover_png, BinaryData::checkbox_InactiveHover_pngSize);
-    juce::Image keepMeSignedInSquareOnImage = juce::ImageFileFormat::loadFrom (BinaryData::checkbox_ON_png, BinaryData::checkbox_ON_pngSize);
-    
     juce::ImageButton quilioLogoButton;
-    juce::ImageButton keepMeSignedInButton;
+    juce::ToggleButton keepMeSignedInButton;
     
     PaddedTextEditor passEditor {"Pass"}, emailEditor {"Email"}, teamIdEditor {"Team ID"}, nameEditor {"Name"};
     juce::OwnedArray<PaddedTextEditor> textEditors {{ &nameEditor, &emailEditor, &teamIdEditor, &passEditor }};
@@ -124,9 +121,10 @@ public:
         
         setImages (quilioLogoButton, quilioLogoFullFormImage, quilioLogoFullFormImage);
         
+        keepMeSignedInButton.setLookAndFeel (&keepMeSignedInButtonStyling);
         keepMeSignedInButton.setToggleable (true);
         keepMeSignedInButton.setClickingTogglesState (true);
-        setImages (keepMeSignedInButton, keepMeSignedInSquareDefaultImage, keepMeSignedInSquareOnImage);
+        keepMeSignedInButton.setButtonText ("Keep me signed in");
         
         submitButton.setHasFocusOutline (false);
         submitButton.onClick = [&]
@@ -269,9 +267,9 @@ public:
         g.setColour (juce::Colours::white);
         g.drawFittedText ("Sign in with your \n Apple Developer Account", 162, 79, 335, 84, juce::Justification::centred, 2);
         
-        g.setFont (24.0f);
-        g.setColour (juce::Colours::white);
-        g.drawFittedText ("Keep me signed in", 279.5, 497, 148, 24, juce::Justification::centred, 1);
+//        g.setFont (24.0f);
+//        g.setColour (juce::Colours::white);
+//        g.drawFittedText ("Keep me signed in", 279.5, 497, 148, 24, juce::Justification::centred, 1);
     }
     
     void printBoundsDBG (juce::Button* component, juce::Image* snapshot)
@@ -331,6 +329,6 @@ public:
         
         quilioLogoButton.setBounds (32, 30, 80, 40);
         
-        keepMeSignedInButton.setBounds (251, 499, 20, 20);
+        keepMeSignedInButton.setBounds (245.5, 493, 188, 32);
     }
 };
