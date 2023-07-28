@@ -66,22 +66,11 @@ public:
     
     
     juce::Image statusLoadingIconImage = juce::ImageFileFormat::loadFrom (BinaryData::statusLoadingIcon_png, BinaryData::statusLoadingIcon_pngSize);
-    // Load SVG as a Drawable
-    juce::DrawableComposite drawableComposite;
-    std::unique_ptr<juce::Drawable> trashIconDefaultDrawable = juce::Drawable::createFromImageData (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
-    std::unique_ptr<juce::Drawable> trashIconHoverDrawable = juce::Drawable::createFromImageData (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
 
     AdvancedTableComponent (std::vector<ColumnData> columns)
     {
         AdvancedTableComponent (columns, std::vector<RowData> ());
 
-        // Optionally, you can set the opacity or other properties of the drawable
-        trashIconDefaultDrawable->setAlpha (1.0f);
-        trashIconHoverDrawable->setAlpha (1.0f);
-        
-        // Add the drawables to the drawableComposite
-        drawableComposite.addAndMakeVisible (trashIconDefaultDrawable.get());
-        drawableComposite.addAndMakeVisible (trashIconHoverDrawable.get());
     }
     
     void update() override;
@@ -390,50 +379,6 @@ public:
             g.fillAll (oddRowColour);
     }
     
-    void drawToolTip (juce::Graphics& g, const juce::String& text, float x, float y, float width, float height)
-    {
-        std::unordered_map<juce::String, juce::String> statusToToolTip
-        {
-            {"Unsigned", "File upload in progress"},
-            {"Uploading", "Signed by <Dev name>"},
-            {"Signed", "Signed by <Dev name>"},
-            {"Success", "Not signed in"},
-            {"Error state 1", "Product sign failed"},
-            {"Error state 2", "Notarization failed"},
-            {"Error state 3", "Staple failed"},
-            {"Error state 4", "Staple failed"},
-            {"Error state 5", "Code sign failed"},
-            {"Error state 6", "Connection error"},
-            {"Error state 7", "Timed out"},
-            {"Error state 8", "Placeholder"},
-            {"Signing in progress", "Signing in progress"}
-        };
-        
-        auto toolTipMessage = statusToToolTip.find(text);
-        
-        // 2 px above status pill
-        
-        juce::Colour fontColour = juce::Colour (89, 89, 89);
-        juce::Typeface::Ptr lightTypeFace = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsLight_ttf, BinaryData::PoppinsLight_ttfSize);
-
-        juce::Colour rectangleFillColour = juce::Colour (239, 239, 239);
-        juce::Colour rectangleOutlineColour = juce::Colour (217, 217, 217);
-        
-        juce::Rectangle<float> toolTipRectangle (0.0f, 0.0f, 59.0f, 20.0f);
-        g.setColour (rectangleFillColour);
-        g.fillRoundedRectangle (toolTipRectangle, 4.0f);
-        
-        g.setColour (rectangleOutlineColour);
-        g.drawRoundedRectangle (toolTipRectangle, 4.0f, 1.0f);
-        
-        // add text
-        g.setFont (lightTypeFace);
-        g.setColour (fontColour);
-        juce::Rectangle<int> fontRectangle (8, 4, 43, 12);
-        g.drawFittedText ("", fontRectangle, juce::Justification::centred, 1);
-    }
-    
-    
     //Paint Methods
     void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const float& cornerSize = 10.0f)
     {
@@ -540,8 +485,6 @@ public:
         dataList->removeItemByIndex (rowIndex);
     }
     
-    
-    
     void drawStatusCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
     {
         if (auto* rowElement = dataList->getChildElement (rowNumber))
@@ -567,16 +510,15 @@ public:
     
     void drawClearCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
     {
-
+        //load in all trash icon states
+        juce::MemoryBlock svgDataDefault (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
+        juce::MemoryBlock svgDataHover (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
+        juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
         
-        //draw the trash can image... or position a button?
-//        float iconWidth = trashIconImage.getWidth();
-//        float iconHeight = trashIconImage.getHeight();
-        
-        // Draw the drawableComposite and its child drawables
-        drawableComposite.paint(g);
-        
-//        g.drawImageWithin (trashIconImage, width / 2.0f - 9.8 * 0.5, height / 2.0f - 12 * 0.5, 9.8, 12, juce::Justification::centred);
+        auto svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
+        auto svg = juce::Drawable::createFromSVG (*svgDocument);
+        juce::Rectangle<float> trashRect (40.0f, 10.0f, 9.82f, 12.0f);
+        svg->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
     }
     
     //This function has to do with cell drawing

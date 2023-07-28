@@ -280,15 +280,25 @@ public:
     }
     
     juce::GlowEffect glowEffect;
+    
     juce::Image applyGlowEffect()
     {
-        // create component snapshot, translate image
         juce::Rectangle<int> area (-12, -12, submitButton.getWidth() + 24, submitButton.getHeight() + 24);
         juce::Image snapshot = submitButton.createComponentSnapshot (area, false);
         juce::Graphics snapshotGraphics (snapshot);
-        
-        glowEffect.setGlowProperties (24.0f, juce::Colour (217, 217, 217).withAlpha (0.1f));
-        glowEffect.applyEffect (snapshot, snapshotGraphics, 0.2f, 1.0f);
+    
+        if (submitButton.isOver())
+        {
+            glowEffect.setGlowProperties (24.0f, juce::Colour (217, 217, 217).withAlpha (0.1f));
+            glowEffect.applyEffect (snapshot, snapshotGraphics, 0.2f, 1.0f);
+        }
+        else if (submitButton.isDown())
+        {
+            juce::DropShadow dropShadow (juce::Colour (140, 140, 140).withAlpha (1.0f), 5.0f, {0, 0});
+            juce::DropShadowEffect dropShadowEffect;
+            dropShadowEffect.setShadowProperties (dropShadow);
+            dropShadowEffect.applyEffect (snapshot, snapshotGraphics, 1.0f, 1.0f);
+        }
         
         return snapshot;
     }
@@ -312,9 +322,12 @@ public:
     {
         Screen::paint (g);
         
-        juce::Image buttonSnap = applyGlowEffect();
         juce::AffineTransform moveButton;
         moveButton = juce::AffineTransform::translation (submitButton.getX() - 12, submitButton.getY() - 12);
+        
+        juce::Image snapshot = applyGlowEffect ();
+        g.drawImageTransformed (snapshot, moveButton);
+        
     }
 
     

@@ -349,7 +349,7 @@ public:
     void drawButtonText (juce::Graphics& g, juce::TextButton& button,
                                          bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override
     {
-        juce::Font font (getRegularTypeFace());
+        juce::Font font (getLightTypeFace());
         
         if (shouldDrawButtonAsDown)
         {
@@ -498,7 +498,7 @@ public:
     void drawButtonText (juce::Graphics& g, juce::TextButton& button,
                                          bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override
     {
-        juce::Font font (getRegularTypeFace());
+        juce::Font font (getLightTypeFace());
         
         if (shouldDrawButtonAsDown)
         {
