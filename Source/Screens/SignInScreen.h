@@ -10,7 +10,7 @@
 
 #pragma once
 #include "../Helpers/Components.h"
-#include "../CredentialManager/KeychainManager.h"
+#include "../CredentialManager/yum_CredentialManager.h"
 
 class PaddedTextEditor : public juce::TextEditor
 {

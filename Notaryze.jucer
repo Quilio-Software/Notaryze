@@ -6,8 +6,19 @@
   <MAINGROUP id="zkUI0t" name="Notaryze">
     <GROUP id="{73768C8C-40C5-4F1E-FE8B-5B7C47599EEB}" name="Source">
       <GROUP id="{13268295-19AD-FED7-E4BC-D1275827DAEA}" name="CredentialManager">
-        <FILE id="iJV6gm" name="KeychainManager.h" compile="0" resource="0"
-              file="Source/CredentialManager/KeychainManager.h"/>
+        <FILE id="bwKko0" name="NativeWindowsHelpers.h" compile="0" resource="0"
+              file="Source/CredentialManager/NativeWindowsHelpers.h"/>
+        <FILE id="isPkZV" name="Types.h" compile="0" resource="0" file="Source/CredentialManager/Types.h"/>
+        <FILE id="TdJ6lH" name="UsernamePasswordUI.cpp" compile="1" resource="0"
+              file="Source/CredentialManager/UsernamePasswordUI.cpp"/>
+        <FILE id="OeZfKp" name="UsernamePasswordUI.h" compile="0" resource="0"
+              file="Source/CredentialManager/UsernamePasswordUI.h"/>
+        <FILE id="rPPFWY" name="yum_CredentialManager.cpp" compile="1" resource="0"
+              file="Source/CredentialManager/yum_CredentialManager.cpp"/>
+        <FILE id="Spd2pO" name="yum_CredentialManager.h" compile="0" resource="0"
+              file="Source/CredentialManager/yum_CredentialManager.h"/>
+        <FILE id="zMhcQ3" name="yum_CredentialManager.mm" compile="1" resource="0"
+              file="Source/CredentialManager/yum_CredentialManager.mm"/>
       </GROUP>
       <GROUP id="{A7E88FC6-6FEE-DDE3-ED9D-1CC0121626ED}" name="AdvancedTable">
         <FILE id="owztem" name="AdvancedTableComponent.cpp" compile="1" resource="0"
@@ -144,8 +155,10 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="Notaryze"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="Notaryze"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Notaryze" macOSDeploymentTarget="10.13"
+                       osxCompatibility="10.13 SDK"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Notaryze" macOSDeploymentTarget="10.13"
+                       osxCompatibility="10.13 SDK"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../juce-dev/juce-7/JUCE/modules"/>

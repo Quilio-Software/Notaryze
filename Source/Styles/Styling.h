@@ -486,7 +486,7 @@ public:
         auto flatOnTop    = button.isConnectedOnTop();
         auto flatOnBottom = button.isConnectedOnBottom();
 
-        float lineThickness;
+        float lineThickness = 1.0f;
         juce::Colour fontColour = juce::Colour (239, 239, 239);
         
         if (flatOnLeft || flatOnRight || flatOnTop || flatOnBottom)

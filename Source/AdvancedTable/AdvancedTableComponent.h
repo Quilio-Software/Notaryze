@@ -68,7 +68,7 @@ public:
     juce::Image statusLoadingIconImage = juce::ImageFileFormat::loadFrom (BinaryData::statusLoadingIcon_png, BinaryData::statusLoadingIcon_pngSize);
     // Load SVG as a Drawable
     juce::DrawableComposite drawableComposite;
-    std::unique_ptr<juce::Drawable> trashIconDefaultDrawable = juce::Drawable::createFromImageData (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
+    std::unique_ptr<juce::Drawable> trashIconDefaultDrawable = juce::Drawable::createFromImageData (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
     std::unique_ptr<juce::Drawable> trashIconHoverDrawable = juce::Drawable::createFromImageData (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
 
     AdvancedTableComponent (std::vector<ColumnData> columns)
@@ -80,7 +80,7 @@ public:
         trashIconHoverDrawable->setAlpha (1.0f);
         
         // Add the drawables to the drawableComposite
-        drawableComposite.addAndMakeVisible (trashIconDefaultDrawable.get());
+//        drawableComposite.addAndMakeVisible (trashIconDefaultDrawable.get());
         drawableComposite.addAndMakeVisible (trashIconHoverDrawable.get());
     }
     
@@ -332,9 +332,6 @@ public:
         else if (tableState == HAS_ITEMS)
             g.drawImage (tableBackgroundHasItems, juce::Rectangle<float> (0, 0, getWidth(), getHeight()));
                 
-        
-        DBG (tableState);
-        
         if (tableState == NO_ITEMS || getIsDraggingToEmptyTable())
         {
             juce::String text ("drop files to upload");
@@ -533,7 +530,7 @@ public:
 //        float iconHeight = trashIconImage.getHeight();
         
         // Draw the drawableComposite and its child drawables
-        drawableComposite.paint(g);
+        drawableComposite.paint (g);
         
 //        g.drawImageWithin (trashIconImage, width / 2.0f - 9.8 * 0.5, height / 2.0f - 12 * 0.5, 9.8, 12, juce::Justification::centred);
     }
@@ -646,6 +643,9 @@ public:
     void resized() override
     {
         table.setBoundsInset (juce::BorderSize<int> (8));
+        
+        drawableComposite.setBoundingBox (getBounds().toFloat());
+        drawableComposite.setContentArea (getBounds().toFloat());
     }
 
 private:

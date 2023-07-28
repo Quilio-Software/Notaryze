@@ -46,15 +46,11 @@ public:
     
     ScreenManager()
     {
-        profileData = std::make_shared<ProfileData>();
-        profileScreen.setProfileData (profileData);
-        utilityScreen.setProfileData (profileData);
-        profileScreen.updateProfilePicture();
-        utilityScreen.updateProfilePicture();
-        
         addChildComponent (signInScreen);
         addChildComponent (utilityScreen);
         addChildComponent (profileScreen);
+        
+        setCurrentScreen (SIGN_IN);
         
         //When we get past the login screen, we arrive at the utility screen.
         signInScreen.onSubmit = [&](bool value)
@@ -82,10 +78,22 @@ public:
         utilityScreen.onLogo    = [&] { launchWebpage (quilioWebsiteURL); };
         utilityScreen.onProfile = [&] { setCurrentScreen (PROFILE); };
         
-        //On start, set profile pictures
-        profileScreen.updateProfilePicture();
-        utilityScreen.updateProfilePicture();
         
+        profileData = std::make_shared<ProfileData>();
+        if (profileData->loadFromKeychain ("Notaryze"))
+        {
+            profileScreen.setProfileData (profileData);
+            utilityScreen.setProfileData (profileData);
+            profileScreen.updateProfilePicture();
+            utilityScreen.updateProfilePicture();
+            
+//            profileData->saveToKeychain();
+            
+            utilityScreen.setDevName (profileData->getName());
+            utilityScreen.setDevID (profileData->getDevID());
+            
+            setCurrentScreen (UTILITY);
+        }
         
         profileScreen.chooseProfilePicture = [&]
         {
@@ -111,12 +119,13 @@ public:
     
     ~ScreenManager() {}
     
-    void setAllScreenVisibilities (bool visibility)
-    {
-        signInScreen.setVisible (visibility);
-        utilityScreen.setVisible (visibility);
-        profileScreen.setVisible (visibility);
-    }
+    //This function sets the visibility of all the screens in the application. This function could be useful for when the application is launched and all the screens need to be hidden until the user interacts with the application.
+        void setAllScreenVisibilities (bool visibility)
+        {
+            signInScreen.setVisible (visibility);
+            utilityScreen.setVisible (visibility);
+            profileScreen.setVisible (visibility);
+        }
     
     ScreenID lastScreenID = ScreenID::UTILITY;
     
