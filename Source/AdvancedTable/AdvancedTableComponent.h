@@ -66,10 +66,10 @@ public:
     
     
     juce::Image statusLoadingIconImage = juce::ImageFileFormat::loadFrom (BinaryData::statusLoadingIcon_png, BinaryData::statusLoadingIcon_pngSize);
-
     AdvancedTableComponent (std::vector<ColumnData> columns)
     {
         AdvancedTableComponent (columns, std::vector<RowData> ());
+
 
     }
     
@@ -321,9 +321,6 @@ public:
         else if (tableState == HAS_ITEMS)
             g.drawImage (tableBackgroundHasItems, juce::Rectangle<float> (0, 0, getWidth(), getHeight()));
                 
-        
-        DBG (tableState);
-        
         if (tableState == NO_ITEMS || getIsDraggingToEmptyTable())
         {
             juce::String text ("drop files to upload");
@@ -510,10 +507,12 @@ public:
     
     void drawClearCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
     {
+
         //load in all trash icon states
         juce::MemoryBlock svgDataDefault (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
         juce::MemoryBlock svgDataHover (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
         juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
+
         
         auto svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
         auto svg = juce::Drawable::createFromSVG (*svgDocument);
@@ -629,6 +628,9 @@ public:
     void resized() override
     {
         table.setBoundsInset (juce::BorderSize<int> (8));
+        
+        drawableComposite.setBoundingBox (getBounds().toFloat());
+        drawableComposite.setContentArea (getBounds().toFloat());
     }
 
 private:

@@ -6,7 +6,6 @@ MainComponent::MainComponent()
     setSize (680, 600);
     
     addAndMakeVisible (screenManager);
-    screenManager.setCurrentScreen (SIGN_IN);
 }
 
 MainComponent::~MainComponent()
