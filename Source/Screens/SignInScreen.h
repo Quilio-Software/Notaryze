@@ -135,7 +135,26 @@ public:
 //        quilioLogoButton = std::make_unique<juce::DrawableButton> ("myButton", juce::DrawableButton::ButtonStyle::ImageStretched);
 //        quilioLogoButton->setImages (quilioLogoSVG.get(), quilioLogoSVG.get(), quilioLogoSVG.get(), quilioLogoSVG.get(), quilioLogoSVG.get(), quilioLogoSVG.get(), quilioLogoSVG.get(), quilioLogoSVG.get());
 //        addAndMakeVisible (*quilioLogoButton);
+        
+        submitButton.onStateChange = [&]
+        {
+            if (submitButton.isOver())
+            {
+                submitButtonSnapshot = getGlowSnapshotFromComponent (&submitButton);
+            }
+            else if (submitButton.isDown())
+            {
+                submitButtonSnapshot = getDropShadowSnapshotFromComponent (&submitButton);
+            }
+            else
+            {
+            }
+            
+            repaint();
+        };
+    
     }
+    juce::Image submitButtonSnapshot;
     
     ~SignInScreen()
     {
@@ -261,53 +280,43 @@ public:
     
     juce::GlowEffect glowEffect;
     
-    juce::Image applyGlowEffect()
+    juce::Image getGlowSnapshotFromComponent (juce::Component* component)
     {
-        juce::Rectangle<int> area (-12, -12, submitButton.getWidth() + 24, submitButton.getHeight() + 24);
-        juce::Image snapshot = submitButton.createComponentSnapshot (area, false);
+        juce::Rectangle<int> area (-12, -12, component->getWidth() + 24, component->getHeight() + 24);
+        juce::Image snapshot = component->createComponentSnapshot (area, false);
         juce::Graphics snapshotGraphics (snapshot);
     
-        if (submitButton.isOver())
-        {
-            glowEffect.setGlowProperties (24.0f, juce::Colour (217, 217, 217).withAlpha (0.1f));
-            glowEffect.applyEffect (snapshot, snapshotGraphics, 0.2f, 1.0f);
-        }
-        else if (submitButton.isDown())
-        {
-            juce::DropShadow dropShadow (juce::Colour (140, 140, 140).withAlpha (1.0f), 5.0f, {0, 0});
-            juce::DropShadowEffect dropShadowEffect;
-            dropShadowEffect.setShadowProperties (dropShadow);
-            dropShadowEffect.applyEffect (snapshot, snapshotGraphics, 1.0f, 1.0f);
-        }
-        
+        glowEffect.setGlowProperties (24.0f, juce::Colour (217, 217, 217).withAlpha (0.1f));
+        glowEffect.applyEffect (snapshot, snapshotGraphics, 0.2f, 1.0f);
+
         return snapshot;
     }
     
-    juce::Image applyDropShadowEffect()
+    juce::Image getDropShadowSnapshotFromComponent (juce::Component* component)
     {
         juce::Rectangle<int> area (-12, -12, submitButton.getWidth() + 24, submitButton.getHeight() + 24);
         juce::Image snapshot = submitButton.createComponentSnapshot (area, false);
         juce::Graphics snapshotGraphics (snapshot);
         
-        juce::DropShadow dropShadow (juce::Colour(0, 0, 0).withAlpha (0.0f), 4.0f, {0, 0});
+        juce::DropShadow dropShadow (juce::Colour (140, 140, 140).withAlpha (1.0f), 5.0f, {0, 0});
         juce::DropShadowEffect dropShadowEffect;
         dropShadowEffect.setShadowProperties (dropShadow);
-        dropShadowEffect.applyEffect (snapshot, snapshotGraphics, 2.0f, 1.0f);
+        dropShadowEffect.applyEffect (snapshot, snapshotGraphics, 1.0f, 1.0f);
         
         return snapshot;
     }
-    
-    
+        
     void paint (juce::Graphics& g) override
     {
         Screen::paint (g);
-        
+
         juce::AffineTransform moveButton;
         moveButton = juce::AffineTransform::translation (submitButton.getX() - 12, submitButton.getY() - 12);
-        
-        juce::Image snapshot = applyGlowEffect ();
-        g.drawImageTransformed (snapshot, moveButton);
-        
+
+        if (submitButton.isOver())
+            g.drawImageTransformed (submitButtonSnapshot, moveButton);
+        else if (submitButton.isDown())
+            g.drawImageTransformed (submitButtonSnapshot, moveButton);
     }
 
     
