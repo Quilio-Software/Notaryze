@@ -158,22 +158,17 @@ public:
         
         submitButton.onStateChange = [&]
         {
-            if (submitButton.isOver())
-            {
-                submitButtonSnapshot = getGlowSnapshotFromComponent (&submitButton);
-            }
-            else if (submitButton.isDown())
+            if (submitButton.isDown()) {}
+            else if (submitButton.isOver())
             {
                 submitButtonSnapshot = getDropShadowSnapshotFromComponent (&submitButton);
             }
-            else
-            {
-            }
+            else{}
             
             repaint();
         };
-    
     }
+
     juce::Image submitButtonSnapshot;
     
     ~SignInScreen()
@@ -314,11 +309,11 @@ public:
     
     juce::Image getDropShadowSnapshotFromComponent (juce::Component* component)
     {
-        juce::Rectangle<int> area (-12, -12, submitButton.getWidth() + 24, submitButton.getHeight() + 24);
-        juce::Image snapshot = submitButton.createComponentSnapshot (area, false);
+        juce::Rectangle<int> area (-12, -12, component->getWidth() + 24, component->getHeight() + 24);
+        juce::Image snapshot = component->createComponentSnapshot (area, false);
         juce::Graphics snapshotGraphics (snapshot);
         
-        juce::DropShadow dropShadow (juce::Colour (140, 140, 140).withAlpha (1.0f), 5.0f, {0, 0});
+        juce::DropShadow dropShadow (juce::Colour (140, 140, 140).withAlpha (1.0f), 10.0f, {0, 0});
         juce::DropShadowEffect dropShadowEffect;
         dropShadowEffect.setShadowProperties (dropShadow);
         dropShadowEffect.applyEffect (snapshot, snapshotGraphics, 1.0f, 1.0f);
@@ -333,10 +328,12 @@ public:
         juce::AffineTransform moveButton;
         moveButton = juce::AffineTransform::translation (submitButton.getX() - 12, submitButton.getY() - 12);
 
-        if (submitButton.isOver())
+        if (submitButton.isDown()){}
+        else if (submitButton.isOver())
+        {
             g.drawImageTransformed (submitButtonSnapshot, moveButton);
-        else if (submitButton.isDown())
-            g.drawImageTransformed (submitButtonSnapshot, moveButton);
+        }
+        else{}
     }
 
     

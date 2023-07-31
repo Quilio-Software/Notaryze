@@ -157,3 +157,159 @@ public:
     
     std::function<void()> clearAllData;
 };
+
+namespace juce {
+class StatusPillTooltip : public TableComponentStyling, public juce::SettableTooltipClient
+{
+public:
+    StatusPillTooltip() {}
+    
+    void drawTooltip (Graphics& g, const String& text, int width, int height) override
+    {
+        juce::String tooltipMessage = text;
+
+
+        // calculate
+        // - 2 - pill height - rectangle
+        // 2 px above status pill
+        // max size - (109, 32)
+        // max textbox - (93, 24)
+
+        // add text
+        juce::Colour fontColour = juce::Colour (89, 89, 89);
+        juce::Typeface::Ptr lightTypeFace = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsLight_ttf, BinaryData::PoppinsLight_ttfSize);
+        g.setFont (lightTypeFace);
+        g.setColour (fontColour);
+        juce::Font font = g.getCurrentFont();
+        int stringWidth = font.getStringWidth (tooltipMessage);
+        juce::Rectangle<int> fontRectangle (8, 4, stringWidth, 12);
+
+        //set up rectangle
+        juce::Colour rectangleFillColour = juce::Colour (239, 239, 239);
+        juce::Colour rectangleOutlineColour = juce::Colour (217, 217, 217);
+
+        juce::Rectangle<float> tooltipRectangle (0, 0, stringWidth + 16.0f, 20.0f);
+        g.setColour (rectangleFillColour);
+        g.fillRoundedRectangle (tooltipRectangle, 4.0f);
+
+        g.setColour (rectangleOutlineColour);
+        g.drawRoundedRectangle (tooltipRectangle, 4.0f, 1.0f);
+
+        //draw text
+        g.drawFittedText (tooltipMessage, fontRectangle, juce::Justification::centred, 1);
+    }
+
+    Rectangle<int> getTooltipBounds (const String& tipText, Point<int> screenPos, Rectangle<int> parentArea) override
+    {
+        juce::Font font = poppinsRegularTypeface;
+        int width = font.getStringWidth (tipText) + 16;
+
+        return Rectangle<int> (parentArea.getX() - parentArea.getX()/2, parentArea.getY() - 2 - 20, width, 20);
+    }
+
+//    ==============================================================================
+};
+}
+
+class StatusPill : public juce::Component, public juce::StatusPillTooltip
+{
+
+public:
+    StatusPill()
+    {
+        juce::StatusPillTooltip toolTipStyling;
+    }
+    
+    void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const float& cornerSize = 10.0f)
+    {
+        juce::Colour colour;
+
+        std::unordered_map<juce::String, juce::Colour> statusToColour
+        {
+            {"Uploading", juce::Colour::fromString ("#ffDEE833")},
+            {"Unsigned", juce::Colour::fromString ("#ff2D72E1")},
+            {"Signed", juce::Colour::fromString ("#ff34A700")},
+            {"Success", juce::Colour::fromString ("#ff34A700")},
+            {"Error", juce::Colours::red }
+        };
+
+        auto it = statusToColour.find(text);
+        if (it != statusToColour.end())
+        {
+            colour = it->second;
+        }
+        else
+        {
+            // handle the case when the text is not found in the map
+            // for example, you might want to assign a default colour
+            colour = juce::Colours::black;
+        }
+
+        // Draw the text with padding
+        juce::Font font (10.0f);
+        g.setFont (font);
+        
+        int padding = 8;
+
+        // Set up the rectangle parameters with padding
+
+        float textWidth = font.getStringWidth (text);
+
+        juce::Rectangle<float> textBounds (7, 6, width - 14, 20);
+
+        // Calculate the x origin (left position) of the text
+        float xOrigin = (width - textWidth) / 2.0f - padding; // + (textBounds.getWidth() - textWidth) / 2.0f;
+        
+  //      g.fillAll (juce::Colours::blue);
+
+        //TODO: Fix this god awful positioning
+        // It looks like the offset amount changes based on the text there...
+        juce::Rectangle<float> rectangleBounds (xOrigin, 6, textWidth + 2 * padding, height - 12);
+
+        // Draw the rounded rectangle with padding
+        g.setColour (colour);
+        g.drawRoundedRectangle (rectangleBounds, cornerSize, 1.0f);
+        
+        g.drawText (text, textBounds.reduced (5), juce::Justification::centred, true);
+
+        // Center the rounded rectangle vertically within the row
+        float yOffset = (height - textBounds.getHeight()) / 2.0f;
+        textBounds.setY (y + yOffset);
+
+        // Center the rounded rectangle horizontally within the cell
+        float xOffset = (width - textBounds.getWidth()) / 2.0f;
+        textBounds.setX (x + xOffset);
+
+        // Draw the background
+        g.setColour (juce::LookAndFeel::getDefaultLookAndFeel().findColour (juce::ListBox::backgroundColourId));
+        g.fillRect (x + width - 1, y, 1, height);
+        
+        setTooltipHelperFunction (text);
+    }
+    
+    void setTooltipHelperFunction (juce::String status)
+    {
+        std::unordered_map<juce::String, juce::String> statusToTooltip
+        {
+            {"Unsigned", "Unsigned"},
+            {"Uploading", "File upload in progress"},
+            {"Signed", "Signed by <Dev name>"},
+            {"Success", "Signed by <Dev name>"},
+            {"Error state 1", "Not signed in"},
+            {"Error state 2", "Product sign failed"},
+            {"Error state 3", "Notarization failed"},
+            {"Error state 4", "Staple failed"},
+            {"Error state 5", "Staple failed"},
+            {"Error state 6", "Code sign failed"},
+            {"Error state 7", "Connection error"},
+            {"Error state 8", "Timed out"},
+            {"Signing in progress", "Signing in progress"}
+        };
+        
+        juce::String tooltipMessage;
+        
+        auto tooltipIterator = statusToTooltip.find (status);
+        if (tooltipIterator != statusToTooltip.end()) { tooltipMessage = tooltipIterator->second; }
+        setTooltip (tooltipMessage);
+    }
+};

@@ -186,7 +186,33 @@ public:
         nameLabel.setFont (juce::Font (20.0));
         nameLabel.setColour (juce::Label::textColourId, juce::Colour::fromString ("#ffA6A6A6"));
         nameLabel.setJustificationType (juce::Justification::right);
+        
+        uploadButton.onStateChange = [&]
+        {
+            if (uploadButton.isDown()) {}
+            else if (uploadButton.isOver())
+            {
+                uploadButtonSnapshot = getDropShadowSnapshotFromComponent (&uploadButton);
+            }
+            else {}
+            
+            repaint();
+        };
+        startButton.onStateChange = [&]
+        {
+            if (uploadButton.isDown()){}
+            else if (startButton.isOver())
+            {
+                startButtonSnapshot = getDropShadowSnapshotFromComponent (&startButton);
+            }
+            else{}
+            
+            repaint();
+        };
     }
+    
+    juce::Image uploadButtonSnapshot;
+    juce::Image startButtonSnapshot;
     
     void toggleSigningTableType()
     {
@@ -216,12 +242,55 @@ public:
         return false;
     }
     
+    juce::GlowEffect glowEffect;
+    
+    juce::Image getGlowSnapshotFromComponent (juce::Component* component)
+    {
+        juce::Rectangle<int> area (-12, -12, component->getWidth() + 24, component->getHeight() + 24);
+        juce::Image snapshot = component->createComponentSnapshot (area, false);
+        juce::Graphics snapshotGraphics (snapshot);
+    
+        glowEffect.setGlowProperties (24.0f, juce::Colour (217, 217, 217).withAlpha (0.1f));
+        glowEffect.applyEffect (snapshot, snapshotGraphics, 0.2f, 1.0f);
+
+        return snapshot;
+    }
+    
+    juce::Image getDropShadowSnapshotFromComponent (juce::Component* component)
+    {
+        juce::Rectangle<int> area (-12, -12, component->getWidth() + 24, component->getHeight() + 24);
+        juce::Image snapshot = component->createComponentSnapshot (area, false);
+        juce::Graphics snapshotGraphics (snapshot);
+        
+        juce::DropShadow dropShadow (juce::Colour (140, 140, 140).withAlpha (1.0f), 10.0f, {0, 0});
+        juce::DropShadowEffect dropShadowEffect;
+        dropShadowEffect.setShadowProperties (dropShadow);
+        dropShadowEffect.applyEffect (snapshot, snapshotGraphics, 1.0f, 1.0f);
+        
+        return snapshot;
+    }
     
     juce::Image backgroundImage = juce::ImageFileFormat::loadFrom (BinaryData::UtilityScreenBackground_png, BinaryData::UtilityScreenBackground_pngSize);
     void paint (juce::Graphics& g) override
     {
         juce::Rectangle<float> area = getBounds().toFloat();
         g.drawImage (backgroundImage, area);
+        
+        juce::AffineTransform moveUploadButton;
+        moveUploadButton = juce::AffineTransform::translation (uploadButton.getX() - 12, uploadButton.getY() - 12);
+
+        if (uploadButton.isDown()){}
+        else if (uploadButton.isOver())
+            g.drawImageTransformed (uploadButtonSnapshot, moveUploadButton);
+        
+        juce::AffineTransform moveStartButton;
+        moveStartButton = juce::AffineTransform::translation (startButton.getX() - 12, startButton.getY() - 12);
+        
+        if (startButton.isDown()){}
+        else if (startButton.isOver())
+        {
+            g.drawImageTransformed (startButtonSnapshot, moveStartButton);
+        }
     }
     
     juce::String removeDotAndCapitalize (juce::String inputString)
@@ -265,59 +334,6 @@ public:
         }
         
         currentTableState = state;
-    }
-    
-    void drawToolTip (juce::Graphics& g, const juce::String& text, float x, float y)
-    {
-        std::unordered_map<juce::String, juce::String> statusToToolTip
-        {
-            {"Unsigned", "Unsigned"},
-            {"Uploading", "File upload in progress"},
-            {"Signed", "Signed by <Dev name>"},
-            {"Success", "Signed by <Dev name>"},
-            {"Error state 1", "Not signed in"},
-            {"Error state 2", "Product sign failed"},
-            {"Error state 3", "Notarization failed"},
-            {"Error state 4", "Staple failed"},
-            {"Error state 5", "Staple failed"},
-            {"Error state 6", "Code sign failed"},
-            {"Error state 7", "Connection error"},
-            {"Error state 8", "Timed out"},
-            {"Signing in progress", "Signing in progress"}
-        };
-        
-        juce::String toolTipMessage;
-        
-        auto toolTipIterator = statusToToolTip.find(text);
-        if (toolTipIterator != statusToToolTip.end()) { toolTipMessage = toolTipIterator->second; }
-        // calculate
-        // - 2 - pill height - rectangle
-        // 2 px above status pill
-        // max size - (109, 32)
-        // max textbox - (93, 24)
-
-        // add text
-        juce::Colour fontColour = juce::Colour (89, 89, 89);
-        juce::Typeface::Ptr lightTypeFace = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsLight_ttf, BinaryData::PoppinsLight_ttfSize);
-        g.setFont (lightTypeFace);
-        g.setColour (fontColour);
-        juce::Font font = g.getCurrentFont();
-        int stringWidth = font.getStringWidth (toolTipMessage);
-        juce::Rectangle<int> fontRectangle (x, y, stringWidth, 12);
-        
-        //set up rectangle
-        juce::Colour rectangleFillColour = juce::Colour (239, 239, 239);
-        juce::Colour rectangleOutlineColour = juce::Colour (217, 217, 217);
-        
-        juce::Rectangle<float> toolTipRectangle (x - 8, y - 4.0f, stringWidth + 16.0f, 20.0f);
-        g.setColour (rectangleFillColour);
-        g.fillRoundedRectangle (toolTipRectangle, 4.0f);
-        
-        g.setColour (rectangleOutlineColour);
-        g.drawRoundedRectangle (toolTipRectangle, 4.0f, 1.0f);
-        
-        //draw text
-        g.drawFittedText (toolTipMessage, fontRectangle, juce::Justification::centred, 1);
     }
     
     void resized() override

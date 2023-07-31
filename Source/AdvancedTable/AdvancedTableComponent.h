@@ -380,70 +380,70 @@ public:
     }
     
     //Paint Methods
-    void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const float& cornerSize = 10.0f)
-    {
-        juce::Colour colour;
-
-        std::unordered_map<juce::String, juce::Colour> statusToColour
-        {
-            {"Uploading", juce::Colour::fromString ("#ffDEE833")},
-            {"Unsigned", juce::Colour::fromString ("#ff2D72E1")},
-            {"Signed", juce::Colour::fromString ("#ff34A700")},
-            {"Success", juce::Colour::fromString ("#ff34A700")},
-            {"Error", juce::Colours::red }
-        };
-
-        auto it = statusToColour.find(text);
-        if (it != statusToColour.end())
-        {
-            colour = it->second;
-        }
-        else
-        {
-            // handle the case when the text is not found in the map
-            // for example, you might want to assign a default colour
-            colour = juce::Colours::black;
-        }
-
-        // Draw the text with padding
-        juce::Font font (10.0f);
-        g.setFont (font);
-        
-        int padding = 8;
-
-        // Set up the rectangle parameters with padding
-
-        float textWidth = font.getStringWidth (text);
-
-        juce::Rectangle<float> textBounds (7, 6, width - 14, 20);
-
-        // Calculate the x origin (left position) of the text
-        float xOrigin = (width - textWidth) / 2.0f - padding; // + (textBounds.getWidth() - textWidth) / 2.0f;
-        
-  //      g.fillAll (juce::Colours::blue);
-
-        //TODO: Fix this god awful positioning
-        // It looks like the offset amount changes based on the text there...
-        juce::Rectangle<float> rectangleBounds (xOrigin, 6, textWidth + 2 * padding, height - 12);
-
-        // Draw the rounded rectangle with padding
-        g.setColour (colour);
-        g.drawRoundedRectangle (rectangleBounds, cornerSize, 1.0f);
-        
-        g.drawText (text, textBounds.reduced (5), juce::Justification::centred, true);
-
-        // Center the rounded rectangle vertically within the row
-        float yOffset = (height - textBounds.getHeight()) / 2.0f;
-        textBounds.setY (y + yOffset);
-
-        // Center the rounded rectangle horizontally within the cell
-        float xOffset = (width - textBounds.getWidth()) / 2.0f;
-        textBounds.setX (x + xOffset);
-
-        // Draw the background
-        g.setColour (juce::LookAndFeel::getDefaultLookAndFeel().findColour (juce::ListBox::backgroundColourId));
-        g.fillRect (x + width - 1, y, 1, height);
-    }
+//    void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const float& cornerSize = 10.0f)
+//    {
+//        juce::Colour colour;
+//
+//        std::unordered_map<juce::String, juce::Colour> statusToColour
+//        {
+//            {"Uploading", juce::Colour::fromString ("#ffDEE833")},
+//            {"Unsigned", juce::Colour::fromString ("#ff2D72E1")},
+//            {"Signed", juce::Colour::fromString ("#ff34A700")},
+//            {"Success", juce::Colour::fromString ("#ff34A700")},
+//            {"Error", juce::Colours::red }
+//        };
+//
+//        auto it = statusToColour.find(text);
+//        if (it != statusToColour.end())
+//        {
+//            colour = it->second;
+//        }
+//        else
+//        {
+//            // handle the case when the text is not found in the map
+//            // for example, you might want to assign a default colour
+//            colour = juce::Colours::black;
+//        }
+//
+//        // Draw the text with padding
+//        juce::Font font (10.0f);
+//        g.setFont (font);
+//
+//        int padding = 8;
+//
+//        // Set up the rectangle parameters with padding
+//
+//        float textWidth = font.getStringWidth (text);
+//
+//        juce::Rectangle<float> textBounds (7, 6, width - 14, 20);
+//
+//        // Calculate the x origin (left position) of the text
+//        float xOrigin = (width - textWidth) / 2.0f - padding; // + (textBounds.getWidth() - textWidth) / 2.0f;
+//
+//  //      g.fillAll (juce::Colours::blue);
+//
+//        //TODO: Fix this god awful positioning
+//        // It looks like the offset amount changes based on the text there...
+//        juce::Rectangle<float> rectangleBounds (xOrigin, 6, textWidth + 2 * padding, height - 12);
+//
+//        // Draw the rounded rectangle with padding
+//        g.setColour (colour);
+//        g.drawRoundedRectangle (rectangleBounds, cornerSize, 1.0f);
+//
+//        g.drawText (text, textBounds.reduced (5), juce::Justification::centred, true);
+//
+//        // Center the rounded rectangle vertically within the row
+//        float yOffset = (height - textBounds.getHeight()) / 2.0f;
+//        textBounds.setY (y + yOffset);
+//
+//        // Center the rounded rectangle horizontally within the cell
+//        float xOffset = (width - textBounds.getWidth()) / 2.0f;
+//        textBounds.setX (x + xOffset);
+//
+//        // Draw the background
+//        g.setColour (juce::LookAndFeel::getDefaultLookAndFeel().findColour (juce::ListBox::backgroundColourId));
+//        g.fillRect (x + width - 1, y, 1, height);
+//    }
     
     void drawCenteredFilledSquare (juce::Graphics& g, const int& componentX, const int& componentY, const int& componentWidth, const int& componentHeight, const int& paddingTop, const int& paddingBottom, const juce::Colour& colour = juce::Colours::green)
     {
@@ -503,7 +503,9 @@ public:
             }
             else
             {
-                drawStatusPill (g, statusText, 162, 179, width, height);
+                StatusPill statusPill;
+                juce::TooltipWindow tooltipWindow ();
+                statusPill.drawStatusPill (g, statusText, 162, 179, width, height);
             }
         }
     }

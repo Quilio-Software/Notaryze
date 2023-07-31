@@ -87,6 +87,47 @@ public:
         
         profilePictureImage = loadImage ("profilePicCircle");
         profilePictureButton.setImages (true, true, true, profilePictureImage, 1.0f, {}, profilePicCircleImageHover, 1.0f, {}, profilePicCircleImageHover, 1.0f, {});
+        
+        backButton.onStateChange = [&]
+        {
+            if (backButton.isDown()){}
+            else if (backButton.isOver())
+            {
+                backButtonSnapshot = getDropShadowSnapshotFromComponent (&backButton);
+            }
+            else{}
+            
+            repaint();
+        };
+        
+    }
+    juce::Image backButtonSnapshot;
+    juce::GlowEffect glowEffect;
+    
+    juce::Image getGlowSnapshotFromComponent (juce::Component* component)
+    {
+        juce::Rectangle<int> area (-12, -12, component->getWidth() + 24, component->getHeight() + 24);
+        juce::Image snapshot = component->createComponentSnapshot (area, false);
+        juce::Graphics snapshotGraphics (snapshot);
+    
+        glowEffect.setGlowProperties (24.0f, juce::Colour (217, 217, 217).withAlpha (0.1f));
+        glowEffect.applyEffect (snapshot, snapshotGraphics, 0.2f, 1.0f);
+
+        return snapshot;
+    }
+    
+    juce::Image getDropShadowSnapshotFromComponent (juce::Component* component)
+    {
+        juce::Rectangle<int> area (-12, -12, component->getWidth() + 24, component->getHeight() + 24);
+        juce::Image snapshot = component->createComponentSnapshot (area, false);
+        juce::Graphics snapshotGraphics (snapshot);
+        
+        juce::DropShadow dropShadow (juce::Colour (140, 140, 140).withAlpha (1.0f), 10.0f, {0, 0});
+        juce::DropShadowEffect dropShadowEffect;
+        dropShadowEffect.setShadowProperties (dropShadow);
+        dropShadowEffect.applyEffect (snapshot, snapshotGraphics, 1.0f, 1.0f);
+        
+        return snapshot;
     }
     
     void paint (juce::Graphics& g) override
@@ -101,6 +142,17 @@ public:
         g.setColour (juce::Colour::fromString ("#ff595959"));
         g.drawText (email, 307.5, 306, 280, 24, juce::Justification::left);
         g.drawText (devID, 307.5, 346, 280, 24, juce::Justification::left);
+        
+        juce::AffineTransform moveBackButton;
+        moveBackButton = juce::AffineTransform::translation (backButton.getX() - 12, backButton.getY() - 12);
+
+        if (backButton.isDown()){}
+        else if (backButton.isOver())
+        {
+            g.drawImageTransformed (backButtonSnapshot, moveBackButton);
+        }
+        else{}
+
     }
     
     void setName (juce::String newName)
