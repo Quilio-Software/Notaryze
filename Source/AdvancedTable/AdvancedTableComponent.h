@@ -18,7 +18,9 @@
 #include "DataModel.h"
 #include "TableStyling.h"
 
-#include <Security/SecStaticCode.h>
+#ifdef JUCE_MAC
+    #include <Security/SecStaticCode.h>
+#endif
 
 
 class AdvancedTableComponent : public juce::AnimatedAppComponent,
@@ -133,6 +135,7 @@ public:
     
     juce::String getStatus (juce::File file)
     {
+#ifdef JUCE_MAC
         juce::String command = "codesign -dv -- \"" + file.getFullPathName() + "\"";
         juce::String status = "Unsigned";
         std::string output;
@@ -161,6 +164,8 @@ public:
         }
 
         return status;
+#endif
+        return "WINDOWS";
     }
 
     AdvancedTableComponent (std::vector<ColumnData> columns, std::vector<RowData> data)
@@ -511,7 +516,7 @@ public:
         //load in all trash icon states
         juce::MemoryBlock svgDataDefault (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
         juce::MemoryBlock svgDataHover (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
-        juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
+ //       juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
 
         
         auto svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
@@ -629,8 +634,8 @@ public:
     {
         table.setBoundsInset (juce::BorderSize<int> (8));
         
-        drawableComposite.setBoundingBox (getBounds().toFloat());
-        drawableComposite.setContentArea (getBounds().toFloat());
+//        drawableComposite.setBoundingBox (getBounds().toFloat());
+//        drawableComposite.setContentArea (getBounds().toFloat());
     }
 
 private:

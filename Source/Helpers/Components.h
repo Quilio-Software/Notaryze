@@ -134,10 +134,12 @@ public:
         
         return juce::Image();
     }
-
+#ifdef JUCE_MAC
     YumAudio::AppCredentials credentialsManager;
+#endif
     bool loadFromKeychain (juce::String applicationName)
     {
+#ifdef JUCE_MAC
         try
         {
             // Load and decode the Base64 image
@@ -175,10 +177,14 @@ public:
         {
             juce::Logger::writeToLog ("Unknown exception caught in loadFromKeychain");
         }
+#endif
+
+        return false;
     }
 
     void saveToKeychain()
     {
+#ifdef JUCE_MAC
         try
         {
             // Store the data as a single entry
@@ -206,6 +212,7 @@ public:
         {
             juce::Logger::writeToLog ("Unknown exception caught in saveToKeychain");
         }
+#endif
     }
 
     void setProfilePicture (juce::File& file)
