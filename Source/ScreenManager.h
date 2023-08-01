@@ -53,7 +53,7 @@ public:
         setCurrentScreen (SIGN_IN);
         
         //When we get past the login screen, we arrive at the utility screen.
-        signInScreen.onSubmit = [&](bool value)
+        signInScreen.onSubmit = [&](bool shouldStaySignedIn)
         {
             if (signInScreen.isDataComplete()) //If all the data has been filled out as necessary
             {
@@ -63,12 +63,13 @@ public:
                 profileScreen.updateProfilePicture();
                 utilityScreen.updateProfilePicture();
                 
-                profileData->saveToKeychain();
-                
                 utilityScreen.setDevName (profileData->getName());
                 utilityScreen.setDevID (profileData->getDevID());
                 
                 setCurrentScreen (UTILITY);
+                
+                if (shouldStaySignedIn)
+                    profileData->saveToKeychain();
             }
         };
         
@@ -76,7 +77,13 @@ public:
         profileScreen.onSignOut = [&]
         {
             setCurrentScreen (SIGN_IN);
-            bool deleteStatus = profileData->removeFromKeychain ("Notaryze");
+            
+            //TODO turn this into a private member variable flag based system
+            if (signInScreen.keepMeSignedInButton.getToggleState())
+            {
+                bool deleteStatus = profileData->removeFromKeychain ("Notaryze");
+            }
+            
             signInScreen.clearTextEditors();
         };
         
