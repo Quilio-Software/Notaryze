@@ -26,11 +26,7 @@
 /** Config: RunHeadless
           If set to Enabled,  automatic dialogs will be disabled getAllStoredUsernamesAndPasswords (). This allows for usage of the Credential Manager in CommandLine applications and Plug-Ins
 */
-#define RunHeadless 0
-
-#ifndef RunHeadless
-#define RunHeadless 0
-#endif
+#define RunHeadless 1
 
 typedef juce::String Name;
 typedef juce::String Password;

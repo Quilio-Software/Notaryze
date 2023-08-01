@@ -205,7 +205,7 @@ bool AppCredentials::updateEntry (const SigningDetails& creds)
             };
             
 #if RunHeadless
-            return updatePassword ();
+            return updateDetails ();
 #else
             auto o = juce::MessageBoxOptions ().withTitle("It seems your password has changed")
                                          .withMessage ("Do you want to update your saved login?")

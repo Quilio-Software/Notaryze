@@ -137,6 +137,14 @@ public:
 //        addAndMakeVisible (*quilioLogoButton);
     }
     
+    void clearTextEditors()
+    {
+        for (auto& textEditor : textEditors)
+        {
+            textEditor->clear();
+        }
+    }
+    
     ~SignInScreen()
     {
         textEditors.clear (false);

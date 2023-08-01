@@ -77,6 +77,7 @@ public:
         {
             setCurrentScreen (SIGN_IN);
             bool deleteStatus = profileData->removeFromKeychain ("Notaryze");
+            signInScreen.clearTextEditors();
         };
         
         utilityScreen.onLogo    = [&] { launchWebpage (quilioWebsiteURL); };
