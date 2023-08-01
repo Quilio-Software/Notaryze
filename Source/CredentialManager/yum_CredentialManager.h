@@ -51,6 +51,9 @@ struct AppCredentials
     
     /// returns if at least one item for the given app exists in system credential manager
     static bool anyExist ();
+    
+    /// Removes a particular entry from the keychain
+    static bool removeEntry (const SigningDetails& creds);
 
     /// returns if a given username already has credentials stored in the keychain
     static bool userCredentialsExist (const Name& name);

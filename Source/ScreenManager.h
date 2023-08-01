@@ -73,7 +73,11 @@ public:
         };
         
         profileScreen.onBack    = [&] { setCurrentScreen (UTILITY); };
-        profileScreen.onSignOut = [&] { setCurrentScreen (SIGN_IN); };
+        profileScreen.onSignOut = [&]
+        {
+            setCurrentScreen (SIGN_IN);
+            bool deleteStatus = profileData->removeFromKeychain ("Notaryze");
+        };
         
         utilityScreen.onLogo    = [&] { launchWebpage (quilioWebsiteURL); };
         utilityScreen.onProfile = [&] { setCurrentScreen (PROFILE); };

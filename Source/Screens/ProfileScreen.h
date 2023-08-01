@@ -72,7 +72,7 @@ public:
         addAndMakeVisible (profilePictureButton);
         profilePictureButton.onClick = [&]
         {
-            chooseProfilePicture();
+//            chooseProfilePicture();
         };
         
 //        profilePictureButton.setImages (profilePictureButtonImageDefault, profilePictureButtonImageHover, profilePictureButtonImageDown);
