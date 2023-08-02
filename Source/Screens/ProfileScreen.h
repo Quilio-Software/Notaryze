@@ -26,9 +26,9 @@ class ProfileScreen : public Screen
     
     juce::Label emailLabel, devIDLabel;
     
-    juce::Image profilePictureImage;// = juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircle_png, BinaryData::profilePicCircle_pngSize);
+    juce::Image profilePicCircleImageDefault;
     
-    juce::Image profilePicCircleImageHover =  juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircleHover_png, BinaryData::profilePicCircleHover_pngSize);
+
     
     juce::Image loadImage (const std::string& imageName)
     {
@@ -49,18 +49,30 @@ class ProfileScreen : public Screen
     
 public:
     
+    std::shared_ptr<ProfileData> profileData;
+    void setProfileData (std::shared_ptr<ProfileData>& newProfileData) { profileData = newProfileData; }
+    
+    //TODO: change to updateProfileData()
+    void updateProfilePicture()
+    {
+        setName (profileData->getName());
+        setEmail (profileData->getEmail());
+        setDevID (profileData->getDevID());
+        
+        profilePictureButton.setImages (true, true, true, profileData->getProfilePicture(), 1.0f, {}, profileData->getProfilePicture(), 1.0f, {}, profileData->getProfilePicture(), 1.0f, {});
+        resized();
+        repaint();
+    }
+    
+    std::function<void()> chooseProfilePicture;
+    
     ProfileScreen()
     {
 //        addAndMakeVisible (*quilioLogoButton);
         addAndMakeVisible (profilePictureButton);
         profilePictureButton.onClick = [&]
         {
-            juce::FileChooser chooser{ "Please load a file" };
-            if (chooser.browseForFileToOpen ())
-            {
-                auto file = chooser.getResult();
-                
-            }
+            chooseProfilePicture();
         };
         
 //        profilePictureButton.setImages (profilePictureButtonImageDefault, profilePictureButtonImageHover, profilePictureButtonImageDown);
@@ -84,7 +96,7 @@ public:
         signOutButton.setColour (juce::ComboBox::outlineColourId, juce::Colour::fromString ("#ffF2571D"));
         signOutButton.setColour (juce::TextButton::textColourOffId, juce::Colour::fromString ("#ffF2571D"));
         signOutButton.setColour (juce::TextButton::textColourOnId, juce::Colour::fromString ("#ffF2571D"));
-        
+
         profilePictureImage = loadImage ("profilePicCircle");
         profilePictureButton.setImages (true, true, true, profilePictureImage, 1.0f, {}, profilePicCircleImageHover, 1.0f, {}, profilePicCircleImageHover, 1.0f, {});
         

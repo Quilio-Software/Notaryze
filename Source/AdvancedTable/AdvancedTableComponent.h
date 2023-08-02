@@ -18,7 +18,9 @@
 #include "DataModel.h"
 #include "TableStyling.h"
 
-#include <Security/SecStaticCode.h>
+#ifdef JUCE_MAC
+    #include <Security/SecStaticCode.h>
+#endif
 
 class StatusPill : public juce::Component, public juce::StatusPillTooltip, public juce::SettableTooltipClient
 {
@@ -209,10 +211,10 @@ public:
     
     
     juce::Image statusLoadingIconImage = juce::ImageFileFormat::loadFrom (BinaryData::statusLoadingIcon_png, BinaryData::statusLoadingIcon_pngSize);
-
     AdvancedTableComponent (std::vector<ColumnData> columns)
     {
         AdvancedTableComponent (columns, std::vector<RowData> ());
+
 
     }
     
@@ -276,6 +278,7 @@ public:
     
     juce::String getStatus (juce::File file)
     {
+#ifdef JUCE_MAC
         juce::String command = "codesign -dv -- \"" + file.getFullPathName() + "\"";
         juce::String status = "Unsigned";
         std::string output;
@@ -304,6 +307,8 @@ public:
         }
 
         return status;
+#endif
+        return "WINDOWS";
     }
 
     AdvancedTableComponent (std::vector<ColumnData> columns, std::vector<RowData> data)
@@ -472,9 +477,6 @@ public:
         else if (tableState == HAS_ITEMS)
             g.drawImage (tableBackgroundHasItems, juce::Rectangle<float> (0, 0, getWidth(), getHeight()));
                 
-        
-        DBG (tableState);
-        
         if (tableState == NO_ITEMS || getIsDraggingToEmptyTable())
         {
             juce::String text ("drop files to upload");
@@ -661,6 +663,22 @@ public:
         }
     }
     
+
+    void drawClearCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+    {
+
+        //load in all trash icon states
+        juce::MemoryBlock svgDataDefault (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
+        juce::MemoryBlock svgDataHover (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
+ //       juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
+
+        
+        auto svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
+        auto svg = juce::Drawable::createFromSVG (*svgDocument);
+        juce::Rectangle<float> trashRect (40.0f, 10.0f, 9.82f, 12.0f);
+        svg->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
+    }
+    
     //This function has to do with cell drawing
     void paintCell (juce::Graphics& g, int rowNumber, int columnId,
                     int width, int height, bool rowIsSelected) override
@@ -769,6 +787,9 @@ public:
     void resized() override
     {
         table.setBoundsInset (juce::BorderSize<int> (8));
+        
+//        drawableComposite.setBoundingBox (getBounds().toFloat());
+//        drawableComposite.setContentArea (getBounds().toFloat());
     }
 
 private:
