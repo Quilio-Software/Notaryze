@@ -22,6 +22,75 @@
 
 using namespace YumAudio;
 
+bool AppCredentials::removeEntry (const SigningDetails& details)
+{
+    const auto name = std::get<0> (details);
+    const auto email = std::get<1> (details);
+    const auto developerID = std::get<2> (details);
+    const auto password = std::get<3> (details);
+    
+    juce::String applicationName = "Notaryze";
+    
+    if (password.isEmpty () || name.isEmpty () || developerID.isEmpty() || email.isEmpty()) return false;
+    
+    auto createEntry = [&, applicationName, name, email, developerID, password]() -> bool
+    {
+        JUCE_AUTORELEASEPOOL
+        {
+            const int numOptions = 8;
+            
+            CFStringRef keys [numOptions];
+            keys[0] = kSecClass;
+            keys[1] = kSecAttrAccount;
+            keys[2] = kSecValueData;
+            keys[3] = kSecValueData;
+            keys[4] = kSecValueData;
+            keys[5] = kSecValueData;
+            keys[6] = kSecAttrService;
+            keys[7] = kSecAttrAccessible;
+            
+            CFTypeRef values [numOptions];
+            values[0] = kSecClassGenericPassword;
+            values[1] = applicationName.toCFString();
+            values[2] = name.toCFString();
+            values[3] = email.toCFString();
+            values[4] = developerID.toCFString ();
+            values[5] = password.toCFString ();
+            values[6] = juce::String (ProjectInfo::projectName).toCFString();
+            values[7] = kSecAttrAccessibleAfterFirstUnlock;
+            
+            CFDictionaryRef query;
+            query = CFDictionaryCreate (kCFAllocatorDefault,
+                                        (const void**) keys,
+                                        (const void**) values,
+                                        numOptions, NULL, NULL);
+            
+            return SecItemDelete (query) == 0;
+        }
+    };
+    
+    auto credentialsExist = userCredentialsExist (name);
+    if ( ! credentialsExist )
+    {
+#if RunHeadless
+        return createEntry ();
+#else
+        auto o = juce::MessageBoxOptions ().withTitle("Save login data in Keychain?")
+            .withMessage ("Do you want to store your login data in Keychain?")
+            .withButton ("Yes").withButton ("No");
+        
+        juce::AlertWindow::showAsync (o, [&, createEntry](int result)
+                                      {
+            if (result == 1)
+                createEntry ();
+        });
+        
+        return true;
+#endif
+        
+    }
+}
+
 bool AppCredentials::updateEntry (const SigningDetails& creds)
 {
     const auto name = std::get<0> (creds);
@@ -136,7 +205,7 @@ bool AppCredentials::updateEntry (const SigningDetails& creds)
             };
             
 #if RunHeadless
-            return updatePassword ();
+            return updateDetails ();
 #else
             auto o = juce::MessageBoxOptions ().withTitle("It seems your password has changed")
                                          .withMessage ("Do you want to update your saved login?")

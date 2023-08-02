@@ -104,9 +104,24 @@ public:
         return memBlock.toBase64Encoding();
     }
     
-    juce::String decryptData(const juce::String& data, const juce::String& key)
+    juce::String decryptData (const juce::String& data, const juce::String& key)
     {
-        return encryptData(data, key);  // XOR decryption is the same as encryption
+        return encryptData (data, key);  // XOR decryption is the same as encryption
+    }
+    
+    bool removeFromKeychain (juce::String applicationName)
+    {
+        // Extract other details from the keychain result or provide appropriate default values
+        const Name _name = name;
+        const Password _password = password;
+        const Email _email = email;
+        const DeveloperID _developerID = devID;
+        
+        DBG ("Deleting with element" + name + password + email + devID);
+
+        // Create and return the SigningDetails tuple
+        SigningDetails signingDetails = std::make_tuple (_name, _password, _developerID, _email);
+        credentialsManager.removeEntry (signingDetails);
     }
 
 //    juce::String fromBase64 (const juce::String& input)

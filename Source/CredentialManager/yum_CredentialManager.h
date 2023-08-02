@@ -26,11 +26,7 @@
 /** Config: RunHeadless
           If set to Enabled,  automatic dialogs will be disabled getAllStoredUsernamesAndPasswords (). This allows for usage of the Credential Manager in CommandLine applications and Plug-Ins
 */
-#define RunHeadless 0
-
-#ifndef RunHeadless
-#define RunHeadless 0
-#endif
+#define RunHeadless 1
 
 typedef juce::String Name;
 typedef juce::String Password;
@@ -51,6 +47,9 @@ struct AppCredentials
     
     /// returns if at least one item for the given app exists in system credential manager
     static bool anyExist ();
+    
+    /// Removes a particular entry from the keychain
+    static bool removeEntry (const SigningDetails& creds);
 
     /// returns if a given username already has credentials stored in the keychain
     static bool userCredentialsExist (const Name& name);

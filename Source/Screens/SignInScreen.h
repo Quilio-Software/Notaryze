@@ -83,6 +83,7 @@ class SignInScreen : public Screen, public juce::TextEditor::Listener
     juce::Image quilioLogoImage = juce::ImageFileFormat::loadFrom (BinaryData::quilioLogo_4x_png, BinaryData::quilioLogo_4x_pngSize);
     
     juce::ImageButton quilioLogoButton;
+
     juce::ToggleButton keepMeSignedInButton;
     
     PaddedTextEditor passEditor {"Pass"}, emailEditor {"Email"}, teamIdEditor {"Team ID"}, nameEditor {"Name"};
@@ -91,6 +92,8 @@ class SignInScreen : public Screen, public juce::TextEditor::Listener
     juce::GlowEffect glow;
     DisappearingMessage disappearingMessage;
 public:
+    
+    juce::ImageButton keepMeSignedInButton;
     
     std::function<void(bool)> onSubmit = [](bool value){};
     
@@ -159,6 +162,14 @@ public:
     }
 
     juce::Image submitButtonSnapshot;
+    
+    void clearTextEditors()
+    {
+        for (auto& textEditor : textEditors)
+        {
+            textEditor->clear();
+        }
+    }
     
     ~SignInScreen()
     {
