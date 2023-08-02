@@ -20,6 +20,137 @@
 
 #include <Security/SecStaticCode.h>
 
+class StatusPill : public juce::Component, public juce::StatusPillTooltip, public juce::SettableTooltipClient
+{
+
+public:
+    StatusPill()
+    {
+        juce::StatusPillTooltip toolTipStyling;
+    }
+    
+    void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const float& cornerSize = 10.0f)
+    {
+        juce::Colour colour;
+
+        std::unordered_map<juce::String, juce::Colour> statusToColour
+        {
+            {"Uploading", juce::Colour::fromString ("#ffDEE833")},
+            {"Unsigned", juce::Colour::fromString ("#ff2D72E1")},
+            {"Signed", juce::Colour::fromString ("#ff34A700")},
+            {"Success", juce::Colour::fromString ("#ff34A700")},
+            {"Error", juce::Colours::red }
+        };
+
+        auto it = statusToColour.find(text);
+        if (it != statusToColour.end())
+        {
+            colour = it->second;
+        }
+        else
+        {
+            // handle the case when the text is not found in the map
+            // for example, you might want to assign a default colour
+            colour = juce::Colours::black;
+        }
+
+        // Draw the text with padding
+        juce::Font font (10.0f);
+        g.setFont (font);
+        
+        int padding = 8;
+
+        // Set up the rectangle parameters with padding
+
+        float textWidth = font.getStringWidth (text);
+
+        juce::Rectangle<float> textBounds (7, 6, width - 14, 20);
+
+        // Calculate the x origin (left position) of the text
+        float xOrigin = (width - textWidth) / 2.0f - padding; // + (textBounds.getWidth() - textWidth) / 2.0f;
+        
+  //      g.fillAll (juce::Colours::blue);
+
+        //TODO: Fix this god awful positioning
+        // It looks like the offset amount changes based on the text there...
+        juce::Rectangle<float> rectangleBounds (xOrigin, 6, textWidth + 2 * padding, height - 12);
+
+        // Draw the rounded rectangle with padding
+        g.setColour (colour);
+        g.drawRoundedRectangle (rectangleBounds, cornerSize, 1.0f);
+        
+        g.drawText (text, textBounds.reduced (5), juce::Justification::centred, true);
+
+        // Center the rounded rectangle vertically within the row
+        float yOffset = (height - textBounds.getHeight()) / 2.0f;
+        textBounds.setY (y + yOffset);
+
+        // Center the rounded rectangle horizontally within the cell
+        float xOffset = (width - textBounds.getWidth()) / 2.0f;
+        textBounds.setX (x + xOffset);
+
+        // Draw the background
+        g.setColour (juce::LookAndFeel::getDefaultLookAndFeel().findColour (juce::ListBox::backgroundColourId));
+        g.fillRect (x + width - 1, y, 1, height);
+        
+        setTooltipHelperFunction (text);
+    }
+    
+    void setTooltipHelperFunction (juce::String status)
+    {
+        std::unordered_map<juce::String, juce::String> statusToTooltip
+        {
+            {"Unsigned", "Unsigned"},
+            {"Uploading", "File upload in progress"},
+            {"Signed", "Signed by <Dev name>"},
+            {"Success", "Signed by <Dev name>"},
+            {"Error state 1", "Not signed in"},
+            {"Error state 2", "Product sign failed"},
+            {"Error state 3", "Notarization failed"},
+            {"Error state 4", "Staple failed"},
+            {"Error state 5", "Staple failed"},
+            {"Error state 6", "Code sign failed"},
+            {"Error state 7", "Connection error"},
+            {"Error state 8", "Timed out"},
+            {"Signing in progress", "Signing in progress"}
+        };
+        
+        juce::String tooltipMessage;
+        
+        auto tooltipIterator = statusToTooltip.find (status);
+        if (tooltipIterator != statusToTooltip.end()) { tooltipMessage = tooltipIterator->second; }
+        setTooltip (tooltipMessage);
+    }
+};
+
+class ClearCell : public juce::Component
+{
+    
+public:
+    
+    ClearCell(){}
+    
+    void drawClearCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+    {
+        //load in all trash icon states
+        juce::MemoryBlock svgDataDefault (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
+        juce::MemoryBlock svgDataHover (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
+        juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
+        
+        auto svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
+        auto svg = juce::Drawable::createFromSVG (*svgDocument);
+        juce::Rectangle<float> trashRect (40.0f, 10.0f, 9.82f, 12.0f);
+        svg->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
+    }
+};
+
+class ClearButton : public juce::Component
+{
+    
+public:
+    ClearButton(){}
+    
+};
 
 class AdvancedTableComponent : public juce::AnimatedAppComponent,
                                public juce::TableListBoxModel,
@@ -239,7 +370,15 @@ public:
         table.setClickingTogglesRowSelection (false);
         
         setFramesPerSecond (60);
+        
+        addAndMakeVisible (statusPill);
+        addAndMakeVisible (clearCell);
+        juce::TooltipWindow tooltipWindow = juce::TooltipWindow ();
     }
+    
+    StatusPill statusPill;
+    ClearCell clearCell;
+    ClearButton clearButton;
     
     ~AdvancedTableComponent()
     {
@@ -510,19 +649,6 @@ public:
         }
     }
     
-    void drawClearCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
-    {
-        //load in all trash icon states
-        juce::MemoryBlock svgDataDefault (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
-        juce::MemoryBlock svgDataHover (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
-        juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
-        
-        auto svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
-        auto svg = juce::Drawable::createFromSVG (*svgDocument);
-        juce::Rectangle<float> trashRect (40.0f, 10.0f, 9.82f, 12.0f);
-        svg->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
-    }
-    
     //This function has to do with cell drawing
     void paintCell (juce::Graphics& g, int rowNumber, int columnId,
                     int width, int height, bool rowIsSelected) override
@@ -533,7 +659,7 @@ public:
         }
         else if (columnId == CLEAR) //If we're on the Clear Column
         {
-            drawClearCell (g, rowNumber, columnId, width, height, rowIsSelected);
+            clearCell.drawClearCell (g, rowNumber, columnId, width, height, rowIsSelected);
         }
         else
         {

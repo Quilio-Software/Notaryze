@@ -81,6 +81,13 @@ public:
     juce::String getPassword() const { return password; }
 };
 
+class DisappearingMessage : public juce::Component
+{
+    
+public:
+    DisappearingMessage(){}
+    
+};
 
 class SignInScreen : public Screen, public juce::TextEditor::Listener
 {
@@ -102,7 +109,7 @@ class SignInScreen : public Screen, public juce::TextEditor::Listener
     juce::OwnedArray<PaddedTextEditor> textEditors {{ &nameEditor, &emailEditor, &teamIdEditor, &passEditor }};
     
     juce::GlowEffect glow;
-    
+    DisappearingMessage disappearingMessage;
 public:
     
     std::function<void(bool)> onSubmit = [](bool value){};
@@ -167,6 +174,8 @@ public:
             
             repaint();
         };
+        
+        addAndMakeVisible (disappearingMessage);
     }
 
     juce::Image submitButtonSnapshot;
