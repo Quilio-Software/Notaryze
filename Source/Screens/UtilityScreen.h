@@ -195,7 +195,33 @@ public:
         nameLabel.setFont (juce::Font (20.0));
         nameLabel.setColour (juce::Label::textColourId, juce::Colour::fromString ("#ffA6A6A6"));
         nameLabel.setJustificationType (juce::Justification::right);
+        
+        uploadButton.onStateChange = [&]
+        {
+            if (uploadButton.isDown()) {}
+            else if (uploadButton.isOver())
+            {
+                uploadButtonSnapshot = getDropShadowSnapshotFromComponent (&uploadButton);
+            }
+            else {}
+            
+            repaint();
+        };
+        startButton.onStateChange = [&]
+        {
+            if (uploadButton.isDown()){}
+            else if (startButton.isOver())
+            {
+                startButtonSnapshot = getDropShadowSnapshotFromComponent (&startButton);
+            }
+            else{}
+            
+            repaint();
+        };
     }
+    
+    juce::Image uploadButtonSnapshot;
+    juce::Image startButtonSnapshot;
     
     void toggleSigningTableType()
     {
@@ -225,12 +251,55 @@ public:
         return false;
     }
     
+    juce::GlowEffect glowEffect;
+    
+    juce::Image getGlowSnapshotFromComponent (juce::Component* component)
+    {
+        juce::Rectangle<int> area (-12, -12, component->getWidth() + 24, component->getHeight() + 24);
+        juce::Image snapshot = component->createComponentSnapshot (area, false);
+        juce::Graphics snapshotGraphics (snapshot);
+    
+        glowEffect.setGlowProperties (24.0f, juce::Colour (217, 217, 217).withAlpha (0.1f));
+        glowEffect.applyEffect (snapshot, snapshotGraphics, 0.2f, 1.0f);
+
+        return snapshot;
+    }
+    
+    juce::Image getDropShadowSnapshotFromComponent (juce::Component* component)
+    {
+        juce::Rectangle<int> area (-12, -12, component->getWidth() + 24, component->getHeight() + 24);
+        juce::Image snapshot = component->createComponentSnapshot (area, false);
+        juce::Graphics snapshotGraphics (snapshot);
+        
+        juce::DropShadow dropShadow (juce::Colour (140, 140, 140).withAlpha (1.0f), 10.0f, {0, 0});
+        juce::DropShadowEffect dropShadowEffect;
+        dropShadowEffect.setShadowProperties (dropShadow);
+        dropShadowEffect.applyEffect (snapshot, snapshotGraphics, 1.0f, 1.0f);
+        
+        return snapshot;
+    }
     
     juce::Image backgroundImage = juce::ImageFileFormat::loadFrom (BinaryData::UtilityScreenBackground_png, BinaryData::UtilityScreenBackground_pngSize);
     void paint (juce::Graphics& g) override
     {
         juce::Rectangle<float> area = getBounds().toFloat();
         g.drawImage (backgroundImage, area);
+        
+        juce::AffineTransform moveUploadButton;
+        moveUploadButton = juce::AffineTransform::translation (uploadButton.getX() - 12, uploadButton.getY() - 12);
+
+        if (uploadButton.isDown()){}
+        else if (uploadButton.isOver())
+            g.drawImageTransformed (uploadButtonSnapshot, moveUploadButton);
+        
+        juce::AffineTransform moveStartButton;
+        moveStartButton = juce::AffineTransform::translation (startButton.getX() - 12, startButton.getY() - 12);
+        
+        if (startButton.isDown()){}
+        else if (startButton.isOver())
+        {
+            g.drawImageTransformed (startButtonSnapshot, moveStartButton);
+        }
     }
     
     juce::String removeDotAndCapitalize (juce::String inputString)

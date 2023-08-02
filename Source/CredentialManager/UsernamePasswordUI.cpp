@@ -3,6 +3,7 @@
 #include "yum_CredentialManager.h"
 
 using namespace YumAudio;
+#ifdef JUCE_MAC
 
 UsernamePasswordUI::UsernamePasswordUI ()
 {
@@ -169,3 +170,6 @@ void UsernamePasswordUI::closeCredentialsPopup ()
     PopupMenu::dismissAllActiveMenus ();
 
 }
+
+
+#endif

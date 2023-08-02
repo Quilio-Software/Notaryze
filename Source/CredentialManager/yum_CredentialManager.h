@@ -20,7 +20,7 @@
 #pragma once
 #include <JuceHeader.h>
 
-
+#ifdef JUCE_MAC
 
 
 /** Config: RunHeadless
@@ -87,3 +87,6 @@ struct Certificates
 };
 
 }
+
+
+#endif // JUCE_MAC
