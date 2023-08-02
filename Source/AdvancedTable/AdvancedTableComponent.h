@@ -130,6 +130,18 @@ public:
     
     ClearCell(){}
     
+    bool isEntered = false;
+    
+    void mouseEnter (const juce::MouseEvent &event) override
+    {
+        isEntered = true;
+    }
+    void mouseExit (const juce::MouseEvent &event) override
+    {
+        isEntered = false;
+    }
+    
+    
     void drawClearCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
     {
         //load in all trash icon states
