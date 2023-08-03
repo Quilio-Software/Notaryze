@@ -84,8 +84,6 @@ class SignInScreen : public Screen, public juce::TextEditor::Listener
     
     juce::ImageButton quilioLogoButton;
 
-    juce::ToggleButton keepMeSignedInButton;
-    
     PaddedTextEditor passEditor {"Pass"}, emailEditor {"Email"}, teamIdEditor {"Team ID"}, nameEditor {"Name"};
     juce::OwnedArray<PaddedTextEditor> textEditors {{ &nameEditor, &emailEditor, &teamIdEditor, &passEditor }};
     
@@ -93,7 +91,7 @@ class SignInScreen : public Screen, public juce::TextEditor::Listener
     DisappearingMessage disappearingMessage;
 public:
     
-    juce::ImageButton keepMeSignedInButton;
+    juce::ToggleButton keepMeSignedInButton;
     
     std::function<void(bool)> onSubmit = [](bool value){};
     

@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="oyjBqG" name="Notaryze" projectType="guiapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" defines="JUCE_MODAL_LOOPS_PERMITTED=1"
-              cppLanguageStandard="17">
+              cppLanguageStandard="latest">
   <MAINGROUP id="zkUI0t" name="Notaryze">
     <GROUP id="{73768C8C-40C5-4F1E-FE8B-5B7C47599EEB}" name="Source">
       <GROUP id="{13268295-19AD-FED7-E4BC-D1275827DAEA}" name="CredentialManager">

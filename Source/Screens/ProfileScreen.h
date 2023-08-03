@@ -28,6 +28,9 @@ class ProfileScreen : public Screen
     
     juce::Image profilePicCircleImageDefault;
     
+    juce::Image profilePictureImage = juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircle_png, BinaryData::profilePicCircle_pngSize);
+
+    
 
     
     juce::Image loadImage (const std::string& imageName)
@@ -97,8 +100,8 @@ public:
         signOutButton.setColour (juce::TextButton::textColourOffId, juce::Colour::fromString ("#ffF2571D"));
         signOutButton.setColour (juce::TextButton::textColourOnId, juce::Colour::fromString ("#ffF2571D"));
 
-        profilePictureImage = loadImage ("profilePicCircle");
-        profilePictureButton.setImages (true, true, true, profilePictureImage, 1.0f, {}, profilePicCircleImageHover, 1.0f, {}, profilePicCircleImageHover, 1.0f, {});
+    //    profilePictureImage = loadImage ("profilePicCircle");
+        profilePictureButton.setImages (true, true, true, profilePictureImage, 1.0f, {}, profilePictureImage, 1.0f, {}, profilePictureImage, 1.0f, {});
         
         backButton.onStateChange = [&]
         {
