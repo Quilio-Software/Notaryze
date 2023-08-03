@@ -152,10 +152,11 @@
               file="Resources/SignInScreen/quilioLogo_4x.png"/>
       </GROUP>
     </GROUP>
+    <GROUP id="{7613A9EA-8EA7-A4C8-90F6-475B78EB6DC6}" name="Frameworks"/>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" embeddedFrameworks="Security.framework&#10;">
+    <XCODE_MAC targetFolder="Builds/MacOSX" embeddedFrameworks="/Users/abhishekshivakumar/quilio-dev/Notaryze/Frameworks/Security.framework">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="Notaryze" macOSDeploymentTarget="10.13"
                        osxCompatibility="10.13 SDK"/>

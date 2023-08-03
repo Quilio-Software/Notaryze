@@ -27,7 +27,6 @@ public:
     //Declare profile data first
     std::shared_ptr<ProfileData> profileData;
     
-    
     SignInScreen signInScreen;
     UtilityScreen utilityScreen;
     ProfileScreen profileScreen;
@@ -90,7 +89,6 @@ public:
         utilityScreen.onLogo    = [&] { launchWebpage (quilioWebsiteURL); };
         utilityScreen.onProfile = [&] { setCurrentScreen (PROFILE); };
         
-        
         profileData = std::make_shared<ProfileData>();
         if (profileData->loadFromKeychain ("Notaryze"))
         {
@@ -98,8 +96,6 @@ public:
             utilityScreen.setProfileData (profileData);
             profileScreen.updateProfilePicture();
             utilityScreen.updateProfilePicture();
-            
-//            profileData->saveToKeychain();
             
             utilityScreen.setDevName (profileData->getName());
             utilityScreen.setDevID (profileData->getDevID());

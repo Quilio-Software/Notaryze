@@ -14,7 +14,13 @@
 class TableComponentStyling : public juce::LookAndFeel_V4
 {
     juce::Colour columnHeaderColour = juce::Colours::white;
+    juce::Typeface::Ptr poppinsSemiBoldTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::PoppinsSemiBold_ttf, BinaryData::PoppinsSemiBold_ttfSize);
+    juce::Typeface::Ptr poppinsRegularTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::PoppinsRegular_ttf, BinaryData::PoppinsRegular_ttfSize);
 
+    
+    juce::Typeface::Ptr getSemiBoldTypeFace() { return poppinsSemiBoldTypeface; }
+    juce::Typeface::Ptr getRegularTypeFace() { return poppinsRegularTypeface; }
+    
 public:
     TableComponentStyling()
     {
@@ -30,6 +36,40 @@ public:
     
     bool canSeeHeader = false;
     void setHeaderVisibility (bool visibility) {canSeeHeader = visibility;}
+    
+    void drawTooltip (juce::Graphics& g, const juce::String& text, int width, int height) override
+    {
+        juce::String tooltipMessage = text;
+
+        // calculate
+        // - 2 - pill height - rectangle
+        // 2 px above status pill
+        // max size - (109, 32)
+        // max textbox - (93, 24)
+
+        // add text
+        juce::Colour fontColour = juce::Colour (89, 89, 89);
+        juce::Typeface::Ptr lightTypeFace = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsLight_ttf, BinaryData::PoppinsLight_ttfSize);
+        g.setFont (lightTypeFace);
+        g.setColour (fontColour);
+        juce::Font font = g.getCurrentFont();
+        int stringWidth = font.getStringWidth (tooltipMessage);
+        juce::Rectangle<int> fontRectangle (8, 4, stringWidth, 12);
+
+        //set up rectangle
+        juce::Colour rectangleFillColour = juce::Colour (239, 239, 239);
+        juce::Colour rectangleOutlineColour = juce::Colour (217, 217, 217);
+
+        juce::Rectangle<float> tooltipRectangle (0, 0, stringWidth + 16.0f, 20.0f);
+        g.setColour (rectangleFillColour);
+        g.fillRoundedRectangle (tooltipRectangle, 4.0f);
+
+        g.setColour (rectangleOutlineColour);
+        g.drawRoundedRectangle (tooltipRectangle, 4.0f, 1.0f);
+
+        //draw text
+        g.drawFittedText (tooltipMessage, fontRectangle, juce::Justification::centred, 1);
+    }
     
     void drawTableHeaderBackground (juce::Graphics& g, juce::TableHeaderComponent& header) override
     {
@@ -52,9 +92,7 @@ public:
         
         
     }
-
-    juce::Typeface::Ptr poppinsSemiBoldTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::PoppinsSemiBold_ttf, BinaryData::PoppinsSemiBold_ttfSize);
-    juce::Typeface::Ptr poppinsRegularTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::PoppinsRegular_ttf, BinaryData::PoppinsRegular_ttfSize);
+    
     void drawTableHeaderColumn (juce::Graphics& g, juce::TableHeaderComponent& header,
                                                 const juce::String& columnName, int /*columnId*/,
                                                 int width, int height, bool isMouseOver, bool isMouseDown,
@@ -157,61 +195,3 @@ public:
     
     std::function<void()> clearAllData;
 };
-
-namespace juce {
-
-class StatusPillTooltip : public TableComponentStyling
-{
-    
-public:
-    StatusPillTooltip() {}
-    
-    void drawTooltip (Graphics& g, const String& text, int width, int height) override
-    {
-        juce::String tooltipMessage = text;
-
-
-        // calculate
-        // - 2 - pill height - rectangle
-        // 2 px above status pill
-        // max size - (109, 32)
-        // max textbox - (93, 24)
-
-        // add text
-        juce::Colour fontColour = juce::Colour (89, 89, 89);
-        juce::Typeface::Ptr lightTypeFace = juce::Typeface::createSystemTypefaceFor (BinaryData::PoppinsLight_ttf, BinaryData::PoppinsLight_ttfSize);
-        g.setFont (lightTypeFace);
-        g.setColour (fontColour);
-        juce::Font font = g.getCurrentFont();
-        int stringWidth = font.getStringWidth (tooltipMessage);
-        juce::Rectangle<int> fontRectangle (8, 4, stringWidth, 12);
-
-        //set up rectangle
-        juce::Colour rectangleFillColour = juce::Colour (239, 239, 239);
-        juce::Colour rectangleOutlineColour = juce::Colour (217, 217, 217);
-
-        juce::Rectangle<float> tooltipRectangle (0, 0, stringWidth + 16.0f, 20.0f);
-        g.setColour (rectangleFillColour);
-        g.fillRoundedRectangle (tooltipRectangle, 4.0f);
-
-        g.setColour (rectangleOutlineColour);
-        g.drawRoundedRectangle (tooltipRectangle, 4.0f, 1.0f);
-
-        //draw text
-        g.drawFittedText (tooltipMessage, fontRectangle, juce::Justification::centred, 1);
-    }
-
-    Rectangle<int> getTooltipBounds (const String& tipText, Point<int> screenPos, Rectangle<int> parentArea) override
-    {
-        juce::Font font = poppinsRegularTypeface;
-        int width = font.getStringWidth (tipText) + 16;
-
-        return Rectangle<int> (parentArea.getX() - parentArea.getX()/2, parentArea.getY() - 2 - 20, width, 20);
-    }
-
-//    ==============================================================================
-};
-
-}
-
-

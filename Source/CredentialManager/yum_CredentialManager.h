@@ -1,32 +1,6 @@
-/***********************************************************************************
- BEGIN_JUCE_MODULE_DECLARATION
-
-  ID:               yum_CredentialManager
-  vendor:           Yum Audio
-  version:          1.0.0
-  name:             Yum Audio - Credential Manager
-  description:      A wrapper for Keychain on macOS and CredentialManager on Windows
-  website:          https://yum-audio.com
-  license:          MIT
-
-  dependencies:    juce_core
-  OSXFrameworks:   Security
-  iOSFrameworks:   Security
-  linuxLibs:
-  mingwLibs:
-
- END_JUCE_MODULE_DECLARATION
-***********************************************************************************/
 #pragma once
 #include <JuceHeader.h>
-
 #ifdef JUCE_MAC
-
-
-/** Config: RunHeadless
-          If set to Enabled,  automatic dialogs will be disabled getAllStoredUsernamesAndPasswords (). This allows for usage of the Credential Manager in CommandLine applications and Plug-Ins
-*/
-#define RunHeadless 1
 
 typedef juce::String Name;
 typedef juce::String Password;
@@ -34,7 +8,7 @@ typedef juce::String DeveloperID;
 typedef juce::String Email;
 typedef std::tuple<Name, Password, DeveloperID, Email> SigningDetails;
 
-namespace YumAudio
+namespace QuilioCredentials
 {
 //using namespace juce;
 

@@ -17,113 +17,11 @@
 #include "../Helpers/FormatLibrary.h"
 #include "DataModel.h"
 #include "TableStyling.h"
+#include "../Helpers/Components.h"
 
 #ifdef JUCE_MAC
     #include <Security/SecStaticCode.h>
 #endif
-
-class StatusPill : public juce::Component, public juce::StatusPillTooltip, public juce::SettableTooltipClient
-{
-
-public:
-    StatusPill()
-    {
-        juce::StatusPillTooltip toolTipStyling;
-    }
-    
-    void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const float& cornerSize = 10.0f)
-    {
-        juce::Colour colour;
-
-        std::unordered_map<juce::String, juce::Colour> statusToColour
-        {
-            {"Uploading", juce::Colour::fromString ("#ffDEE833")},
-            {"Unsigned", juce::Colour::fromString ("#ff2D72E1")},
-            {"Signed", juce::Colour::fromString ("#ff34A700")},
-            {"Success", juce::Colour::fromString ("#ff34A700")},
-            {"Error", juce::Colours::red }
-        };
-
-        auto it = statusToColour.find(text);
-        if (it != statusToColour.end())
-        {
-            colour = it->second;
-        }
-        else
-        {
-            // handle the case when the text is not found in the map
-            // for example, you might want to assign a default colour
-            colour = juce::Colours::black;
-        }
-
-        // Draw the text with padding
-        juce::Font font (10.0f);
-        g.setFont (font);
-        
-        int padding = 8;
-
-        // Set up the rectangle parameters with padding
-
-        float textWidth = font.getStringWidth (text);
-
-        juce::Rectangle<float> textBounds (7, 6, width - 14, 20);
-
-        // Calculate the x origin (left position) of the text
-        float xOrigin = (width - textWidth) / 2.0f - padding; // + (textBounds.getWidth() - textWidth) / 2.0f;
-        
-  //      g.fillAll (juce::Colours::blue);
-
-        //TODO: Fix this god awful positioning
-        // It looks like the offset amount changes based on the text there...
-        juce::Rectangle<float> rectangleBounds (xOrigin, 6, textWidth + 2 * padding, height - 12);
-
-        // Draw the rounded rectangle with padding
-        g.setColour (colour);
-        g.drawRoundedRectangle (rectangleBounds, cornerSize, 1.0f);
-        
-        g.drawText (text, textBounds.reduced (5), juce::Justification::centred, true);
-
-        // Center the rounded rectangle vertically within the row
-        float yOffset = (height - textBounds.getHeight()) / 2.0f;
-        textBounds.setY (y + yOffset);
-
-        // Center the rounded rectangle horizontally within the cell
-        float xOffset = (width - textBounds.getWidth()) / 2.0f;
-        textBounds.setX (x + xOffset);
-
-        // Draw the background
-        g.setColour (juce::LookAndFeel::getDefaultLookAndFeel().findColour (juce::ListBox::backgroundColourId));
-        g.fillRect (x + width - 1, y, 1, height);
-        
-        setTooltipHelperFunction (text);
-    }
-    
-    void setTooltipHelperFunction (juce::String status)
-    {
-        std::unordered_map<juce::String, juce::String> statusToTooltip
-        {
-            {"Unsigned", "Unsigned"},
-            {"Uploading", "File upload in progress"},
-            {"Signed", "Signed by <Dev name>"},
-            {"Success", "Signed by <Dev name>"},
-            {"Error state 1", "Not signed in"},
-            {"Error state 2", "Product sign failed"},
-            {"Error state 3", "Notarization failed"},
-            {"Error state 4", "Staple failed"},
-            {"Error state 5", "Staple failed"},
-            {"Error state 6", "Code sign failed"},
-            {"Error state 7", "Connection error"},
-            {"Error state 8", "Timed out"},
-            {"Signing in progress", "Signing in progress"}
-        };
-        
-        juce::String tooltipMessage;
-        
-        auto tooltipIterator = statusToTooltip.find (status);
-        if (tooltipIterator != statusToTooltip.end()) { tooltipMessage = tooltipIterator->second; }
-        setTooltip (tooltipMessage);
-    }
-};
 
 class ClearCell : public juce::Component
 {
@@ -158,14 +56,6 @@ public:
     }
 };
 
-class ClearButton : public juce::Component
-{
-    
-public:
-    ClearButton(){}
-    
-};
-
 class AdvancedTableComponent : public juce::AnimatedAppComponent,
                                public juce::TableListBoxModel,
                                public juce::FileDragAndDropTarget,
@@ -173,10 +63,6 @@ class AdvancedTableComponent : public juce::AnimatedAppComponent,
                                
 {
     TableComponentStyling tableStyle;
-    
-
-
-
 
     enum ColumnNames
     {
@@ -214,8 +100,6 @@ public:
     AdvancedTableComponent (std::vector<ColumnData> columns)
     {
         AdvancedTableComponent (columns, std::vector<RowData> ());
-
-
     }
     
     void update() override;
@@ -230,39 +114,6 @@ public:
     StringVector getAllowedFileTypes() { return allowedFileTypes; }
     void setAllowedFileTypes (StringVector fileTypesToAllow) { allowedFileTypes = fileTypesToAllow; }
     void setAllowedFileTypes (FormatLibrary::Types fileType) { allowedFileTypes = FormatLibrary::getFormats (fileType); }
-    
-    /*
-    juce::String getStatus (juce::File file)
-    {
-        juce::String command = "xcrun notary -v --info " + file.getFullPathName();
-        juce::String status = "Not signed";
-        std::string output;
-
-        FILE* pipe = popen(command.toRawUTF8(), "r");
-        if (pipe)
-        {
-            char buffer[128];
-            while (fgets(buffer, sizeof(buffer), pipe) != nullptr)
-            {
-                output += buffer;
-            }
-
-            pclose(pipe);
-        }
-        else
-        {
-            std::cout << "Failed to run command: " << command << std::endl;
-            return "Error";
-        }
-
-        if (!output.empty())
-        {
-            status = "Signed";
-        }
-
-        return status;
-    }
-     */
     
     void updateRowStatuses()
     {
@@ -390,12 +241,13 @@ public:
         
         addAndMakeVisible (statusPill);
         addAndMakeVisible (clearCell);
-        juce::TooltipWindow tooltipWindow = juce::TooltipWindow ();
+        
+        addAndMakeVisible (tooltipWindow);
     }
     
+    juce::TooltipWindow tooltipWindow;
     StatusPill statusPill;
     ClearCell clearCell;
-    ClearButton clearButton;
     
     ~AdvancedTableComponent()
     {
@@ -420,14 +272,11 @@ public:
         rowToSign->setAttribute ("Status", "PROCESSING");
         updateTable();
     }
-    
-    
+
     void notarizeTable (juce::String devName, juce::String devID, bool isCodeSigning);
     
     float currentStatusIconRotationInRadians = 0.0f;
     float statusIconRotationIncrementInRadians = 0.1f;
-    
-
     
     enum TableState {NO_ITEMS, DRAGGING, HAS_ITEMS};
     TableState tableState = NO_ITEMS;
@@ -521,7 +370,6 @@ public:
         auto alternateColour = getLookAndFeel().findColour (juce::ListBox::backgroundColourId)
                                                .interpolatedWith (getLookAndFeel().findColour (juce::ListBox::textColourId), 0.03f);
 
-        
         juce::Colour rowSelectionColour = juce::Colour::fromString ("#ff000A1A");
         juce::Colour oddRowColour = juce::Colour::fromString ("#ff291523");
         juce::Colour evenRowColour = juce::Colour::fromString ("#ff000A1A");
@@ -531,72 +379,6 @@ public:
         else
             g.fillAll (oddRowColour);
     }
-    
-    //Paint Methods
-//    void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const float& cornerSize = 10.0f)
-//    {
-//        juce::Colour colour;
-//
-//        std::unordered_map<juce::String, juce::Colour> statusToColour
-//        {
-//            {"Uploading", juce::Colour::fromString ("#ffDEE833")},
-//            {"Unsigned", juce::Colour::fromString ("#ff2D72E1")},
-//            {"Signed", juce::Colour::fromString ("#ff34A700")},
-//            {"Success", juce::Colour::fromString ("#ff34A700")},
-//            {"Error", juce::Colours::red }
-//        };
-//
-//        auto it = statusToColour.find(text);
-//        if (it != statusToColour.end())
-//        {
-//            colour = it->second;
-//        }
-//        else
-//        {
-//            // handle the case when the text is not found in the map
-//            // for example, you might want to assign a default colour
-//            colour = juce::Colours::black;
-//        }
-//
-//        // Draw the text with padding
-//        juce::Font font (10.0f);
-//        g.setFont (font);
-//
-//        int padding = 8;
-//
-//        // Set up the rectangle parameters with padding
-//
-//        float textWidth = font.getStringWidth (text);
-//
-//        juce::Rectangle<float> textBounds (7, 6, width - 14, 20);
-//
-//        // Calculate the x origin (left position) of the text
-//        float xOrigin = (width - textWidth) / 2.0f - padding; // + (textBounds.getWidth() - textWidth) / 2.0f;
-//
-//  //      g.fillAll (juce::Colours::blue);
-//
-//        //TODO: Fix this god awful positioning
-//        // It looks like the offset amount changes based on the text there...
-//        juce::Rectangle<float> rectangleBounds (xOrigin, 6, textWidth + 2 * padding, height - 12);
-//
-//        // Draw the rounded rectangle with padding
-//        g.setColour (colour);
-//        g.drawRoundedRectangle (rectangleBounds, cornerSize, 1.0f);
-//
-//        g.drawText (text, textBounds.reduced (5), juce::Justification::centred, true);
-//
-//        // Center the rounded rectangle vertically within the row
-//        float yOffset = (height - textBounds.getHeight()) / 2.0f;
-//        textBounds.setY (y + yOffset);
-//
-//        // Center the rounded rectangle horizontally within the cell
-//        float xOffset = (width - textBounds.getWidth()) / 2.0f;
-//        textBounds.setX (x + xOffset);
-//
-//        // Draw the background
-//        g.setColour (juce::LookAndFeel::getDefaultLookAndFeel().findColour (juce::ListBox::backgroundColourId));
-//        g.fillRect (x + width - 1, y, 1, height);
-//    }
     
     void drawCenteredFilledSquare (juce::Graphics& g, const int& componentX, const int& componentY, const int& componentWidth, const int& componentHeight, const int& paddingTop, const int& paddingBottom, const juce::Colour& colour = juce::Colours::green)
     {
@@ -656,9 +438,7 @@ public:
             }
             else
             {
-                StatusPill statusPill;
-                juce::TooltipWindow tooltipWindow ();
-                statusPill.drawStatusPill (g, statusText, 162, 179, width, height);
+   //             statusPill.drawStatusPill (g, statusText, 162, 179, width, height);
             }
         }
     }
@@ -788,6 +568,13 @@ public:
     {
         table.setBoundsInset (juce::BorderSize<int> (8));
         
+        int cellWidth = getColumnAutoSizeWidth (2); int cellHeight = 50;
+
+        juce::Rectangle<int> cellRect = table.getCellPosition (3, 0, false);
+        
+        statusPill.setBounds (cellRect);
+
+        
 //        drawableComposite.setBoundingBox (getBounds().toFloat());
 //        drawableComposite.setContentArea (getBounds().toFloat());
     }
@@ -895,7 +682,6 @@ private:
     };
 
     //==============================================================================
-
 
     juce::String getAttributeNameForColumnId (const int columnId) const
     {

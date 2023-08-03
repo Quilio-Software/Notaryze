@@ -30,9 +30,6 @@ class ProfileScreen : public Screen
     
     juce::Image profilePictureImage = juce::ImageFileFormat::loadFrom (BinaryData::profilePicCircle_png, BinaryData::profilePicCircle_pngSize);
 
-    
-
-    
     juce::Image loadImage (const std::string& imageName)
     {
         std::string imageIdentifier = imageName + "_png";

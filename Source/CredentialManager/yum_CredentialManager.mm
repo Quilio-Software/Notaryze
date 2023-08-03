@@ -1,5 +1,4 @@
 #include "yum_CredentialManager.h"
-//#include "yum_CredentialManager.cpp"
 /// For Keychain examples see:
 /// https://es1015.tistory.com/243
 /// https://cpp.hotexamples.com/examples/-/-/SecItemCopyMatching/cpp-secitemcopymatching-function-examples.html
@@ -20,7 +19,7 @@
 
 #include <JuceHeader.h>
 
-using namespace YumAudio;
+using namespace QuilioCredentials;
 
 bool AppCredentials::removeEntry (const SigningDetails& details)
 {
@@ -141,22 +140,7 @@ bool AppCredentials::updateEntry (const SigningDetails& creds)
     auto credentialsExist = userCredentialsExist (name);
     if ( ! credentialsExist )
     {
-#if RunHeadless
         return createEntry ();
-#else
-        auto o = juce::MessageBoxOptions ().withTitle("Save login data in Keychain?")
-                                     .withMessage ("Do you want to store your login data in Keychain?")
-                                     .withButton ("Yes").withButton ("No");
-
-        juce::AlertWindow::showAsync (o, [&, createEntry](int result)
-        {
-            if (result == 1)
-                createEntry ();
-        });
-        
-        return true;
-#endif
-
     }
     else //credentials exist, check if we have to update
     {
@@ -204,22 +188,7 @@ bool AppCredentials::updateEntry (const SigningDetails& creds)
                 }
             };
             
-#if RunHeadless
             return updateDetails ();
-#else
-            auto o = juce::MessageBoxOptions ().withTitle("It seems your password has changed")
-                                         .withMessage ("Do you want to update your saved login?")
-                                         .withButton ("Yes").withButton ("No");
-
-            juce::AlertWindow::showAsync (o, [&, updateDetails](int result)
-            {
-                if (result == 1)
-                    updateDetails ();
-            });
-            
-            return true;
-#endif
-
         }
         
         return false;
@@ -492,13 +461,6 @@ juce::String Certificates::getAppIdFromSignature (const juce::File& f)
 
     return appId;
 }
-
-
-//WORKING FUNCTIONS
-
-
-
-
 
 
 juce::String Certificates::getSignerIdentity (const juce::File& f)

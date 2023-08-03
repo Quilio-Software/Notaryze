@@ -272,5 +272,4 @@ public:
         juce::String devID = teamID;
         return runCommand ("productsign --sign 'Developer ID Installer: " + devName + " (" + devID + ")" + "' '" + unsignedFileName + "' '" + signedFileName + "'");
     }
-    
 };

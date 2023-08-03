@@ -2,7 +2,7 @@
 
 #include "yum_CredentialManager.h"
 
-using namespace YumAudio;
+using namespace QuilioCredentials;
 #ifdef JUCE_MAC
 
 UsernamePasswordUI::UsernamePasswordUI ()
