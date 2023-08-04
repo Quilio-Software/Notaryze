@@ -30,7 +30,12 @@ public:
     
     TrashButton(){}
     
-    void drawClearCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+    void paint (juce::Graphics& g) override
+    {
+        drawTrashButton (g);
+    }
+    
+    void drawTrashButton (juce::Graphics& g)
     {
         //load in all trash icon states
         juce::MemoryBlock svgDataDefault (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
@@ -48,7 +53,6 @@ public:
         juce::Rectangle<float> trashRect (40.0f, 10.0f, 9.82f, 12.0f);
         svg->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
     }
-
 };
 
 class AdvancedTableComponent : public juce::AnimatedAppComponent,
