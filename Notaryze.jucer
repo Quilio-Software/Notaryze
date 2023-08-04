@@ -106,9 +106,9 @@
         </GROUP>
       </GROUP>
       <GROUP id="{7879BED4-5178-A7B3-B9D5-7221A9686697}" name="Images">
-        <FILE id="unoQHo" name="trashIcon_Default.svg" compile="0" resource="1"
+        <FILE id="NzQGTg" name="trashIcon_Default.svg" compile="0" resource="1"
               file="Resources/Images/trashIcon_Default.svg"/>
-        <FILE id="VAREqL" name="trashIcon_Disabled.svg" compile="0" resource="1"
+        <FILE id="mBK0wn" name="trashIcon_Disabled.svg" compile="0" resource="1"
               file="Resources/Images/trashIcon_Disabled.svg"/>
         <FILE id="uvRcIv" name="trashIcon_Hover.svg" compile="0" resource="1"
               file="Resources/Images/trashIcon_Hover.svg"/>

@@ -334,7 +334,7 @@ public:
     StatusPill()
     {
         setTooltip ("Hello hello testing testing");
-        setInterceptsMouseClicks (true, true);
+//        setInterceptsMouseClicks (true, true);
     }
     
     void paint (juce::Graphics& g) override
@@ -345,7 +345,7 @@ public:
     }
     
     juce::Rectangle<float> hitBounds;
-    bool hitTest(int x, int y) override
+    bool hitTest (int x, int y) override
     {
         if (x > hitBounds.getX() &&
             x < hitBounds.getX() + hitBounds.getWidth() &&
@@ -403,7 +403,7 @@ public:
         // It looks like the offset amount changes based on the text there...
         juce::Rectangle<float> rectangleBounds (xOrigin, 6, textWidth + 2 * padding, height - 12);
         
-        hitBounds = rectangleBounds;
+//        hitBounds = rectangleBounds;
 
         // Draw the rounded rectangle with padding
         g.setColour (colour);

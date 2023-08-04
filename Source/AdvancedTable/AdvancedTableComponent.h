@@ -28,7 +28,10 @@ class TrashButton : public juce::Component
     bool isHovering = false;
 public:
     
-    TrashButton(){}
+    TrashButton()
+    {
+        setInterceptsMouseClicks (true, true);
+    }
     
     void paint (juce::Graphics& g) override
     {
@@ -42,17 +45,47 @@ public:
         juce::MemoryBlock svgDataHover (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
         juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
         
-        std::unique_ptr<juce::XmlElement> svgDocument;
+        std::unique_ptr<juce::XmlElement> svgDefaultDocument;
+        std::unique_ptr<juce::XmlElement> svgHoverDocument;
         
-        if (!isHovering)
-            svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
-        else
-            svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataHover.getData()), static_cast<size_t> (svgDataHover.getSize())));
+        svgDefaultDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
 
-        auto svg = juce::Drawable::createFromSVG (*svgDocument);
+        svgHoverDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataHover.getData()), static_cast<size_t> (svgDataHover.getSize())));
+        
+        auto svgDefault = juce::Drawable::createFromSVG (*svgDefaultDocument);
+        auto svgHover = juce::Drawable::createFromSVG (*svgHoverDocument);
+        
         juce::Rectangle<float> trashRect (40.0f, 10.0f, 9.82f, 12.0f);
-        svg->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
+        
+        if (isHovering)
+            svgHover->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
+        else
+            svgDefault->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
     }
+    
+    void mouseEnter(const juce::MouseEvent& event) override
+        {
+            isHovering = true;
+            repaint();
+        }
+        
+        void mouseExit(const juce::MouseEvent& event) override
+        {
+            isHovering = false;
+            repaint();
+        }
+    
+//    juce::Rectangle<float> hitBounds;
+//    bool hitTest (int x, int y) override
+//    {
+//        if (x > getX() &&
+//            x < getX() + getWidth() &&
+//            y < getY() + getHeight() &&
+//            y > getY()) { isHovering = true; }
+//        else { isHovering = false; }
+//        return isHovering;
+//    }
+    
 };
 
 class AdvancedTableComponent : public juce::AnimatedAppComponent,
