@@ -152,7 +152,382 @@
               file="Resources/SignInScreen/quilioLogo_4x.png"/>
       </GROUP>
     </GROUP>
-    <GROUP id="{7613A9EA-8EA7-A4C8-90F6-475B78EB6DC6}" name="Frameworks"/>
+    <GROUP id="{7613A9EA-8EA7-A4C8-90F6-475B78EB6DC6}" name="Frameworks">
+      <GROUP id="{B4D85AD1-730B-EB9C-F642-4A94F35AA745}" name="Security.framework">
+        <GROUP id="{1E584221-EFBE-06DB-661D-844166F987D9}" name="Headers">
+          <FILE id="cc0WzP" name="Authorization.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/Authorization.h"/>
+          <FILE id="WSU0iA" name="AuthorizationDB.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/AuthorizationDB.h"/>
+          <FILE id="bAHGjt" name="AuthorizationPlugin.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/AuthorizationPlugin.h"/>
+          <FILE id="W5beVb" name="AuthorizationTags.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/AuthorizationTags.h"/>
+          <FILE id="WpjFSp" name="AuthSession.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/AuthSession.h"/>
+          <FILE id="L3yFfn" name="certextensions.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/certextensions.h"/>
+          <FILE id="jCRGrL" name="CipherSuite.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/CipherSuite.h"/>
+          <FILE id="cZVz8z" name="CMSDecoder.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/CMSDecoder.h"/>
+          <FILE id="Vz2XPW" name="CMSEncoder.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/CMSEncoder.h"/>
+          <FILE id="MyxGY4" name="CodeSigning.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/CodeSigning.h"/>
+          <FILE id="MI1hQE" name="CSCommon.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/CSCommon.h"/>
+          <FILE id="lsFnvs" name="cssm.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssm.h"/>
+          <FILE id="epUuzD" name="cssmaci.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmaci.h"/>
+          <FILE id="p4yxfs" name="cssmapi.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmapi.h"/>
+          <FILE id="YrcY23" name="cssmapple.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmapple.h"/>
+          <FILE id="ge54Qy" name="cssmcli.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmcli.h"/>
+          <FILE id="DuB6Mq" name="cssmconfig.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmconfig.h"/>
+          <FILE id="Mzn4EK" name="cssmcspi.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmcspi.h"/>
+          <FILE id="NxC9JY" name="cssmdli.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmdli.h"/>
+          <FILE id="DlVHXQ" name="cssmerr.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmerr.h"/>
+          <FILE id="xbX7Yb" name="cssmkrapi.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmkrapi.h"/>
+          <FILE id="aLpKbu" name="cssmkrspi.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmkrspi.h"/>
+          <FILE id="XC0RUa" name="cssmspi.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmspi.h"/>
+          <FILE id="SEZg2e" name="cssmtpi.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmtpi.h"/>
+          <FILE id="qKj6Sv" name="cssmtype.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/cssmtype.h"/>
+          <FILE id="jMBhdY" name="eisl.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/eisl.h"/>
+          <FILE id="WON6bh" name="emmspi.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/emmspi.h"/>
+          <FILE id="xXHQSt" name="emmtype.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/emmtype.h"/>
+          <FILE id="ltgfyj" name="mds.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/mds.h"/>
+          <FILE id="R4ufql" name="mds_schema.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/mds_schema.h"/>
+          <FILE id="DqFyK5" name="oids.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/oids.h"/>
+          <FILE id="fDMdpa" name="oidsalg.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/oidsalg.h"/>
+          <FILE id="JpqlkN" name="oidsattr.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/oidsattr.h"/>
+          <FILE id="sROKgI" name="oidsbase.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/oidsbase.h"/>
+          <FILE id="AQ0lXX" name="oidscert.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/oidscert.h"/>
+          <FILE id="wcQXfX" name="oidscrl.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/oidscrl.h"/>
+          <FILE id="TCeifW" name="SecAccess.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecAccess.h"/>
+          <FILE id="pMlEqG" name="SecAccessControl.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecAccessControl.h"/>
+          <FILE id="pRb7Ss" name="SecACL.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecACL.h"/>
+          <FILE id="nGKB2u" name="SecAsn1Coder.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecAsn1Coder.h"/>
+          <FILE id="l4v5Ke" name="SecAsn1Templates.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecAsn1Templates.h"/>
+          <FILE id="SmL95F" name="SecAsn1Types.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecAsn1Types.h"/>
+          <FILE id="x8jbRe" name="SecBase.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecBase.h"/>
+          <FILE id="eOkb3i" name="SecCertificate.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecCertificate.h"/>
+          <FILE id="qSVJjS" name="SecCertificateOIDs.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecCertificateOIDs.h"/>
+          <FILE id="YV5xMS" name="SecCode.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecCode.h"/>
+          <FILE id="ckPAF0" name="SecCodeHost.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecCodeHost.h"/>
+          <FILE id="vL71i4" name="SecCustomTransform.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecCustomTransform.h"/>
+          <FILE id="qJFrpU" name="SecDecodeTransform.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecDecodeTransform.h"/>
+          <FILE id="IQzhv6" name="SecDigestTransform.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecDigestTransform.h"/>
+          <FILE id="u5Q9nR" name="SecEncodeTransform.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecEncodeTransform.h"/>
+          <FILE id="OSRA2p" name="SecEncryptTransform.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecEncryptTransform.h"/>
+          <FILE id="NcDGGT" name="SecIdentity.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecIdentity.h"/>
+          <FILE id="wFf8Mk" name="SecIdentitySearch.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecIdentitySearch.h"/>
+          <FILE id="kDZVcQ" name="SecImportExport.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecImportExport.h"/>
+          <FILE id="jtljrz" name="SecItem.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecItem.h"/>
+          <FILE id="cO6w5V" name="SecKey.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecKey.h"/>
+          <FILE id="eEZf3j" name="SecKeychain.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecKeychain.h"/>
+          <FILE id="DUX2h6" name="SecKeychainItem.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecKeychainItem.h"/>
+          <FILE id="FBkFp1" name="SecKeychainSearch.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecKeychainSearch.h"/>
+          <FILE id="SqThU0" name="SecPolicy.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecPolicy.h"/>
+          <FILE id="jdyJE8" name="SecPolicySearch.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecPolicySearch.h"/>
+          <FILE id="B9hzuA" name="SecProtocolMetadata.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecProtocolMetadata.h"/>
+          <FILE id="quB3XN" name="SecProtocolObject.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecProtocolObject.h"/>
+          <FILE id="UaqNAa" name="SecProtocolOptions.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecProtocolOptions.h"/>
+          <FILE id="s9c7nG" name="SecProtocolTypes.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecProtocolTypes.h"/>
+          <FILE id="scE9JQ" name="SecRandom.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecRandom.h"/>
+          <FILE id="w3aWbQ" name="SecReadTransform.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecReadTransform.h"/>
+          <FILE id="jtFNm5" name="SecRequirement.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecRequirement.h"/>
+          <FILE id="Ao5toy" name="SecSharedCredential.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecSharedCredential.h"/>
+          <FILE id="zNjTWv" name="SecSignVerifyTransform.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecSignVerifyTransform.h"/>
+          <FILE id="jfzqJD" name="SecStaticCode.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecStaticCode.h"/>
+          <FILE id="GgrHwd" name="SecTask.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecTask.h"/>
+          <FILE id="gvkcOm" name="SecTransform.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecTransform.h"/>
+          <FILE id="ksa4s3" name="SecTransformReadTransform.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecTransformReadTransform.h"/>
+          <FILE id="GsdPKz" name="SecTrust.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/SecTrust.h"/>
+          <FILE id="GkGJcW" name="SecTrustedApplication.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecTrustedApplication.h"/>
+          <FILE id="P90r8t" name="SecTrustSettings.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecTrustSettings.h"/>
+          <FILE id="x2uMRP" name="SecureDownload.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecureDownload.h"/>
+          <FILE id="hdU9Ut" name="SecureTransport.h" compile="0" resource="0"
+                file="Frameworks/Security.framework/Headers/SecureTransport.h"/>
+          <FILE id="qWXAjN" name="Security.apinotes" compile="0" resource="1"
+                file="Frameworks/Security.framework/Headers/Security.apinotes"/>
+          <FILE id="vulfHw" name="Security.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/Security.h"/>
+          <FILE id="Fe0o6h" name="x509defs.h" compile="0" resource="0" file="Frameworks/Security.framework/Headers/x509defs.h"/>
+        </GROUP>
+        <GROUP id="{93B3AF3E-F79F-22E5-FBD8-B77B6BB45052}" name="Modules">
+          <FILE id="yuY3DA" name="module.modulemap" compile="0" resource="1"
+                file="Frameworks/Security.framework/Modules/module.modulemap"/>
+        </GROUP>
+        <GROUP id="{10E8BB4B-A9DB-DE6E-D7AE-4157FBB3BEA5}" name="Versions">
+          <GROUP id="{9FA09132-1E7E-0CE4-427E-B9B092747018}" name="A">
+            <GROUP id="{1EA1D4A9-FA2A-6A60-7FB4-E98B591FF1BB}" name="Headers">
+              <FILE id="PojNHY" name="Authorization.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/Authorization.h"/>
+              <FILE id="oRILRM" name="AuthorizationDB.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/AuthorizationDB.h"/>
+              <FILE id="eTnyQf" name="AuthorizationPlugin.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/AuthorizationPlugin.h"/>
+              <FILE id="sUr8TA" name="AuthorizationTags.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/AuthorizationTags.h"/>
+              <FILE id="vuj7Xv" name="AuthSession.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/AuthSession.h"/>
+              <FILE id="oPr7mO" name="certextensions.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/certextensions.h"/>
+              <FILE id="D5j9K6" name="CipherSuite.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/CipherSuite.h"/>
+              <FILE id="xgbbkH" name="CMSDecoder.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/CMSDecoder.h"/>
+              <FILE id="Apldth" name="CMSEncoder.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/CMSEncoder.h"/>
+              <FILE id="a2bToD" name="CodeSigning.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/CodeSigning.h"/>
+              <FILE id="azxzh2" name="CSCommon.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/CSCommon.h"/>
+              <FILE id="P3THYf" name="cssm.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssm.h"/>
+              <FILE id="F38Qjc" name="cssmaci.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmaci.h"/>
+              <FILE id="aAEOav" name="cssmapi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmapi.h"/>
+              <FILE id="SJOPH8" name="cssmapple.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmapple.h"/>
+              <FILE id="oj1723" name="cssmcli.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmcli.h"/>
+              <FILE id="CLGMbM" name="cssmconfig.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmconfig.h"/>
+              <FILE id="Ma5TaY" name="cssmcspi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmcspi.h"/>
+              <FILE id="pAXDgM" name="cssmdli.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmdli.h"/>
+              <FILE id="Y37t8f" name="cssmerr.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmerr.h"/>
+              <FILE id="UKMSVz" name="cssmkrapi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmkrapi.h"/>
+              <FILE id="gcRxg0" name="cssmkrspi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmkrspi.h"/>
+              <FILE id="xxEzXY" name="cssmspi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmspi.h"/>
+              <FILE id="Y4VPSt" name="cssmtpi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmtpi.h"/>
+              <FILE id="zy0FMp" name="cssmtype.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/cssmtype.h"/>
+              <FILE id="xK6gtg" name="eisl.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/eisl.h"/>
+              <FILE id="x4Vn53" name="emmspi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/emmspi.h"/>
+              <FILE id="CG5ai4" name="emmtype.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/emmtype.h"/>
+              <FILE id="KYoXSX" name="mds.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/mds.h"/>
+              <FILE id="vEUVWp" name="mds_schema.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/mds_schema.h"/>
+              <FILE id="yaJXKA" name="oids.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/oids.h"/>
+              <FILE id="yVyxB3" name="oidsalg.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/oidsalg.h"/>
+              <FILE id="UkGpZe" name="oidsattr.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/oidsattr.h"/>
+              <FILE id="adXX78" name="oidsbase.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/oidsbase.h"/>
+              <FILE id="gYaZU3" name="oidscert.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/oidscert.h"/>
+              <FILE id="ikqO7A" name="oidscrl.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/oidscrl.h"/>
+              <FILE id="VcqIMt" name="SecAccess.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecAccess.h"/>
+              <FILE id="OjnqQz" name="SecAccessControl.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecAccessControl.h"/>
+              <FILE id="wK7eRX" name="SecACL.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecACL.h"/>
+              <FILE id="jz9mBb" name="SecAsn1Coder.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecAsn1Coder.h"/>
+              <FILE id="kOvuwI" name="SecAsn1Templates.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecAsn1Templates.h"/>
+              <FILE id="BACaFL" name="SecAsn1Types.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecAsn1Types.h"/>
+              <FILE id="Lr73zC" name="SecBase.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecBase.h"/>
+              <FILE id="KprX1S" name="SecCertificate.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecCertificate.h"/>
+              <FILE id="hTSOxA" name="SecCertificateOIDs.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecCertificateOIDs.h"/>
+              <FILE id="lhJv5W" name="SecCode.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecCode.h"/>
+              <FILE id="oHej2x" name="SecCodeHost.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecCodeHost.h"/>
+              <FILE id="d5p7gG" name="SecCustomTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecCustomTransform.h"/>
+              <FILE id="QHdoow" name="SecDecodeTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecDecodeTransform.h"/>
+              <FILE id="Pld108" name="SecDigestTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecDigestTransform.h"/>
+              <FILE id="yTHOsw" name="SecEncodeTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecEncodeTransform.h"/>
+              <FILE id="W4S9Vj" name="SecEncryptTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecEncryptTransform.h"/>
+              <FILE id="Kn8JAk" name="SecIdentity.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecIdentity.h"/>
+              <FILE id="giFI2J" name="SecIdentitySearch.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecIdentitySearch.h"/>
+              <FILE id="DZhL16" name="SecImportExport.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecImportExport.h"/>
+              <FILE id="Jz3uzH" name="SecItem.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecItem.h"/>
+              <FILE id="nOcLfO" name="SecKey.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecKey.h"/>
+              <FILE id="EJ4YFo" name="SecKeychain.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecKeychain.h"/>
+              <FILE id="c2IZQn" name="SecKeychainItem.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecKeychainItem.h"/>
+              <FILE id="IEeIRp" name="SecKeychainSearch.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecKeychainSearch.h"/>
+              <FILE id="h1gux6" name="SecPolicy.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecPolicy.h"/>
+              <FILE id="WoES5Q" name="SecPolicySearch.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecPolicySearch.h"/>
+              <FILE id="hhEhEe" name="SecProtocolMetadata.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecProtocolMetadata.h"/>
+              <FILE id="Ott3uu" name="SecProtocolObject.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecProtocolObject.h"/>
+              <FILE id="CVKiMv" name="SecProtocolOptions.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecProtocolOptions.h"/>
+              <FILE id="PORjY7" name="SecProtocolTypes.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecProtocolTypes.h"/>
+              <FILE id="yXNHwB" name="SecRandom.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecRandom.h"/>
+              <FILE id="al9nPr" name="SecReadTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecReadTransform.h"/>
+              <FILE id="vynFtQ" name="SecRequirement.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecRequirement.h"/>
+              <FILE id="Pz6qE3" name="SecSharedCredential.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecSharedCredential.h"/>
+              <FILE id="gUFA9A" name="SecSignVerifyTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecSignVerifyTransform.h"/>
+              <FILE id="pLZ6uv" name="SecStaticCode.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecStaticCode.h"/>
+              <FILE id="nYfxFm" name="SecTask.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecTask.h"/>
+              <FILE id="UWDAfZ" name="SecTransform.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecTransform.h"/>
+              <FILE id="EA4dPv" name="SecTransformReadTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecTransformReadTransform.h"/>
+              <FILE id="Am5UJ8" name="SecTrust.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/SecTrust.h"/>
+              <FILE id="xSnZ9a" name="SecTrustedApplication.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecTrustedApplication.h"/>
+              <FILE id="aqbSrQ" name="SecTrustSettings.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecTrustSettings.h"/>
+              <FILE id="h9yiJg" name="SecureDownload.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecureDownload.h"/>
+              <FILE id="uXgF29" name="SecureTransport.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/A/Headers/SecureTransport.h"/>
+              <FILE id="P06DPr" name="Security.apinotes" compile="0" resource="1"
+                    file="Frameworks/Security.framework/Versions/A/Headers/Security.apinotes"/>
+              <FILE id="tY2Og5" name="Security.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/Security.h"/>
+              <FILE id="k6sRZP" name="x509defs.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/A/Headers/x509defs.h"/>
+            </GROUP>
+            <GROUP id="{CE8EA78A-401E-1A73-8AA7-87578B352459}" name="Modules">
+              <FILE id="PFKqg2" name="module.modulemap" compile="0" resource="1"
+                    file="Frameworks/Security.framework/Versions/A/Modules/module.modulemap"/>
+            </GROUP>
+            <FILE id="lvOnfQ" name="Security.tbd" compile="0" resource="1" file="Frameworks/Security.framework/Versions/A/Security.tbd"/>
+          </GROUP>
+          <GROUP id="{B95F92F6-F8FA-F597-8F2B-56C31BDCEDAF}" name="Current">
+            <GROUP id="{7E13F2B8-EB10-09C6-F5B9-7E24FBFAF8CA}" name="Headers">
+              <FILE id="iWaKsu" name="Authorization.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/Authorization.h"/>
+              <FILE id="VRJK6X" name="AuthorizationDB.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/AuthorizationDB.h"/>
+              <FILE id="gpu1Cp" name="AuthorizationPlugin.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/AuthorizationPlugin.h"/>
+              <FILE id="Wzoygt" name="AuthorizationTags.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/AuthorizationTags.h"/>
+              <FILE id="i0GNsI" name="AuthSession.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/AuthSession.h"/>
+              <FILE id="NBJhnf" name="certextensions.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/certextensions.h"/>
+              <FILE id="etI2zu" name="CipherSuite.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/CipherSuite.h"/>
+              <FILE id="EY4ZS4" name="CMSDecoder.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/CMSDecoder.h"/>
+              <FILE id="qpan6b" name="CMSEncoder.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/CMSEncoder.h"/>
+              <FILE id="kLK7wZ" name="CodeSigning.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/CodeSigning.h"/>
+              <FILE id="u7dM0q" name="CSCommon.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/CSCommon.h"/>
+              <FILE id="Uod2th" name="cssm.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssm.h"/>
+              <FILE id="F3zhrX" name="cssmaci.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmaci.h"/>
+              <FILE id="VgQZxU" name="cssmapi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmapi.h"/>
+              <FILE id="juwpqH" name="cssmapple.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmapple.h"/>
+              <FILE id="USE84w" name="cssmcli.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmcli.h"/>
+              <FILE id="tH7YDR" name="cssmconfig.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmconfig.h"/>
+              <FILE id="Cqog76" name="cssmcspi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmcspi.h"/>
+              <FILE id="bj8wA6" name="cssmdli.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmdli.h"/>
+              <FILE id="YQatpJ" name="cssmerr.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmerr.h"/>
+              <FILE id="JYfjv8" name="cssmkrapi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmkrapi.h"/>
+              <FILE id="rzSpVs" name="cssmkrspi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmkrspi.h"/>
+              <FILE id="IX0N71" name="cssmspi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmspi.h"/>
+              <FILE id="Q4jkM7" name="cssmtpi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmtpi.h"/>
+              <FILE id="XXUgA8" name="cssmtype.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/cssmtype.h"/>
+              <FILE id="msn8Oo" name="eisl.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/eisl.h"/>
+              <FILE id="lDvyq4" name="emmspi.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/emmspi.h"/>
+              <FILE id="ycArH4" name="emmtype.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/emmtype.h"/>
+              <FILE id="G35RNF" name="mds.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/mds.h"/>
+              <FILE id="RERtRH" name="mds_schema.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/mds_schema.h"/>
+              <FILE id="OLboiq" name="oids.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/oids.h"/>
+              <FILE id="UdvZwZ" name="oidsalg.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/oidsalg.h"/>
+              <FILE id="kCnMOk" name="oidsattr.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/oidsattr.h"/>
+              <FILE id="AfFK6S" name="oidsbase.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/oidsbase.h"/>
+              <FILE id="vvk7pu" name="oidscert.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/oidscert.h"/>
+              <FILE id="Z1STDK" name="oidscrl.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/oidscrl.h"/>
+              <FILE id="LRgNFK" name="SecAccess.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecAccess.h"/>
+              <FILE id="ldO6VF" name="SecAccessControl.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecAccessControl.h"/>
+              <FILE id="XltqwG" name="SecACL.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecACL.h"/>
+              <FILE id="KKmr4J" name="SecAsn1Coder.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecAsn1Coder.h"/>
+              <FILE id="Qe1KsX" name="SecAsn1Templates.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecAsn1Templates.h"/>
+              <FILE id="YQMJsL" name="SecAsn1Types.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecAsn1Types.h"/>
+              <FILE id="ntGLlo" name="SecBase.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecBase.h"/>
+              <FILE id="aysBB8" name="SecCertificate.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecCertificate.h"/>
+              <FILE id="OUbADG" name="SecCertificateOIDs.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecCertificateOIDs.h"/>
+              <FILE id="LkbU7m" name="SecCode.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecCode.h"/>
+              <FILE id="Z8h5Bh" name="SecCodeHost.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecCodeHost.h"/>
+              <FILE id="QrB9zj" name="SecCustomTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecCustomTransform.h"/>
+              <FILE id="sSATZl" name="SecDecodeTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecDecodeTransform.h"/>
+              <FILE id="YjYzZF" name="SecDigestTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecDigestTransform.h"/>
+              <FILE id="qyeFJs" name="SecEncodeTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecEncodeTransform.h"/>
+              <FILE id="nFF5sk" name="SecEncryptTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecEncryptTransform.h"/>
+              <FILE id="kGay1E" name="SecIdentity.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecIdentity.h"/>
+              <FILE id="qS4QbR" name="SecIdentitySearch.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecIdentitySearch.h"/>
+              <FILE id="VxVvaY" name="SecImportExport.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecImportExport.h"/>
+              <FILE id="idjHPQ" name="SecItem.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecItem.h"/>
+              <FILE id="SReQm8" name="SecKey.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecKey.h"/>
+              <FILE id="XkXFQv" name="SecKeychain.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecKeychain.h"/>
+              <FILE id="qRDBf7" name="SecKeychainItem.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecKeychainItem.h"/>
+              <FILE id="rLm3Tj" name="SecKeychainSearch.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecKeychainSearch.h"/>
+              <FILE id="biVoc2" name="SecPolicy.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecPolicy.h"/>
+              <FILE id="OntFOS" name="SecPolicySearch.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecPolicySearch.h"/>
+              <FILE id="qpSG4M" name="SecProtocolMetadata.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecProtocolMetadata.h"/>
+              <FILE id="ZL8FCZ" name="SecProtocolObject.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecProtocolObject.h"/>
+              <FILE id="UEkVEs" name="SecProtocolOptions.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecProtocolOptions.h"/>
+              <FILE id="EEeMS1" name="SecProtocolTypes.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecProtocolTypes.h"/>
+              <FILE id="Lc8jpy" name="SecRandom.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecRandom.h"/>
+              <FILE id="MoPjif" name="SecReadTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecReadTransform.h"/>
+              <FILE id="i7v3da" name="SecRequirement.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecRequirement.h"/>
+              <FILE id="Mtzo7Z" name="SecSharedCredential.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecSharedCredential.h"/>
+              <FILE id="A5N6Sp" name="SecSignVerifyTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecSignVerifyTransform.h"/>
+              <FILE id="Ccy48P" name="SecStaticCode.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecStaticCode.h"/>
+              <FILE id="YjRFTS" name="SecTask.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecTask.h"/>
+              <FILE id="WVFOHc" name="SecTransform.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecTransform.h"/>
+              <FILE id="ZizQXn" name="SecTransformReadTransform.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecTransformReadTransform.h"/>
+              <FILE id="YvXp7q" name="SecTrust.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/SecTrust.h"/>
+              <FILE id="ofFER6" name="SecTrustedApplication.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecTrustedApplication.h"/>
+              <FILE id="udTFVN" name="SecTrustSettings.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecTrustSettings.h"/>
+              <FILE id="LmTpSw" name="SecureDownload.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecureDownload.h"/>
+              <FILE id="is7amc" name="SecureTransport.h" compile="0" resource="0"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/SecureTransport.h"/>
+              <FILE id="Xhluvf" name="Security.apinotes" compile="0" resource="1"
+                    file="Frameworks/Security.framework/Versions/Current/Headers/Security.apinotes"/>
+              <FILE id="eeTC8E" name="Security.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/Security.h"/>
+              <FILE id="CHWRs5" name="x509defs.h" compile="0" resource="0" file="Frameworks/Security.framework/Versions/Current/Headers/x509defs.h"/>
+            </GROUP>
+            <GROUP id="{22F6AB55-67CF-D2B2-A1E3-A56A3E125FA7}" name="Modules">
+              <FILE id="rGI9aN" name="module.modulemap" compile="0" resource="1"
+                    file="Frameworks/Security.framework/Versions/Current/Modules/module.modulemap"/>
+            </GROUP>
+            <FILE id="eJs79N" name="Security.tbd" compile="0" resource="1" file="Frameworks/Security.framework/Versions/Current/Security.tbd"/>
+          </GROUP>
+        </GROUP>
+        <FILE id="F1SKpH" name="Security.tbd" compile="0" resource="1" file="Frameworks/Security.framework/Security.tbd"/>
+      </GROUP>
+    </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
