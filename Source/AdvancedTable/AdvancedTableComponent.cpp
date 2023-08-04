@@ -12,6 +12,43 @@
 #include "AdvancedTableComponent.h"
 #include "../Helpers/SpecialStringProcessing.h"
 
+/*  ROW OPERATIONS  */
+void AdvancedTableComponent::removeRow (int rowIndex)
+{
+    dataList->removeItemByIndex (rowIndex);
+    statusPills.erase (statusPills.begin() + rowIndex);
+    trashButtons.erase (trashButtons.begin() + rowIndex);
+}
+
+void AdvancedTableComponent::addRow (juce::String newPropertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear)
+{
+    if (checkItemExists (newItem)) return; //To avoid adding duplicates, we check if the item already exists.
+    
+    //We need to add a status pill to the vector
+    statusPills.push_back (std::make_unique<StatusPill>());
+    trashButtons.push_back (std::make_unique<TrashButton>());
+    addAndMakeVisible (*trashButtons.back());
+    addAndMakeVisible (*statusPills.back());
+
+    dataList->addProperty (newPropertyName, newItem, newType, newStatus, newClear);
+    updateTable();
+}
+
+void AdvancedTableComponent::clearAllRows()
+{
+    dataList->clear();
+    updateTable();
+    
+    //TODO: Move the stuff below into updatetable
+    if (dataList->getNumChildElements() > 0)
+        setTableState (HAS_ITEMS);
+    else
+        setTableState (NO_ITEMS);
+    
+    statusPills.clear();
+    trashButtons.clear();
+}
+
 /* FILE RELATED STUFF */
 void AdvancedTableComponent::filesDropped (const juce::StringArray& files, int x, int y)
 {
@@ -29,6 +66,8 @@ void AdvancedTableComponent::filesDropped (const juce::StringArray& files, int x
         }
     }
 }
+
+
 
 void AdvancedTableComponent::browseForFileToUpload()
 {
@@ -69,22 +108,7 @@ bool AdvancedTableComponent::isInterestedInFileDrag (const juce::StringArray& fi
 
 
 
-/*  ROW OPERATIONS  */
-void AdvancedTableComponent::addRow (juce::String newPropertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear)
-{
-    //check if file already exists, to avoid adding duplicates
-    for (auto* rowXml : dataList->getChildIterator())
-    {
-        if (newItem == rowXml->getStringAttribute ("Item"))
-        {
-            //Item already exists
-            return;
-        }
-    }
 
-    dataList->addProperty (newPropertyName, newItem, newType, newStatus, newClear);
-    updateTable();
-}
 
 
 /* BATCH OPERATIONS */
@@ -92,6 +116,7 @@ void AdvancedTableComponent::addRow (juce::String newPropertyName, juce::String 
 void AdvancedTableComponent::notarizeTable (juce::String devName, juce::String devID, bool isCodeSigning)
 {
 #ifdef JUCE_MAC
+    int rowCount = 0;
     for (auto* rowXml : dataList->getChildIterator())
     {
         auto filename = rowXml->getStringAttribute ("Item");
@@ -104,6 +129,9 @@ void AdvancedTableComponent::notarizeTable (juce::String devName, juce::String d
             if (response != "Success")
             {
                 rowXml->setAttribute ("Status", "Error");
+                
+                //Set status pill status to row attribute
+                statusPills[rowCount]->setStatus ("Error");
             }
             else
             {
@@ -127,6 +155,7 @@ void AdvancedTableComponent::notarizeTable (juce::String devName, juce::String d
                 rowXml->setAttribute ("Status", "Signed");
             }
         }
+        rowCount++;
     }
 #endif
     updateTable();

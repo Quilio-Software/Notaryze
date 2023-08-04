@@ -171,24 +171,41 @@ public:
                 //TODO: Convert this manual postiioning to some sort of relative positioning
                 juce::Rectangle<float> roundedRectArea (8, 8, 41, 18);//(width * 0.25f * 0.5f, height * 0.25f, width * 0.75f, height * 0.5f);
                 
-                //Handle different clear button colors here
-                //            if (isMouseOver)
-                //            {
-                //
-                //            }
-
-
+                float stroke; //px
+                juce::Colour fillColour;
+                juce::Colour backgroundFillColour;
+                juce::Font typeface = poppinsRegularTypeface;
+                float fontHeight = 18.0f; //same for all
                 
-                if (isMouseDown) //Clear button in the Header has been clicked
+                //Handle different clear button colors here
+                if (isMouseOver)
                 {
+                    stroke = 2.0f; //px
+                    fillColour = juce::Colour::fromString ("#ffF2571D");
+                    backgroundFillColour = fillColour.withAlpha (0.2f); // 20%
+                }
+                else if (isMouseDown) //Clear button in the Header has been clicked
+                {
+                    stroke = 1.0f;
+                    fillColour = juce::Colour::fromString ("#ffF2571D");
+                    backgroundFillColour = fillColour.withAlpha (0.2f);
                     clearAllData();
                 }
-
-                g.setColour (juce::Colour::fromString ("#ffF2571D"));
-                g.setFont (poppinsRegularTypeface);
-                g.setFont (18.0f); //Bug: This needs to be 2x whatever it actually is WTFFFFF.
+                else //if mouse is frickin somewhere else ;)
+                {
+                    stroke = 1.0f;
+                    fillColour = juce::Colour::fromString ("#ffF2571D");
+                    backgroundFillColour = fillColour.withAlpha (0.0f);
+                }
+                
+                g.setFont (fontHeight);
+                g.setFont (typeface);
+                g.setColour (backgroundFillColour);
+                g.fillRoundedRectangle (roundedRectArea.toFloat(), 4);
+                g.setColour (fillColour);
                 g.drawText ("CLEAR", roundedRectArea.toFloat(), juce::Justification::centred, 1);
-                g.drawRoundedRectangle (roundedRectArea.toFloat(), 4, 1.0f);
+                g.drawRoundedRectangle (roundedRectArea.toFloat(), 4, stroke);
+
             }
         }
     }

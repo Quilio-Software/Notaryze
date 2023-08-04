@@ -23,24 +23,12 @@
     #include <Security/SecStaticCode.h>
 #endif
 
-class ClearCell : public juce::Component
+class TrashButton : public juce::Component
 {
-    
+    bool isHovering = false;
 public:
     
-    ClearCell(){}
-    
-    bool isEntered = false;
-    
-    void mouseEnter (const juce::MouseEvent &event) override
-    {
-        isEntered = true;
-    }
-    void mouseExit (const juce::MouseEvent &event) override
-    {
-        isEntered = false;
-    }
-    
+    TrashButton(){}
     
     void drawClearCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
     {
@@ -49,11 +37,18 @@ public:
         juce::MemoryBlock svgDataHover (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
         juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
         
-        auto svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
+        std::unique_ptr<juce::XmlElement> svgDocument;
+        
+        if (!isHovering)
+            svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
+        else
+            svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataHover.getData()), static_cast<size_t> (svgDataHover.getSize())));
+
         auto svg = juce::Drawable::createFromSVG (*svgDocument);
         juce::Rectangle<float> trashRect (40.0f, 10.0f, 9.82f, 12.0f);
         svg->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
     }
+
 };
 
 class AdvancedTableComponent : public juce::AnimatedAppComponent,
@@ -161,6 +156,8 @@ public:
 #endif
         return "WINDOWS";
     }
+    
+    void clearAllRows();
 
     AdvancedTableComponent (std::vector<ColumnData> columns, std::vector<RowData> data)
     {
@@ -169,14 +166,7 @@ public:
         //When clicking the "Clear" button on the top right, we want to clear the table data.
         tableStyle.clearAllData = [&]()
         {
-            dataList->clear();
-            updateTable();
-            
-            //TODO: Move the stuff below into updatetable
-            if (dataList->getNumChildElements() > 0)
-                setTableState (HAS_ITEMS);
-            else
-                setTableState (NO_ITEMS);
+            clearAllRows();
         };
         
         // Create data model
@@ -239,19 +229,35 @@ public:
         
         setFramesPerSecond (60);
         
-        addAndMakeVisible (statusPill);
-        addAndMakeVisible (clearCell);
-        
         addAndMakeVisible (tooltipWindow);
+        
+        tooltipWindow.setMillisecondsBeforeTipAppears (0);
     }
     
     juce::TooltipWindow tooltipWindow;
-    StatusPill statusPill;
-    ClearCell clearCell;
+    
+    
+    //We maintain a list of status pills, and add to this list when a new dataItem is added.
+    //The index of the statuspill links to the index of the row.
+    std::vector<std::unique_ptr<StatusPill>> statusPills;
+    std::vector<std::unique_ptr<TrashButton>> trashButtons;
     
     ~AdvancedTableComponent()
     {
         setLookAndFeel (nullptr);
+    }
+    
+    bool checkItemExists (juce::String newItem)
+    {
+        for (auto* rowXml : dataList->getChildIterator())
+        {
+            if (newItem == rowXml->getStringAttribute ("Item"))
+            {
+                //Item already exists
+                return true;
+            }
+        }
+        return false;
     }
     
     //Notarization functions
@@ -415,10 +421,7 @@ public:
         }
     }
     
-    void removeRow (int rowIndex)
-    {
-        dataList->removeItemByIndex (rowIndex);
-    }
+    void removeRow (int rowIndex);
     
     void drawStatusCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
     {
@@ -443,25 +446,8 @@ public:
         }
     }
     
-
-    void drawClearCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
-    {
-
-        //load in all trash icon states
-        juce::MemoryBlock svgDataDefault (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
-        juce::MemoryBlock svgDataHover (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
- //       juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
-
-        
-        auto svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
-        auto svg = juce::Drawable::createFromSVG (*svgDocument);
-        juce::Rectangle<float> trashRect (40.0f, 10.0f, 9.82f, 12.0f);
-        svg->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
-    }
-    
     //This function has to do with cell drawing
-    void paintCell (juce::Graphics& g, int rowNumber, int columnId,
-                    int width, int height, bool rowIsSelected) override
+    void paintCell (juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override
     {
         if (columnId == STATUS) //columnID 3 is status
         {
@@ -469,7 +455,6 @@ public:
         }
         else if (columnId == CLEAR) //If we're on the Clear Column
         {
-            clearCell.drawClearCell (g, rowNumber, columnId, width, height, rowIsSelected);
         }
         else
         {
@@ -569,12 +554,16 @@ public:
         table.setBoundsInset (juce::BorderSize<int> (8));
         
         int cellWidth = getColumnAutoSizeWidth (2); int cellHeight = 50;
-
-        juce::Rectangle<int> cellRect = table.getCellPosition (3, 0, false);
         
-        statusPill.setBounds (cellRect);
-
-        
+        //We distribute the status pills vertically, as per the row index
+        for (int rowIndex = 0; rowIndex < numRows; ++rowIndex)
+        {
+            juce::Rectangle<int> statusPillCellRect = table.getCellPosition (3, rowIndex, false);
+            statusPills[rowIndex]->setBounds (statusPillCellRect);
+            
+            juce::Rectangle<int> trashButtonCellRect = table.getCellPosition (4, rowIndex, false);
+            trashButtons[rowIndex]->setBounds (trashButtonCellRect);
+        }
 //        drawableComposite.setBoundingBox (getBounds().toFloat());
 //        drawableComposite.setContentArea (getBounds().toFloat());
     }

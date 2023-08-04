@@ -355,6 +355,8 @@ public:
         return false;
     }
     
+    void setStatus (juce::String newStatus) { status = newStatus; }
+    
     void drawStatusPill (juce::Graphics& g, const juce::String& text, const int& x, const int& y, const int& width, const int& height, const float& cornerSize = 10.0f)
     {
         juce::Colour colour;
@@ -440,6 +442,7 @@ public:
             {"Error state 6", "Code sign failed"},
             {"Error state 7", "Connection error"},
             {"Error state 8", "Timed out"},
+            {"Error", "Code Sign Failed"},
             {"Signing in progress", "Signing in progress"}
         };
         
