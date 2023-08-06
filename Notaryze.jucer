@@ -106,11 +106,11 @@
         </GROUP>
       </GROUP>
       <GROUP id="{7879BED4-5178-A7B3-B9D5-7221A9686697}" name="Images">
-        <FILE id="unoQHo" name="trashIcon_Default.svg" compile="0" resource="1"
+        <FILE id="fWMy5P" name="trashIcon_Default.svg" compile="0" resource="1"
               file="Resources/Images/trashIcon_Default.svg"/>
-        <FILE id="VAREqL" name="trashIcon_Disabled.svg" compile="0" resource="1"
+        <FILE id="aVJKRo" name="trashIcon_Disabled.svg" compile="0" resource="1"
               file="Resources/Images/trashIcon_Disabled.svg"/>
-        <FILE id="uvRcIv" name="trashIcon_Hover.svg" compile="0" resource="1"
+        <FILE id="zhB0JI" name="trashIcon_Hover.svg" compile="0" resource="1"
               file="Resources/Images/trashIcon_Hover.svg"/>
         <GROUP id="{449B243E-5567-B8C1-55CA-4389EBF86B1F}" name="Backgrounds">
           <FILE id="p49RX5" name="UtilityScreenBackground.png" compile="0" resource="1"
