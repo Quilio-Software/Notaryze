@@ -35,6 +35,25 @@ public:
         drawTrashButton (g);
     }
     
+    bool hitTest (int x, int y) override
+    {
+        if ((x < 40 && x < 49.82) && (y > 10.0f && y < 22.0f))
+        {
+            if (!isHovering)
+            {
+                isHovering = true;
+                repaint();
+            }
+            return true;
+        }
+        if (isHovering)
+        {
+            isHovering = false;
+            repaint();
+        }
+        return false;
+    }
+    
     void drawTrashButton (juce::Graphics& g)
     {
         //load in all trash icon states
@@ -50,7 +69,7 @@ public:
             svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataHover.getData()), static_cast<size_t> (svgDataHover.getSize())));
 
         auto svg = juce::Drawable::createFromSVG (*svgDocument);
-        juce::Rectangle<float> trashRect (40.0f, 10.0f, 9.82f, 12.0f);
+        juce::Rectangle<float> trashRect (getLocalBounds().toFloat()/*40.0f, 10.0f, 9.82f, 12.0f */);
         svg->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
     }
 };
