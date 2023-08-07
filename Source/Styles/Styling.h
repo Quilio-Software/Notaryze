@@ -272,6 +272,7 @@ public:
 
 class RoundedFillButtonStyling : public PoppinsLookAndFeel
 {
+    bool buttonDisabled = false;
 public:
     
     RoundedFillButtonStyling()
@@ -331,6 +332,7 @@ public:
         {
 //            g.fillRoundedRectangle (bounds, cornerSize);
             juce::Colour hoverColour = juce::Colour (239, 239, 239);
+           
             if (shouldDrawButtonAsDown)
             {
             // add shadows
@@ -458,7 +460,6 @@ public:
         
        // if button is disabled:
        
-        
         if (flatOnLeft || flatOnRight || flatOnTop || flatOnBottom)
         {
             juce::Path path;
@@ -496,7 +497,6 @@ public:
             // g.setOpacity (1.0f);
         }
     }
-    
     
     void drawButtonText (juce::Graphics& g, juce::TextButton& button,
                                          bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override

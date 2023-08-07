@@ -25,10 +25,28 @@
 
 class TrashButton : public juce::Component
 {
+    //load in all trash icon states
+    std::unique_ptr<juce::XmlElement> svgDefaultDocument;
+    std::unique_ptr<juce::XmlElement> svgHoverDocument;
+    std::unique_ptr<juce::XmlElement> svgDisabledDocument;
+
     bool isHovering = false;
-public:
+    bool isDisabled = false;
     
-    TrashButton(){}
+    juce::Rectangle<float> trashRect;
+public:
+    TrashButton()
+    {
+        juce::MemoryBlock svgDataDefault (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
+        juce::MemoryBlock svgDataHover (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
+        juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
+        
+        svgDefaultDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
+        svgHoverDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataHover.getData()), static_cast<size_t> (svgDataHover.getSize())));
+        svgDisabledDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDisabled.getData()), static_cast<size_t> (svgDataDisabled.getSize())));
+        
+        trashRect = juce::Rectangle<float> (25.0f, 10.0f, 9.82f, 12.0f);
+    }
     
     void paint (juce::Graphics& g) override
     {
@@ -53,24 +71,30 @@ public:
         }
         return false;
     }
+   
+    void setDisabled()
+    {
+        isDisabled = true;
+        repaint();
+    }
     
     void drawTrashButton (juce::Graphics& g)
     {
-        //load in all trash icon states
-        juce::MemoryBlock svgDataDefault (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
-        juce::MemoryBlock svgDataHover (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
-        juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
-        
-        std::unique_ptr<juce::XmlElement> svgDocument;
-        
-        if (!isHovering)
-            svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
+        if (isDisabled)
+        {
+            auto svgDisabled = juce::Drawable::createFromSVG (*svgDisabledDocument);
+            svgDisabled->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
+        }
+        else if (isHovering)
+        {
+            auto svgHover = juce::Drawable::createFromSVG (*svgHoverDocument);
+            svgHover->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
+        }
         else
-            svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataHover.getData()), static_cast<size_t> (svgDataHover.getSize())));
-
-        auto svg = juce::Drawable::createFromSVG (*svgDocument);
-        juce::Rectangle<float> trashRect (25.0f, 10.0f, 9.82f, 12.0f);
-        svg->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
+        {
+            auto svgDefault = juce::Drawable::createFromSVG (*svgDefaultDocument);
+            svgDefault->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
+        }
     }
 };
 

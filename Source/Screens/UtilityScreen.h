@@ -279,6 +279,25 @@ public:
         return snapshot;
     }
     
+    bool isStartButtonDisabled;
+    bool isUploadButtonDisabled;
+    
+    void setStartButtonDisabled()
+    {
+        isStartButtonDisabled = true;
+        startButton.setState (juce::Button::ButtonState::buttonNormal);
+        startButton.setEnabled (false);
+        startButton.setAlpha (0.6f);
+    }
+    
+    void setUploadButtonDisabled()
+    {
+        isUploadButtonDisabled = true;
+        uploadButton.setState (juce::Button::ButtonState::buttonNormal);
+        uploadButton.setEnabled (false);
+        uploadButton.setAlpha (0.6f);
+    }
+    
     juce::Image backgroundImage = juce::ImageFileFormat::loadFrom (BinaryData::UtilityScreenBackground_png, BinaryData::UtilityScreenBackground_pngSize);
     void paint (juce::Graphics& g) override
     {
