@@ -69,7 +69,7 @@ public:
             svgDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataHover.getData()), static_cast<size_t> (svgDataHover.getSize())));
 
         auto svg = juce::Drawable::createFromSVG (*svgDocument);
-        juce::Rectangle<float> trashRect (getLocalBounds().toFloat()/*40.0f, 10.0f, 9.82f, 12.0f */);
+        juce::Rectangle<float> trashRect (25.0f, 10.0f, 9.82f, 12.0f);
         svg->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
     }
 };
@@ -582,9 +582,11 @@ public:
         for (int rowIndex = 0; rowIndex < numRows; ++rowIndex)
         {
             juce::Rectangle<int> statusPillCellRect = table.getCellPosition (3, rowIndex, false);
+            statusPillCellRect.translate (8, 8);
             statusPills[rowIndex]->setBounds (statusPillCellRect);
             
             juce::Rectangle<int> trashButtonCellRect = table.getCellPosition (4, rowIndex, false);
+            trashButtonCellRect.translate (8, 8);
             trashButtons[rowIndex]->setBounds (trashButtonCellRect);
         }
 //        drawableComposite.setBoundingBox (getBounds().toFloat());
