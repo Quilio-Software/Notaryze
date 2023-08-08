@@ -34,6 +34,7 @@ class TrashButton : public juce::Component
     bool isDisabled = false;
     
     juce::Rectangle<float> trashRect;
+    
 public:
     TrashButton()
     {
@@ -71,7 +72,12 @@ public:
         }
         return false;
     }
-   
+    
+    void mouseDown (const juce::MouseEvent& event) override
+    {
+        onClick();
+    }
+    
     void setDisabled()
     {
         isDisabled = true;
@@ -96,6 +102,8 @@ public:
             svgDefault->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
         }
     }
+    
+    std::function<void()> onClick;
 };
 
 class AdvancedTableComponent : public juce::AnimatedAppComponent,
@@ -276,8 +284,8 @@ public:
         
         setFramesPerSecond (60);
         
+        //tooltipWindow settings
         addAndMakeVisible (tooltipWindow);
-        
         tooltipWindow.setMillisecondsBeforeTipAppears (0);
     }
     
@@ -458,14 +466,6 @@ public:
     
     void cellClicked (int rowIndex, int columnId, const juce::MouseEvent&) override
     {
-        //TODO: Add Mouse position check to ensure it's within the bounds of the trash icon
-        if (columnId == CLEAR) //Then we've hit the trash icon
-        {
-            auto childXMLElement = dataList->getChildElement (rowIndex);
-            DBG ("Just removed element " + juce::String (childXMLElement->getAttributeValue (2)));
-            removeRow (rowIndex);
-            updateTable();
-        }
     }
     
     void removeRow (int rowIndex);

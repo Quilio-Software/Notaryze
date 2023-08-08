@@ -15,9 +15,19 @@
 /*  ROW OPERATIONS  */
 void AdvancedTableComponent::removeRow (int rowIndex)
 {
+    auto childXMLElement = dataList->getChildElement (rowIndex);
+    if (childXMLElement != nullptr)
+        DBG ("Removing element " + juce::String (childXMLElement->getAttributeValue (2)));
+    
     dataList->removeItemByIndex (rowIndex);
     statusPills.erase (statusPills.begin() + rowIndex);
     trashButtons.erase (trashButtons.begin() + rowIndex);
+    updateTable();
+
+    if (dataList->getNumChildElements() > 0)
+        setTableState (HAS_ITEMS);
+    else
+        setTableState (NO_ITEMS);
 }
 
 void AdvancedTableComponent::addRow (juce::String newPropertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear)
@@ -32,6 +42,18 @@ void AdvancedTableComponent::addRow (juce::String newPropertyName, juce::String 
 
     dataList->addProperty (newPropertyName, newItem, newType, newStatus, newClear);
     updateTable();
+    
+    trashButtons.back()->onClick = [&, this]()
+    {
+        auto it = std::find(trashButtons.begin(), trashButtons.end(), trashButtons.back());
+
+        if (it != trashButtons.end())
+        {
+            int currentRowIndex = std::distance(trashButtons.begin(), it);
+            removeRow(currentRowIndex);
+            updateTable();
+        }
+    };
 }
 
 void AdvancedTableComponent::clearAllRows()
@@ -39,7 +61,6 @@ void AdvancedTableComponent::clearAllRows()
     dataList->clear();
     updateTable();
     
-    //TODO: Move the stuff below into updatetable
     if (dataList->getNumChildElements() > 0)
         setTableState (HAS_ITEMS);
     else
