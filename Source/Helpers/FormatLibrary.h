@@ -79,6 +79,16 @@ public:
         return checkFormat (file, IMAGE);
     }
     
+    static bool isExecutable (const juce::File& file)
+    {
+        return checkFormat (file, EXECUTABLE);
+    }
+    
+    static bool isInstaller (const juce::File& file)
+    {
+        return checkFormat (file, INSTALLER);
+    }
+    
     Types getFormatType (juce::String fileExtension)
     {
         for (int formatTypeID = 0; formatTypeID < 5; ++formatTypeID)

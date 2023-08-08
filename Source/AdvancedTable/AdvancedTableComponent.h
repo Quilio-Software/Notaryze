@@ -58,18 +58,13 @@ public:
     {
         if ((x < 40 && x < 49.82) && (y > 10.0f && y < 22.0f))
         {
-            if (!isHovering)
-            {
-                isHovering = true;
-                repaint();
-            }
+            isHovering = true;
+            repaint();
             return true;
         }
-        if (isHovering)
-        {
-            isHovering = false;
-            repaint();
-        }
+        
+        isHovering = false;
+        repaint();
         return false;
     }
     

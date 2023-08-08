@@ -49,7 +49,7 @@ void AdvancedTableComponent::addRow (juce::String newPropertyName, juce::String 
 
         if (it != trashButtons.end())
         {
-            int currentRowIndex = std::distance(trashButtons.begin(), it);
+            int currentRowIndex = (int) std::distance (trashButtons.begin(), it);
             removeRow(currentRowIndex);
             updateTable();
         }
@@ -97,7 +97,9 @@ void AdvancedTableComponent::browseForFileToUpload()
     if (chooser.browseForFileToOpen()) //If file is selected
     {
         juce::File file (chooser.getResult());
-        addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
+        //TODO: Handle different behavior if code / product
+        if (FormatLibrary::isExecutable (file) || FormatLibrary::isInstaller (file))
+            addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
     }
 }
 
