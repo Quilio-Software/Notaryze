@@ -18,8 +18,6 @@
 #include <thread>
 #include "ErrorHandling.h"
 
-
-
 enum NotaryState
 {
     CODESIGN,
@@ -135,7 +133,7 @@ inline juce::String runCommandVerbose (const juce::String& command)
 inline int codesign (const juce::String& filename, const juce::String& name, const juce::String& teamID)
 {
     // Keep in mind the " (" demarcation, necessary to maintain spacing.
-    return runCommand ("codesign --force -s 'Developer ID Application: " + name + " (" + teamID + ")" + "' -v '" + filename + "' --deep --strict --options=runtime --timestamp");
+    return runCommand ("sudo codesign --force -s 'Developer ID Application: " + name + " (" + teamID + ")" + "' -v '" + filename + "' --deep --strict --options=runtime --timestamp");
 }
 
 
@@ -143,7 +141,7 @@ inline int codesign (const juce::String& filename, const juce::String& name, con
 inline juce::String codesignVerbose (const juce::String& filename, const juce::String& name, const juce::String& teamID)
 {
     // Keep in mind the " (" demarcation, necessary to maintain spacing.
-    auto response =  runCommandVerbose ("codesign -dvvv --force -s 'Developer ID Application: " + name + " (" + teamID + ")" + "' -v '" + filename + "' --deep --strict --options=runtime --timestamp");
+    auto response =  runCommandVerbose ("sudo codesign -dvvv --force -s 'Developer ID Application: " + name + " (" + teamID + ")" + "' -v '" + filename + "' --deep --strict --options=runtime --timestamp");
     
     auto result = NotarizationErrorChecker::getResult (response);
     return result;
@@ -158,7 +156,7 @@ inline juce::String productsignVerbose (const juce::File& file, const juce::Stri
     juce::String signedFileName = parentDir.getFullPathName() + "/" + fileNameWithoutExtension + " (signed)" + fileExtension;
     juce::String devName = name;
     juce::String devID = teamID;
-    auto result = runCommandVerbose ("productsign --sign 'Developer ID Installer: " + devName + " (" + devID + ")" + "' '" + unsignedFileName + "' '" + signedFileName + "'");
+    auto result = runCommandVerbose ("sudo productsign --sign 'Developer ID Installer: " + devName + " (" + devID + ")" + "' '" + unsignedFileName + "' '" + signedFileName + "'");
     return result;
 }
 

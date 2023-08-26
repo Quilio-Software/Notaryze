@@ -159,6 +159,15 @@ public:
     StringVector getAllowedFileTypes() { return allowedFileTypes; }
     void setAllowedFileTypes (StringVector fileTypesToAllow) { allowedFileTypes = fileTypesToAllow; }
     void setAllowedFileTypes (FormatLibrary::Types fileType) { allowedFileTypes = FormatLibrary::getFormats (fileType); }
+    void setAllowedFileTypes(std::initializer_list<FormatLibrary::Types> fileTypes) {
+        allowedFileTypes.clear(); // Clear the vector before populating it with new values
+        
+        for (const FormatLibrary::Types fileType : fileTypes) {
+            std::vector<juce::String> formats = FormatLibrary::getFormats(fileType);
+            allowedFileTypes.insert(allowedFileTypes.end(), formats.begin(), formats.end());
+        }
+    }
+
     
     void updateRowStatuses()
     {

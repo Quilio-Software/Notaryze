@@ -24,6 +24,7 @@ public:
         EXECUTABLE,
         IMAGE,
         TEXT,
+        DYLIB,
     };
     
     static StringVector getFormats (Types type)
@@ -50,6 +51,10 @@ public:
 #else
             formats = {};
 #endif
+        else if (type == DYLIB)
+        {
+            formats = {".dylib"};
+        }
         else if (type == TEXT)
         {
             formats = {".txt", ".rtf", ".pdf", ".otf"};
@@ -82,6 +87,11 @@ public:
     static bool isExecutable (const juce::File& file)
     {
         return checkFormat (file, EXECUTABLE);
+    }
+    
+    static bool isDynamicLibrary (const juce::File& file)
+    {
+        return checkFormat (file, DYLIB);
     }
     
     static bool isInstaller (const juce::File& file)

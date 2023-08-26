@@ -151,7 +151,7 @@ public:
         codeSignTable = std::make_unique<AdvancedTableComponent> (columns, codesigndata);
         productSignTable = std::make_unique<AdvancedTableComponent> (columns, productsigndata);
   
-        codeSignTable->setAllowedFileTypes (FormatLibrary::Types::EXECUTABLE);
+        codeSignTable->setAllowedFileTypes ({FormatLibrary::Types::EXECUTABLE, FormatLibrary::Types::DYLIB});
         productSignTable->setAllowedFileTypes (FormatLibrary::Types::INSTALLER);
         
         addAndMakeVisible (codeSignButton);
