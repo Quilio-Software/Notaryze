@@ -141,6 +141,7 @@ public:
     }
     
     
+    
     juce::Image statusLoadingIconImage = juce::ImageFileFormat::loadFrom (BinaryData::statusLoadingIcon_png, BinaryData::statusLoadingIcon_pngSize);
     AdvancedTableComponent (std::vector<ColumnData> columns)
     {
@@ -320,6 +321,9 @@ public:
     }
     
     //Notarization functions
+    NotaryState notaryState;
+    void setNotaryState (NotaryState newNotaryState) { notaryState = newNotaryState; }
+    
     void notarizeRow (juce::String rowID, juce::String devName, juce::String devID)
     {
         DBG ("Row " + rowID + " has been set to notarize.");
@@ -339,6 +343,7 @@ public:
     }
 
     void notarizeTable (juce::String devName, juce::String devID, bool isCodeSigning);
+    void notarizeTableAsynchronously (juce::String devName, juce::String devID, bool isCodeSigning);
     
     float currentStatusIconRotationInRadians = 0.0f;
     float statusIconRotationIncrementInRadians = 0.1f;

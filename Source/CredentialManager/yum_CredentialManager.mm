@@ -92,108 +92,169 @@ bool AppCredentials::removeEntry (const SigningDetails& details)
 
 bool AppCredentials::updateEntry (const SigningDetails& creds)
 {
-    const auto name = std::get<0> (creds);
-    const auto email = std::get<1> (creds);
-    const auto developerID = std::get<2> (creds);
-    const auto password = std::get<3> (creds);
-    
-    juce::String applicationName = "Notaryze";
-    
-    if (password.isEmpty () || name.isEmpty () || developerID.isEmpty() || email.isEmpty()) return false;
-    
-    auto createEntry = [&, applicationName, name, email, developerID, password]() -> bool
-    {
-        JUCE_AUTORELEASEPOOL
-        {
-            const int numOptions = 8;
-            
-            CFStringRef keys [numOptions];
-            keys[0] = kSecClass;
-            keys[1] = kSecAttrAccount;
-            keys[2] = kSecValueData;
-            keys[3] = kSecValueData;
-            keys[4] = kSecValueData;
-            keys[5] = kSecValueData;
-            keys[6] = kSecAttrService;
-            keys[7] = kSecAttrAccessible;
+    const auto name = std::get<0>(creds);
+    const auto email = std::get<1>(creds);
+    const auto developerID = std::get<2>(creds);
+    const auto password = std::get<3>(creds);
 
-            CFTypeRef values [numOptions];
+    juce::String applicationName = "Notaryze";
+
+    if (password.isEmpty() || name.isEmpty() || developerID.isEmpty() || email.isEmpty())
+        return false;
+
+    auto createEntry = [applicationName, name, email, developerID, password]() -> bool {
+        JUCE_AUTORELEASEPOOL {
+            const int numOptions = 7;
+
+            CFStringRef keys[numOptions];
+            keys[0] = kSecClass;
+            keys[1] = kSecAttrService;
+            keys[2] = kSecAttrAccount;
+            keys[3] = kSecAttrGeneric;
+            keys[4] = kSecValueData;
+            keys[5] = kSecAttrAccessible;
+            keys[6] = kSecAttrSynchronizable;
+
+            juce::MemoryBlock emailData(email.toRawUTF8(), email.getNumBytesAsUTF8());
+            juce::MemoryBlock devIDData(developerID.toRawUTF8(), developerID.getNumBytesAsUTF8());
+
+            CFDataRef emailDataRef = CFDataCreate(kCFAllocatorDefault, (const UInt8*)emailData.getData(), emailData.getSize());
+            CFDataRef devIDDataRef = CFDataCreate(kCFAllocatorDefault, (const UInt8*)devIDData.getData(), devIDData.getSize());
+
+            CFStringRef combinedGeneric = juce::String(email + ";" + developerID).toCFString();
+
+            CFTypeRef values[numOptions];
             values[0] = kSecClassGenericPassword;
             values[1] = applicationName.toCFString();
             values[2] = name.toCFString();
-            values[3] = email.toCFString();
-            values[4] = developerID.toCFString ();
-            values[5] = password.toCFString ();
-            values[6] = juce::String (ProjectInfo::projectName).toCFString();
-            values[7] = kSecAttrAccessibleAfterFirstUnlock;
-            
-            CFDictionaryRef query;
-            query = CFDictionaryCreate (kCFAllocatorDefault,
-                                        (const void**) keys,
-                                        (const void**) values,
-                                        numOptions, NULL, NULL);
+            values[3] = combinedGeneric;
+            values[4] = CFDataCreate(kCFAllocatorDefault, (const UInt8*)password.toRawUTF8(), password.getNumBytesAsUTF8());
+            values[5] = kSecAttrAccessibleAfterFirstUnlock;
+            values[6] = kCFBooleanTrue;  // synchronizable if desired
 
-            return SecItemAdd (query, NULL) == 0;
+            CFDictionaryRef query;
+            query = CFDictionaryCreate(kCFAllocatorDefault,
+                (const void**)keys,
+                (const void**)values,
+                numOptions, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+
+            OSStatus status = SecItemAdd(query, NULL);
+
+            CFRelease(emailDataRef);
+            CFRelease(devIDDataRef);
+
+            return status == errSecSuccess;
         }
     };
-    
-    auto credentialsExist = userCredentialsExist (name);
-    if ( ! credentialsExist )
-    {
-        return createEntry ();
-    }
-    else //credentials exist, check if we have to update
-    {
-        const auto currentlyStoredDetails = getDetailsForName (name);
-        auto name = std::get<0> (currentlyStoredDetails);
-        auto email = std::get<1> (currentlyStoredDetails);
-        auto developerID = std::get<2> (currentlyStoredDetails);
-        auto password = std::get<3> (currentlyStoredDetails);
-        juce::String applicationName ("Notaryze");
- //       if (currentlyStoredPassword != password)
-        {
-            //update
-            auto updateDetails = [&, applicationName, name, email, developerID, password, createEntry]() -> bool
-            {
-                JUCE_AUTORELEASEPOOL
-                {
-                    const auto serviceName = [[NSString alloc] initWithUTF8String: ProjectInfo::projectName];
-                    
-                    CFMutableDictionaryRef query = CFDictionaryCreateMutable (NULL, 0,
-                                                                             &kCFTypeDictionaryKeyCallBacks,
-                                                                             &kCFTypeDictionaryValueCallBacks);
-                    
-                    CFDictionarySetValue (query, kSecClass, kSecClassGenericPassword);
-                    CFDictionarySetValue (query, kSecAttrService, serviceName);
-                    CFDictionarySetValue (query, kSecAttrAccount, [[NSString alloc] initWithUTF8String:applicationName.toRawUTF8()]);
-                    CFDictionarySetValue (query, kSecReturnAttributes, kCFBooleanTrue);
-                    CFDictionarySetValue (query, kSecReturnData, kCFBooleanTrue);
-                    
-                    /// I can't figure out for the life of me how to use SecItemUpdate (),
-                    /// so we do it the rough way, deleting the item and recreating it
-                    /// i have tried every single example I was able to find, but if you think you can manage
-                    /// be my guest and submit a PR using SecItemUpdate () here instead
-                    OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query);
-                    
-                    if (status == errSecSuccess)
-                    {
-                        DBG("Item deleted... recreating now");
-                        return createEntry ();
-                    }
-                    else
-                    {
-                        jassertfalse; // error handling?
-                        return false;
-                    }
-                }
-            };
-            
-            return updateDetails ();
-        }
-        
-        return false;
-    }
+
+    return createEntry();
 }
+
+
+
+//bool AppCredentials::updateEntry (const SigningDetails& creds)
+//{
+//    const auto name = std::get<0> (creds);
+//    const auto email = std::get<1> (creds);
+//    const auto developerID = std::get<2> (creds);
+//    const auto password = std::get<3> (creds);
+//
+//    juce::String applicationName = "Notaryze";
+//
+//    if (password.isEmpty () || name.isEmpty () || developerID.isEmpty() || email.isEmpty()) return false;
+//
+//    auto createEntry = [&, applicationName, name, email, developerID, password]() -> bool
+//    {
+//        JUCE_AUTORELEASEPOOL
+//        {
+//            const int numOptions = 8;
+//
+//            CFStringRef keys [numOptions];
+//            keys[0] = kSecClass;
+//            keys[1] = kSecAttrAccount;
+//            keys[2] = kSecValueData;
+//            keys[3] = kSecValueData;
+//            keys[4] = kSecValueData;
+//            keys[5] = kSecValueData;
+//            keys[6] = kSecAttrService;
+//            keys[7] = kSecAttrAccessible;
+//
+//            CFTypeRef values [numOptions];
+//            values[0] = kSecClassGenericPassword;
+//            values[1] = applicationName.toCFString();
+//            values[2] = name.toCFString();
+//            values[3] = email.toCFString();
+//            values[4] = developerID.toCFString ();
+//            values[5] = password.toCFString ();
+//            values[6] = juce::String (ProjectInfo::projectName).toCFString();
+//            values[7] = kSecAttrAccessibleAfterFirstUnlock;
+//
+//            CFDictionaryRef query;
+//            query = CFDictionaryCreate (kCFAllocatorDefault,
+//                                        (const void**) keys,
+//                                        (const void**) values,
+//                                        numOptions, NULL, NULL);
+//
+//            return SecItemAdd (query, NULL) == 0;
+//        }
+//    };
+//    auto credentialsExist = userCredentialsExist (name);
+//    if ( ! credentialsExist )
+//    {
+//        return createEntry ();
+//    }
+//    else //credentials exist, check if we have to update
+//    {
+//        const auto currentlyStoredDetails = getDetailsForName (name);
+//        auto name = std::get<0> (currentlyStoredDetails);
+//        auto email = std::get<1> (currentlyStoredDetails);
+//        auto developerID = std::get<2> (currentlyStoredDetails);
+//        auto password = std::get<3> (currentlyStoredDetails);
+//        juce::String applicationName ("Notaryze");
+// //       if (currentlyStoredPassword != password)
+//        {
+//            //update
+//            auto updateDetails = [&, applicationName, name, email, developerID, password, createEntry]() -> bool
+//            {
+//                JUCE_AUTORELEASEPOOL
+//                {
+//                    const auto serviceName = [[NSString alloc] initWithUTF8String: ProjectInfo::projectName];
+//
+//                    CFMutableDictionaryRef query = CFDictionaryCreateMutable (NULL, 0,
+//                                                                             &kCFTypeDictionaryKeyCallBacks,
+//                                                                             &kCFTypeDictionaryValueCallBacks);
+//
+//                    CFDictionarySetValue (query, kSecClass, kSecClassGenericPassword);
+//                    CFDictionarySetValue (query, kSecAttrService, serviceName);
+//                    CFDictionarySetValue (query, kSecAttrAccount, [[NSString alloc] initWithUTF8String:applicationName.toRawUTF8()]);
+//                    CFDictionarySetValue (query, kSecReturnAttributes, kCFBooleanTrue);
+//                    CFDictionarySetValue (query, kSecReturnData, kCFBooleanTrue);
+//
+//                    /// I can't figure out for the life of me how to use SecItemUpdate (),
+//                    /// so we do it the rough way, deleting the item and recreating it
+//                    /// i have tried every single example I was able to find, but if you think you can manage
+//                    /// be my guest and submit a PR using SecItemUpdate () here instead
+//                    OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query);
+//
+//                    if (status == errSecSuccess)
+//                    {
+//                        DBG("Item deleted... recreating now");
+//                        return createEntry ();
+//                    }
+//                    else
+//                    {
+//                        jassertfalse; // error handling?
+//                        return false;
+//                    }
+//                }
+//            };
+//
+//            return updateDetails ();
+//        }
+//
+//        return false;
+//    }
+//}
 
 bool AppCredentials::anyExist ()
 {
@@ -355,7 +416,7 @@ SigningDetails AppCredentials::getDetailsForName (const Name& applicationName)
             const DeveloperID _developerID = [developerID UTF8String];
 
             // Create and return the SigningDetails tuple
-            return std::make_tuple (_name, _password, _developerID, _email);
+            return std::make_tuple (_name, _email, _developerID, _password);
         }
         else
         {

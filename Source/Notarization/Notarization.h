@@ -24,6 +24,11 @@ enum NotaryState
     PRODUCTSIGN
 };
 
+inline juce::String checkIdentityFound()
+{
+    
+}
+
 inline int notarize (const juce::File file, const juce::String& email, const juce::String& password, const juce::String& teamID)
 {
     juce::File parentDir = file.getParentDirectory();
@@ -133,7 +138,7 @@ inline juce::String runCommandVerbose (const juce::String& command)
 inline int codesign (const juce::String& filename, const juce::String& name, const juce::String& teamID)
 {
     // Keep in mind the " (" demarcation, necessary to maintain spacing.
-    return runCommand ("sudo codesign --force -s 'Developer ID Application: " + name + " (" + teamID + ")" + "' -v '" + filename + "' --deep --strict --options=runtime --timestamp");
+    return runCommand ("codesign --force -s 'Developer ID Application: " + name + " (" + teamID + ")" + "' -v '" + filename + "' --deep --strict --options=runtime --timestamp");
 }
 
 
@@ -141,9 +146,11 @@ inline int codesign (const juce::String& filename, const juce::String& name, con
 inline juce::String codesignVerbose (const juce::String& filename, const juce::String& name, const juce::String& teamID)
 {
     // Keep in mind the " (" demarcation, necessary to maintain spacing.
-    auto response =  runCommandVerbose ("sudo codesign -dvvv --force -s 'Developer ID Application: " + name + " (" + teamID + ")" + "' -v '" + filename + "' --deep --strict --options=runtime --timestamp");
-    
+    auto response =  runCommandVerbose ("codesign -dvvv --force -s 'Developer ID Application: " + name + " (" + teamID + ")" + "' -v '" + filename + "' --deep --strict --options=runtime --timestamp");
+    DBG ("/n");
+    DBG ("Response is: " + response);
     auto result = NotarizationErrorChecker::getResult (response);
+    DBG ("/n");
     return result;
 }
 
@@ -156,7 +163,7 @@ inline juce::String productsignVerbose (const juce::File& file, const juce::Stri
     juce::String signedFileName = parentDir.getFullPathName() + "/" + fileNameWithoutExtension + " (signed)" + fileExtension;
     juce::String devName = name;
     juce::String devID = teamID;
-    auto result = runCommandVerbose ("sudo productsign --sign 'Developer ID Installer: " + devName + " (" + devID + ")" + "' '" + unsignedFileName + "' '" + signedFileName + "'");
+    auto result = runCommandVerbose ("productsign --sign 'Developer ID Installer: " + devName + " (" + devID + ")" + "' '" + unsignedFileName + "' '" + signedFileName + "'");
     return result;
 }
 

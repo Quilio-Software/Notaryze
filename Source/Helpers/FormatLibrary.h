@@ -32,7 +32,7 @@ public:
         StringVector formats;
 
         if (type == PLUGIN)
-            formats = { ".vst3", ".au" };
+            formats = { ".vst3", ".component" };
         else if (type == AUDIO)
             formats = { ".mp3", ".wav", ".aiff", ".ogg" };
         else if (type == INSTALLER)
@@ -97,6 +97,11 @@ public:
     static bool isInstaller (const juce::File& file)
     {
         return checkFormat (file, INSTALLER);
+    }
+    
+    static bool isPlugin (const juce::File& file)
+    {
+        return checkFormat (file, PLUGIN);
     }
     
     Types getFormatType (juce::String fileExtension)

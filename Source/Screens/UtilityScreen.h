@@ -150,8 +150,11 @@ public:
         
         codeSignTable = std::make_unique<AdvancedTableComponent> (columns, codesigndata);
         productSignTable = std::make_unique<AdvancedTableComponent> (columns, productsigndata);
+        
+        codeSignTable->setNotaryState (CODESIGN);
+        productSignTable->setNotaryState (PRODUCTSIGN);
   
-        codeSignTable->setAllowedFileTypes ({FormatLibrary::Types::EXECUTABLE, FormatLibrary::Types::DYLIB});
+        codeSignTable->setAllowedFileTypes ({FormatLibrary::Types::EXECUTABLE, FormatLibrary::Types::DYLIB, FormatLibrary::Types::PLUGIN});
         productSignTable->setAllowedFileTypes (FormatLibrary::Types::INSTALLER);
         
         addAndMakeVisible (codeSignButton);
@@ -175,11 +178,11 @@ public:
         {
             if (currentTableState == CODE_SIGN)
             {
-                codeSignTable->notarizeTable (devName, devID, true);
+                codeSignTable->notarizeTableAsynchronously (devName, devID, true);
             }
             else if (currentTableState == PRODUCT_SIGN)
             {
-                productSignTable->notarizeTable (devName, devID, false);
+                productSignTable->notarizeTableAsynchronously		 (devName, devID, false);
             }
         };
         

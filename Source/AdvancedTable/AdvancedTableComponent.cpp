@@ -98,8 +98,21 @@ void AdvancedTableComponent::browseForFileToUpload()
     {
         juce::File file (chooser.getResult());
         //TODO: Handle different behavior if code / product
-        if (FormatLibrary::isExecutable (file) || FormatLibrary::isInstaller (file))
-            addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
+        
+        if (notaryState == CODESIGN)
+        {
+            if (FormatLibrary::isExecutable (file) ||
+
+                FormatLibrary::isPlugin (file))
+                addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
+        }
+        else if (notaryState == PRODUCTSIGN)
+        {
+            if (FormatLibrary::isExecutable (file) ||
+                FormatLibrary::isInstaller (file) ||
+                FormatLibrary::isPlugin (file))
+                addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
+        }
     }
 }
 
@@ -184,6 +197,94 @@ void AdvancedTableComponent::notarizeTable (juce::String devName, juce::String d
     updateTable();
 }
 
+class SigningJob : public juce::ThreadPoolJob
+{
+public:
+    SigningJob(juce::XmlElement* rowXml, const juce::String& filename,
+               const juce::String& devName, const juce::String& devID, bool isCodeSigning)
+    : juce::ThreadPoolJob(filename),
+      rowXml(rowXml), filename(filename), devName(devName), devID(devID), isCodeSigning(isCodeSigning)
+    {
+    }
+
+    JobStatus runJob() override
+    {
+        try
+        {
+            if (isCodeSigning)
+            {
+                DBG("Attempting codesign for file: " + filename);
+                auto response = codesignVerbose(filename, devName, devID);
+                
+                if (response != "Success")
+                {
+                    DBG("Error during codesign for file: " + filename + " Response: " + response);
+                    rowXml->setAttribute("Status", "Error");
+                }
+                else
+                {
+                    DBG("Successfully signed file: " + filename);
+                    rowXml->setAttribute("Status", "Signed");
+                    //TODO: Add codesign check stage here
+                }
+            }
+            else
+            {
+                DBG("Attempting productsign for file: " + filename);
+                auto response = productsignVerbose(filename, devName, devID);
+                
+                if (response != "Success")
+                {
+                    DBG("Error during productsign for file: " + filename + " Response: " + response);
+                    rowXml->setAttribute("Status", "Error");
+                }
+                else
+                {
+                    DBG("Successfully signed file: " + filename);
+                    rowXml->setAttribute("Status", "Signed");
+                    //TODO: Add productsign check stage here
+                }
+            }
+        }
+        catch (const std::exception& e)
+        {
+            DBG("Exception caught during signing process for file: " + filename + " - " + e.what());
+            rowXml->setAttribute("Status", "Exception");
+        }
+        
+        return jobHasFinished;
+    }
+
+private:
+    juce::XmlElement* rowXml;
+    juce::String filename, devName, devID;
+    bool isCodeSigning;
+};
+
+void AdvancedTableComponent::notarizeTableAsynchronously (juce::String devName, juce::String devID, bool isCodeSigning)
+{
+#ifdef JUCE_MAC
+    juce::ThreadPool threadPool;  // Create a thread pool. You might want to set some thread limits here.
+
+    // Queue up all the signing tasks in the thread pool
+    for (auto* rowXml : dataList->getChildIterator())
+    {
+        auto filename = rowXml->getStringAttribute("Item");
+        DBG("Queuing signing job for file: " + filename);
+        threadPool.addJob(new SigningJob(rowXml, filename, devName, devID, isCodeSigning), true);
+    }
+
+    // Wait for all tasks to complete
+    DBG("Waiting for all signing jobs to complete...");
+    while (threadPool.getNumJobs() > 0)
+    {
+        juce::Thread::sleep(100);  // Sleep for a bit so we're not constantly polling.
+    }
+    DBG ("Thread Pool: All signing jobs completed.");
+    
+    updateTable();
+#endif
+}
 
 
 
