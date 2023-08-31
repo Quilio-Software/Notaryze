@@ -10,6 +10,9 @@
 
 #pragma once
 
+//To Be Completed......
+//Most of these error codes are unimplemented
+
 enum RESULT_CODE
 {
     INVALID_CREDENTIALS,
@@ -25,55 +28,40 @@ enum RESULT_CODE
 //Error Parsing goes here
 class NotarizationErrorChecker 
 {
-    
 public:
     static bool containsNoIdentityError (const juce::String& text)
     {
         std::string lowerText = text.toStdString();
-        std::transform(lowerText.begin(), lowerText.end(), lowerText.begin(), ::tolower);
-        
+        std::transform (lowerText.begin(), lowerText.end(), lowerText.begin(), ::tolower);
         std::string keyword = "no identity found";
-        
         size_t found = lowerText.find(keyword);
-        if (found != std::string::npos) {
-            return true;
-        }
-        return false;
+        return (found != std::string::npos);
     }
     
     static bool containsTimeoutError (const juce::String& text)
     {
         juce::String lowerText = text.toLowerCase();
         juce::String keyword = "timeout error";
-        
-        if (lowerText.containsIgnoreCase(keyword)) {
-            return true;
-        }
-        return false;
+        return (lowerText.containsIgnoreCase (keyword));
     }
     
-    static RESULT_CODE getResultCode (juce::String responseToParse)
+    static RESULT_CODE getResultCode (const juce::String responseToParse)
     {
-        if (containsNoIdentityError (responseToParse))
-        {
-            return INVALID_CREDENTIALS;
-        }
-        else if (containsTimeoutError (responseToParse))
-        {
-            return TIMEOUT;
-        }
-        else
-        {
-            return SUCCESS;
-        }
+        if (containsNoIdentityError (responseToParse)) { return INVALID_CREDENTIALS; }
+        else if (containsTimeoutError (responseToParse)) { return TIMEOUT; }
+        else { return SUCCESS; }
     }
     
-    static juce::String getResult (juce::String responseToParse)
+    static juce::String getResult (const juce::String responseToParse)
     {
         auto resultCode = getResultCode (responseToParse);
         if (resultCode == INVALID_CREDENTIALS)
         {
             return "The credentials are invalid";
+        }
+        else
+        {
+            return "Success";
         }
     }
 };
