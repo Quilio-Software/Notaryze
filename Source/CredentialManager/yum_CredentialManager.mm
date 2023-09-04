@@ -58,21 +58,7 @@ bool AppCredentials::removeEntry (const SigningDetails& concatenatedDetails)
     auto credentialsExist = userCredentialsExist ("Notaryze");
     if (credentialsExist)
     {
-#if RunHeadless
-        return deleteEntry ();
-#else
-        auto o = juce::MessageBoxOptions().withTitle("Remove login data from Keychain?")
-            .withMessage ("Do you want to remove your login data from Keychain?")
-            .withButton ("Yes").withButton ("No");
-        
-        juce::AlertWindow::showAsync (o, [&, deleteEntry](int result)
-                                      {
-            if (result == 1)
-                deleteEntry ();
-        });
-        
-        return true;
-#endif
+        return deleteEntry();
     }
     return false;
 }
