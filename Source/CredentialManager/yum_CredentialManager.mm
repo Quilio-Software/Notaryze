@@ -21,133 +21,210 @@
 
 using namespace QuilioCredentials;
 
-bool AppCredentials::removeEntry (const SigningDetails& details)
+bool AppCredentials::removeEntry (const SigningDetails& concatenatedDetails)
 {
-    const auto name = std::get<0> (details);
-    const auto email = std::get<1> (details);
-    const auto developerID = std::get<2> (details);
-    const auto password = std::get<3> (details);
+    juce::String concatenatedDataString = std::get<0>(concatenatedDetails) + "|" + std::get<1>(concatenatedDetails) + "|" + std::get<2>(concatenatedDetails) + "|" + std::get<3>(concatenatedDetails);
+
+    if (concatenatedDataString.isEmpty()) return false;
     
     juce::String applicationName = "Notaryze";
     
-    if (password.isEmpty () || name.isEmpty () || developerID.isEmpty() || email.isEmpty()) return false;
-    
-    auto createEntry = [&, applicationName, name, email, developerID, password]() -> bool
+    auto deleteEntry = [&, applicationName, concatenatedDataString]() -> bool
     {
         JUCE_AUTORELEASEPOOL
         {
-            const int numOptions = 8;
-            
+            const int numOptions = 3;
+
             CFStringRef keys [numOptions];
             keys[0] = kSecClass;
             keys[1] = kSecAttrAccount;
-            keys[2] = kSecValueData;
-            keys[3] = kSecValueData;
-            keys[4] = kSecValueData;
-            keys[5] = kSecValueData;
-            keys[6] = kSecAttrService;
-            keys[7] = kSecAttrAccessible;
-            
+            keys[2] = kSecAttrService;
+
             CFTypeRef values [numOptions];
             values[0] = kSecClassGenericPassword;
             values[1] = applicationName.toCFString();
-            values[2] = name.toCFString();
-            values[3] = email.toCFString();
-            values[4] = developerID.toCFString ();
-            values[5] = password.toCFString ();
-            values[6] = juce::String (ProjectInfo::projectName).toCFString();
-            values[7] = kSecAttrAccessibleAfterFirstUnlock;
-            
+            values[2] = juce::String (ProjectInfo::projectName).toCFString();
+
             CFDictionaryRef query;
             query = CFDictionaryCreate (kCFAllocatorDefault,
                                         (const void**) keys,
                                         (const void**) values,
                                         numOptions, NULL, NULL);
-            
+
             return SecItemDelete (query) == 0;
         }
     };
-    
-    auto credentialsExist = userCredentialsExist (name);
-    if ( ! credentialsExist )
+
+    auto credentialsExist = userCredentialsExist ("Notaryze");
+    if (credentialsExist)
     {
 #if RunHeadless
-        return createEntry ();
+        return deleteEntry ();
 #else
-        auto o = juce::MessageBoxOptions ().withTitle("Save login data in Keychain?")
-            .withMessage ("Do you want to store your login data in Keychain?")
+        auto o = juce::MessageBoxOptions().withTitle("Remove login data from Keychain?")
+            .withMessage ("Do you want to remove your login data from Keychain?")
             .withButton ("Yes").withButton ("No");
         
-        juce::AlertWindow::showAsync (o, [&, createEntry](int result)
+        juce::AlertWindow::showAsync (o, [&, deleteEntry](int result)
                                       {
             if (result == 1)
-                createEntry ();
+                deleteEntry ();
         });
         
         return true;
 #endif
-        
     }
+    return false;
 }
+
+//bool AppCredentials::updateEntry (const SigningDetails& creds)
+//{
+//    const auto name = std::get<0>(creds);
+//    const auto email = std::get<1>(creds);
+//    const auto developerID = std::get<2>(creds);
+//    const auto password = std::get<3>(creds);
+//
+//    juce::String applicationName = "Notaryze";
+//
+//    if (password.isEmpty() || name.isEmpty() || developerID.isEmpty() || email.isEmpty())
+//        return false;
+//
+//    auto createEntry = [applicationName, name, email, developerID, password]() -> bool {
+//        JUCE_AUTORELEASEPOOL {
+//            const int numOptions = 7;
+//
+//            CFStringRef keys[numOptions];
+//            keys[0] = kSecClass;
+//            keys[1] = kSecAttrService;
+//            keys[2] = kSecAttrAccount;
+//            keys[3] = kSecAttrGeneric;
+//            keys[4] = kSecValueData;
+//            keys[5] = kSecAttrAccessible;
+//            keys[6] = kSecAttrSynchronizable;
+//
+//            juce::MemoryBlock emailData(email.toRawUTF8(), email.getNumBytesAsUTF8());
+//            juce::MemoryBlock devIDData(developerID.toRawUTF8(), developerID.getNumBytesAsUTF8());
+//
+//            CFDataRef emailDataRef = CFDataCreate(kCFAllocatorDefault, (const UInt8*) emailData.getData(), emailData.getSize());
+//            CFDataRef devIDDataRef = CFDataCreate(kCFAllocatorDefault, (const UInt8*) devIDData.getData(), devIDData.getSize());
+//
+//            CFStringRef combinedGeneric = juce::String(email + ";" + developerID).toCFString();
+//
+//            CFTypeRef values[numOptions];
+//            values[0] = kSecClassGenericPassword;
+//            values[1] = applicationName.toCFString();
+//            values[2] = name.toCFString();
+//            values[3] = combinedGeneric;
+//            values[4] = CFDataCreate(kCFAllocatorDefault, (const UInt8*)password.toRawUTF8(), password.getNumBytesAsUTF8());
+//            values[5] = kSecAttrAccessibleAfterFirstUnlock;
+//            values[6] = kCFBooleanTrue;  // synchronizable if desired
+//
+//            CFDictionaryRef query;
+//            query = CFDictionaryCreate(kCFAllocatorDefault,
+//                (const void**)keys,
+//                (const void**)values,
+//                numOptions, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+//
+//            OSStatus status = SecItemAdd(query, NULL);
+//
+//            CFRelease(emailDataRef);
+//            CFRelease(devIDDataRef);
+//
+//            return status == errSecSuccess;
+//        }
+//    };
+//
+//    return createEntry();
+//}
 
 bool AppCredentials::updateEntry (const SigningDetails& creds)
 {
-    const auto name = std::get<0>(creds);
-    const auto email = std::get<1>(creds);
-    const auto developerID = std::get<2>(creds);
-    const auto password = std::get<3>(creds);
+    const auto name = std::get<0> (creds);
+    const auto email = std::get<1> (creds);
+    const auto developerID = std::get<2> (creds);
+    const auto password = std::get<3> (creds);
 
     juce::String applicationName = "Notaryze";
 
-    if (password.isEmpty() || name.isEmpty() || developerID.isEmpty() || email.isEmpty())
-        return false;
+    if (password.isEmpty() || name.isEmpty() || developerID.isEmpty() || email.isEmpty()) return false;
 
-    auto createEntry = [applicationName, name, email, developerID, password]() -> bool {
-        JUCE_AUTORELEASEPOOL {
-            const int numOptions = 7;
+    juce::String concatenatedData = name + "|" + email + "|" + developerID + "|" + password;
+
+    auto createEntry = [&, applicationName, concatenatedData]() -> bool
+    {
+        JUCE_AUTORELEASEPOOL
+        {
+            const int numOptions = 4;
 
             CFStringRef keys[numOptions];
             keys[0] = kSecClass;
-            keys[1] = kSecAttrService;
-            keys[2] = kSecAttrAccount;
-            keys[3] = kSecAttrGeneric;
-            keys[4] = kSecValueData;
-            keys[5] = kSecAttrAccessible;
-            keys[6] = kSecAttrSynchronizable;
-
-            juce::MemoryBlock emailData(email.toRawUTF8(), email.getNumBytesAsUTF8());
-            juce::MemoryBlock devIDData(developerID.toRawUTF8(), developerID.getNumBytesAsUTF8());
-
-            CFDataRef emailDataRef = CFDataCreate(kCFAllocatorDefault, (const UInt8*)emailData.getData(), emailData.getSize());
-            CFDataRef devIDDataRef = CFDataCreate(kCFAllocatorDefault, (const UInt8*)devIDData.getData(), devIDData.getSize());
-
-            CFStringRef combinedGeneric = juce::String(email + ";" + developerID).toCFString();
+            keys[1] = kSecAttrAccount;
+            keys[2] = kSecValueData;
+            keys[3] = kSecAttrService;
 
             CFTypeRef values[numOptions];
             values[0] = kSecClassGenericPassword;
             values[1] = applicationName.toCFString();
-            values[2] = name.toCFString();
-            values[3] = combinedGeneric;
-            values[4] = CFDataCreate(kCFAllocatorDefault, (const UInt8*)password.toRawUTF8(), password.getNumBytesAsUTF8());
-            values[5] = kSecAttrAccessibleAfterFirstUnlock;
-            values[6] = kCFBooleanTrue;  // synchronizable if desired
+            values[2] = concatenatedData.toCFString();
+            values[3] = juce::String (ProjectInfo::projectName).toCFString();
 
             CFDictionaryRef query;
-            query = CFDictionaryCreate(kCFAllocatorDefault,
-                (const void**)keys,
-                (const void**)values,
-                numOptions, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+            query = CFDictionaryCreate (kCFAllocatorDefault,
+                                       (const void**) keys,
+                                       (const void**) values,
+                                       numOptions, NULL, NULL);
 
-            OSStatus status = SecItemAdd(query, NULL);
-
-            CFRelease(emailDataRef);
-            CFRelease(devIDDataRef);
-
-            return status == errSecSuccess;
+            return SecItemAdd (query, NULL) == 0;
         }
     };
 
-    return createEntry();
+    auto credentialsExist = userCredentialsExist (name);
+    if (!credentialsExist)
+    {
+        return createEntry();
+    }
+    else
+    {
+        const auto currentlyStoredDetails = getDetailsForName(name);
+        auto storedConcatenatedData = std::get<0>(currentlyStoredDetails);
+        juce::String applicationName("Notaryze");
+
+        if (storedConcatenatedData != concatenatedData)
+        {
+            auto updateDetails = [&, applicationName, concatenatedData, createEntry]() -> bool
+            {
+                JUCE_AUTORELEASEPOOL
+                {
+                    const auto serviceName = [[NSString alloc] initWithUTF8String: ProjectInfo::projectName];
+                    CFMutableDictionaryRef query = CFDictionaryCreateMutable(NULL, 0,
+                                                                            &kCFTypeDictionaryKeyCallBacks,
+                                                                            &kCFTypeDictionaryValueCallBacks);
+
+                    CFDictionarySetValue(query, kSecClass, kSecClassGenericPassword);
+                    CFDictionarySetValue(query, kSecAttrService, serviceName);
+                    CFDictionarySetValue(query, kSecAttrAccount, [[NSString alloc] initWithUTF8String:applicationName.toRawUTF8()]);
+                    CFDictionarySetValue(query, kSecReturnAttributes, kCFBooleanTrue);
+                    CFDictionarySetValue(query, kSecReturnData, kCFBooleanTrue);
+
+                    OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query);
+
+                    if (status == errSecSuccess)
+                    {
+                        return createEntry();
+                    }
+                    else
+                    {
+                        jassertfalse;
+                        return false;
+                    }
+                }
+            };
+
+            return updateDetails();
+        }
+
+        return false;
+    }
 }
 
 
@@ -370,67 +447,59 @@ juce::String AppCredentials::getPasswordForName (const Name& name)
     jassertfalse;
     return {};
 }
-SigningDetails AppCredentials::getDetailsForName (const Name& applicationName)
+
+
+SigningDetails AppCredentials::getDetailsForName(const Name& applicationName)
 {
     JUCE_AUTORELEASEPOOL
     {
         const auto serviceName = [[NSString alloc] initWithUTF8String:ProjectInfo::projectName];
-
+        
         CFMutableDictionaryRef query = CFDictionaryCreateMutable(NULL, 0,
             &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-
-        CFDictionarySetValue (query, kSecClass, kSecClassGenericPassword);
-        CFDictionarySetValue (query, kSecAttrService, serviceName);
-        CFDictionarySetValue (query, kSecAttrAccount, [[NSString alloc] initWithUTF8String:applicationName.toRawUTF8()]);
-        CFDictionarySetValue (query, kSecReturnAttributes, kCFBooleanTrue);
-        CFDictionarySetValue (query, kSecReturnData, kCFBooleanTrue);
-
+            
+        CFDictionarySetValue(query, kSecClass, kSecClassGenericPassword);
+        CFDictionarySetValue(query, kSecAttrService, serviceName);
+        CFDictionarySetValue(query, kSecAttrAccount, [[NSString alloc] initWithUTF8String:applicationName.toRawUTF8()]);
+        CFDictionarySetValue(query, kSecReturnAttributes, kCFBooleanTrue);
+        CFDictionarySetValue(query, kSecReturnData, kCFBooleanTrue);
+        
         CFDictionaryRef result = nil;
         OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, (CFTypeRef*)&result);
-
-        //Prompts for keychain access here
         
         if (status == errSecSuccess)
         {
             const auto resultDict = (NSDictionary*)result;
+            const auto concatenatedData = static_cast<NSData*>(resultDict[(__bridge id)kSecValueData]);
+            const auto concatenatedString = [[NSString alloc] initWithData:concatenatedData encoding:NSUTF8StringEncoding];
             
-//            const auto applicationNameData = static_cast<NSData*>(resultDict[(__bridge id)kSecAttrAccount]);
-//            const auto applicationName = [[NSString alloc] initWithData:applicationNameData encoding:NSUTF8StringEncoding];
-//
-            const auto nameData = static_cast<NSData*>(resultDict[(__bridge id)kSecValueData]);
-            const auto name = [[NSString alloc] initWithData:nameData encoding:NSUTF8StringEncoding];
-            
-            const auto emailData = static_cast<NSData*>(resultDict[(__bridge id)kSecValueData]);
-            const auto email = [[NSString alloc] initWithData:emailData encoding:NSUTF8StringEncoding];
+            std::istringstream iss([concatenatedString UTF8String]);
+            std::string token;
+            std::vector<std::string> components;
 
-            const auto developerIDData = static_cast<NSData*>(resultDict[(__bridge id)kSecValueData]);
-            const auto developerID = [[NSString alloc] initWithData:developerIDData encoding:NSUTF8StringEncoding];
+            while (std::getline(iss, token, '|'))
+            {
+                components.push_back(token);
+            }
 
-            const auto passwordData = static_cast<NSData*>(resultDict[(__bridge id)kSecValueData]);
-            const auto password = [[NSString alloc] initWithData:passwordData encoding:NSUTF8StringEncoding];
-
-            // Extract other details from the keychain result or provide appropriate default values
-            const Name _name = [name UTF8String];
-            const Password _password = [password UTF8String];
-            const Email _email = [email UTF8String];
-            const DeveloperID _developerID = [developerID UTF8String];
-
-            // Create and return the SigningDetails tuple
-            return std::make_tuple (_name, _email, _developerID, _password);
+            if (components.size() == 4)
+            {
+                return std::make_tuple(components[0], components[1], components[2], components[3]);
+            }
+            else
+            {
+                // Handle error: The split data does not have the expected number of components.
+                return std::make_tuple("", "", "", "");
+            }
         }
         else
         {
-            // jassertfalse;
-            DBG("User denied access or other error");
-            // Return an empty SigningDetails tuple or appropriate default values
+            // Handle errors
             return std::make_tuple("", "", "", "");
         }
     }
-
-    // jassertfalse;
-    // Return an empty SigningDetails tuple or appropriate default values
-    return std::make_tuple("", "", "", "");
 }
+
 
 
 //juce::Array<UsernameAndPassword> AppCredentials::getAllStoredUsernamesAndPasswords (std::function<bool ()> onNoneFound)
@@ -460,32 +529,51 @@ SigningDetails AppCredentials::getDetailsForName (const Name& applicationName)
 
 
 
-juce::Array<SigningDetails> AppCredentials::getAllStoredSigningDetails (std::function<bool ()> onNoneFound)
+#include <sstream>
+
+juce::Array<SigningDetails> AppCredentials::getAllStoredSigningDetails(std::function<bool()> onNoneFound)
 {
     juce::Array<SigningDetails> creds;
     const auto entries = getAllAvailableEntries();
-    
-    if (entries.isEmpty () && onNoneFound != nullptr)
+
+    if (entries.isEmpty() && onNoneFound != nullptr)
     {
-        auto tryAgain = onNoneFound ();
+        auto tryAgain = onNoneFound();
         if (tryAgain)
-            return getAllStoredSigningDetails (onNoneFound);
-    }
-    
-    for (auto& e : entries)
-    {
-        const auto details = getDetailsForName (e);
-        auto name = std::get<0> (details);
-        auto email = std::get<1> (details);
-        auto developerID = std::get<2> (details);
-        auto password = std::get<3> (details);
-        
-        creds.add (std::make_tuple (name, email, developerID, password));
+            return getAllStoredSigningDetails(onNoneFound);
     }
 
+    for (auto& e : entries)
+    {
+        const auto details = getDetailsForName(e);
+        juce::String concatenatedData = std::get<0>(details) + "|" + std::get<1>(details) + "|" + std::get<2>(details) + "|" + std::get<3>(details);
+        std::istringstream iss (concatenatedData.toStdString());
+
+        std::string token;
+        std::vector<juce::String> components;
+
+        while (std::getline(iss, token, '|'))
+        {
+            components.push_back(juce::String(token));
+        }
+
+        if (components.size() == 4)
+        {
+            auto name = components[0];
+            auto email = components[1];
+            auto developerID = components[2];
+            auto password = components[3];
+            creds.add(std::make_tuple(name, email, developerID, password));
+        }
+        else
+        {
+            // Handle error: The split data does not have the expected number of components.
+        }
+    }
 
     return creds;
 }
+
 
 //========================================================================
 //========================================================================

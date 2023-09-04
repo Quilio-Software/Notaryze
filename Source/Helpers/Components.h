@@ -120,8 +120,9 @@ public:
         DBG ("Deleting with element" + name + password + email + devID);
 
         // Create and return the SigningDetails tuple
-        SigningDetails signingDetails = std::make_tuple (_name, _password, _developerID, _email);
-        credentialsManager.removeEntry (signingDetails);
+        SigningDetails signingDetails = std::make_tuple (_name, _email, _developerID, _password);
+        
+        return credentialsManager.removeEntry (signingDetails);
     }
 
 //    juce::String fromBase64 (const juce::String& input)
@@ -203,21 +204,26 @@ public:
         try
         {
             // Store the data as a single entry
-            credentialsManager.updateEntry (std::make_tuple (name, email, devID, password));
-
-            // Save the image as a Base64 string
-            juce::MemoryOutputStream outputStream;
-            juce::JPEGImageFormat jpegFormat;
-            if (!jpegFormat.writeImageToStream(profileImage, outputStream))
+            if (credentialsManager.updateEntry (std::make_tuple (name, email, devID, password)))
             {
-                juce::Logger::writeToLog ("Error: Unable to write image to stream");
-                return;
+                // Save the image as a Base64 string
+                juce::MemoryOutputStream outputStream;
+                juce::JPEGImageFormat jpegFormat;
+                if (!jpegFormat.writeImageToStream(profileImage, outputStream))
+                {
+                    juce::Logger::writeToLog ("Error: Unable to write image to stream");
+                    return;
+                }
+
+                juce::String base64Image = toBase64 (outputStream.toString());
+         //       credentialsManager.updateEntry (std::make_pair ("profileImage", base64Image));
+
+                juce::Logger::writeToLog ("Success: Saved user details to the keychain");
             }
-
-            juce::String base64Image = toBase64 (outputStream.toString());
-     //       credentialsManager.updateEntry (std::make_pair ("profileImage", base64Image));
-
-            juce::Logger::writeToLog ("Success: Saved user details to the keychain");
+            else
+            {
+                juce::Logger::writeToLog ("Failure: Unable to save user details to the keychain");
+            }
         }
         catch (const std::exception& e)
         {

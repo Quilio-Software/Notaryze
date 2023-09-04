@@ -78,10 +78,16 @@ public:
             setCurrentScreen (SIGN_IN);
             
             //TODO turn this into a private member variable flag based system
-            if (signInScreen.keepMeSignedInButton.getToggleState())
-            {
+//            if (signInScreen.keepMeSignedInButton.getState())
+//            {
                 bool deleteStatus = profileData->removeFromKeychain ("Notaryze");
-            }
+                
+                if (deleteStatus)
+                {
+                    DBG ("Successfully deleted details from keychain.");
+                }
+                else DBG ("Failed to delete details from keychain.");
+//            }
             
             signInScreen.clearTextEditors();
         };
