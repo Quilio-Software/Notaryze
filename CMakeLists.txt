@@ -137,10 +137,14 @@ file(GLOB_RECURSE MyResources RELATIVE ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_SOU
 # Remove problematic files
 list(FILTER MyResources EXCLUDE REGEX ".DS_Store$")
 
-# Escape spaces in filenames
-string(REPLACE " " "\\ " MyResources "${MyResources}")
+# Quote each path
+set(QuotedResources "")
+foreach(resource ${MyResources})
+    list(APPEND QuotedResources "\"${resource}\"")
+endforeach()
 
-juce_add_binary_data(BinaryData SOURCES ${MyResources})
+juce_add_binary_data(BinaryData SOURCES ${QuotedResources})
+
 
 
 # `target_link_libraries` links libraries and JUCE modules to other libraries or executables. Here,
