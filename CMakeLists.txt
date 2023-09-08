@@ -21,8 +21,8 @@ if(CMAKE_COMPILER_IS_GNUCC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--stack, SIZE, /m:4")
 endif()
 
-add_compile_options (/wd4996 /wd4458 /bigobj /W4) 
-set(ENV{PreferredToolArchitecture} "x64")
+#add_compile_options (/wd4996 /wd4458 /bigobj /W4) 
+#set(ENV{PreferredToolArchitecture} "x64")
 
 
 
