@@ -112,7 +112,7 @@ target_sources(Notaryze PRIVATE
 # definitions will be visible both to your code, and also the JUCE module code, so for new
 # definitions, pick unique names that are unlikely to collide! This is a standard CMake command.
 
-target_compile_definitions(InstrumentalGenerator
+target_compile_definitions(Notaryze
     PRIVATE
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.
         JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the
@@ -143,7 +143,7 @@ juce_add_binary_data(BinaryData
 # resolved automatically. If you'd generated a binary data target above, you would need to link to
 # it here too. This is a standard CMake command.
 
-target_link_libraries(InstrumentalGenerator
+target_link_libraries(Notaryze
     PRIVATE
         BinaryData
         juce::juce_core
