@@ -43,7 +43,7 @@ project(Notaryze VERSION 0.0.1)
 # add_subdirectory(JUCE)                    # If you've put JUCE in a subdirectory called JUCE
 
 #We include tracktion engine here
-add_subdirectory(dependencies/JUCE JUCE)
+add_subdirectory(Dependencies/JUCE JUCE)
 
 # `juce_add_console_app` adds an executable target with the name passed as the first argument
 # (ConsoleAppExample here). This target is a normal CMake target, but has a lot of extra properties
@@ -63,51 +63,45 @@ juce_generate_juce_header(Notaryze)
 
 target_compile_features(Notaryze PUBLIC cxx_std_17)
 
+
+# Link the Security framework for macOS
+if(APPLE)
+    find_library(SECURITY_LIBRARY Security)
+    target_link_libraries(Notaryze PRIVATE ${SECURITY_LIBRARY})
+endif()
+
 # `target_sources` adds source files to a target. We pass the target that needs the sources as the
 # first argument, then a visibility parameter for the sources which should normally be PRIVATE.
 # Finally, we supply a list of source files that will be built into the target. This is a standard
 # CMake command.
 
-target_sources(InstrumentalGenerator
-    PRIVATE
-Source\Main.cpp
-Source\MainComponent.h
-Source\Notarization.h
-Source\ScreenManager.h
-Source\ErrorHandling.h
-Source\MainComponent.cpp
-
-Source\Styles\Styling.h
-
-Source\Screens\ProfileScreen.h
-Source\Screens\SignInScreen.h
-Source\Screens\UtilityScreen.h
-
-Source\Notarization\ErrorHandling.h
-Source\Notarization\Notarization.h
-
-Source\Helpers\Components.h
-Source\Helpers\FormatLibrary.h
-Source\Helpers\SpecialStringProcessing.h
-
-Source\CredentialManager\NativeWindowsHelpers.h
-Source\CredentialManager\Types.h
-Source\CredentialManager\UsernamePasswordUI.h
-Source\CredentialManager\UsernamePasswordUI.cpp
-Source\CredentialManager\yum_CredentialManager.cpp
-Source\CredentialManager\yum_CredentialManager.h
-Source\CredentialManager\yum_CredentialManager.mm
-
-Source\AdvancedTable\AdvancedTableComponent.cpp
-Source\AdvancedTable\AdvancedTableComponent.h
-Source\AdvancedTable\DataModel.h
-Source\AdvancedTable\TableStyling.h
-
-
-
-
-
-
+target_sources(Notaryze PRIVATE
+    Source/Main.cpp
+    Source/MainComponent.h
+    Source/Notarization.h
+    Source/ScreenManager.h
+    Source/ErrorHandling.h
+    Source/MainComponent.cpp
+    Source/Styles/Styling.h
+    Source/Screens/ProfileScreen.h
+    Source/Screens/SignInScreen.h
+    Source/Screens/UtilityScreen.h
+    Source/Notarization/ErrorHandling.h
+    Source/Notarization/Notarization.h
+    Source/Helpers/Components.h
+    Source/Helpers/FormatLibrary.h
+    Source/Helpers/SpecialStringProcessing.h
+    Source/CredentialManager/NativeWindowsHelpers.h
+    Source/CredentialManager/Types.h
+    Source/CredentialManager/UsernamePasswordUI.h
+    Source/CredentialManager/UsernamePasswordUI.cpp
+    Source/CredentialManager/yum_CredentialManager.cpp
+    Source/CredentialManager/yum_CredentialManager.h
+    Source/CredentialManager/yum_CredentialManager.mm
+    Source/AdvancedTable/AdvancedTableComponent.cpp
+    Source/AdvancedTable/AdvancedTableComponent.h
+    Source/AdvancedTable/DataModel.h
+    Source/AdvancedTable/TableStyling.h
 )
 
 
