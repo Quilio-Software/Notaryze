@@ -132,27 +132,10 @@ target_compile_definitions(Notaryze
 # Conversion to binary-data will happen when the target is built.
 
 
-# Create a temporary directory for sanitized files
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/sanitized_files)
+file(GLOB_RECURSE MY_BINARY_FILES RELATIVE ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_SOURCE_DIR}/Resources/*)
 
-# Sanitize file names and copy to the temporary directory
-add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/sanitize_complete.txt
-                   COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/sanitized_files
-                   COMMAND mkdir -p ${CMAKE_BINARY_DIR}/sanitized_files
-                   COMMAND find "${CMAKE_SOURCE_DIR}/Resources" -type f -exec bash -c 'f="{}"; nf=`echo $$f | tr " " "_"`; cp "$$f" "${CMAKE_BINARY_DIR}/sanitized_files/$$nf"' \;
-                   COMMAND touch ${CMAKE_BINARY_DIR}/sanitize_complete.txt
-                   DEPENDS ${MY_BINARY_FILES})
 
-# Add a custom target to trigger the custom command
-add_custom_target(sanitize_files ALL DEPENDS ${CMAKE_BINARY_DIR}/sanitize_complete.txt)
-
-# Use juce_add_binary_data on the sanitized directory
-file(GLOB_RECURSE SANITIZED_BINARY_FILES RELATIVE ${CMAKE_BINARY_DIR}/sanitized_files ${CMAKE_BINARY_DIR}/sanitized_files/*)
-juce_add_binary_data(MyBinaryData SOURCES ${SANITIZED_BINARY_FILES})
-
-# Make sure juce_add_binary_data depends on the sanitize_files target
-add_dependencies(MyBinaryData sanitize_files)
-
+juce_add_binary_data(BinaryData SOURCES ${MY_BINARY_FILES})
 
 
 
