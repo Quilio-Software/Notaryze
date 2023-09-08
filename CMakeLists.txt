@@ -134,23 +134,12 @@ target_compile_definitions(Notaryze
 
 file(GLOB_RECURSE MyResources RELATIVE ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_SOURCE_DIR}/Resources/*)
 
-# Remove problematic files
-list(FILTER MyResources EXCLUDE REGEX ".DS_Store$")
 
-# Create a temporary directory for sanitized resources
-set(SanitizedResourcesDir "${CMAKE_BINARY_DIR}/SanitizedResources")
-file(MAKE_DIRECTORY ${SanitizedResourcesDir})
+# Quote each file path
+list(TRANSFORM MY_BINARY_FILES REPLACE "^(.*)$" "\"\\1\"")
 
-# Copy and sanitize resources
-foreach(resource ${MyResources})
-    string(REPLACE " " "_" sanitized_resource ${resource})
-    configure_file("${CMAKE_SOURCE_DIR}/Resources/${resource}" "${SanitizedResourcesDir}/${sanitized_resource}" COPYONLY)
-endforeach()
-
-# Now use the sanitized resources directory
-file(GLOB_RECURSE SanitizedResources RELATIVE ${SanitizedResourcesDir} ${SanitizedResourcesDir}/*)
-juce_add_binary_data(BinaryData SOURCES ${SanitizedResources})
-
+# Pass the quoted list to JUCE's binary data function
+juce_add_binary_data(MyBinaryData SOURCES ${MY_BINARY_FILES})
 
 
 
