@@ -133,7 +133,15 @@ target_compile_definitions(Notaryze
 
 
 file(GLOB_RECURSE MyResources RELATIVE ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_SOURCE_DIR}/Resources/*)
+
+# Remove problematic files
+list(FILTER MyResources EXCLUDE REGEX ".DS_Store$")
+
+# Escape spaces in filenames
+string(REPLACE " " "\\ " MyResources "${MyResources}")
+
 juce_add_binary_data(BinaryData SOURCES ${MyResources})
+
 
 # `target_link_libraries` links libraries and JUCE modules to other libraries or executables. Here,
 # we're linking our executable target to the `juce::juce_core` module. Inter-module dependencies are
