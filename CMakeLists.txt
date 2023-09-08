@@ -118,7 +118,7 @@ target_compile_definitions(Notaryze
         JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the
         JUCE_USE_CURL=0
 	JUCE_MODAL_LOOPS_PERMITTED=1
-	JucePlugin_Build_Standalone=1
+	JUCE_USE_CUSTOM_PLUGIN_STANDALONE_APP=1
 	_USE_MATH_DEFINES=1
 
 
