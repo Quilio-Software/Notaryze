@@ -133,10 +133,10 @@ target_compile_definitions(Notaryze
 
 
 file(GLOB_RECURSE MY_BINARY_FILES RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/Resources/*)
-
+message("MY_BINARY_FILES = ${MY_BINARY_FILES}")
 
 juce_add_binary_data(BinaryData SOURCES ${MY_BINARY_FILES})
-message("MY_BINARY_FILES = ${MY_BINARY_FILES}")
+
 
 
 
