@@ -132,7 +132,7 @@ target_compile_definitions(Notaryze
 # Conversion to binary-data will happen when the target is built.
 
 
-file(GLOB_RECURSE MyResources RELATIVE ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_SOURCE_DIR}/Resources/*)
+file(GLOB_RECURSE MY_BINARY_FILES RELATIVE ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_SOURCE_DIR}/Resources/*)
 
 
 # Quote each file path
