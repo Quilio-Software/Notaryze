@@ -137,13 +137,20 @@ file(GLOB_RECURSE MyResources RELATIVE ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_SOU
 # Remove problematic files
 list(FILTER MyResources EXCLUDE REGEX ".DS_Store$")
 
-# Quote each path
-set(QuotedResources "")
+# Create a temporary directory for sanitized resources
+set(SanitizedResourcesDir "${CMAKE_BINARY_DIR}/SanitizedResources")
+file(MAKE_DIRECTORY ${SanitizedResourcesDir})
+
+# Copy and sanitize resources
 foreach(resource ${MyResources})
-    list(APPEND QuotedResources "\"${resource}\"")
+    string(REPLACE " " "_" sanitized_resource ${resource})
+    configure_file("${CMAKE_SOURCE_DIR}/Resources/${resource}" "${SanitizedResourcesDir}/${sanitized_resource}" COPYONLY)
 endforeach()
 
-juce_add_binary_data(BinaryData SOURCES ${QuotedResources})
+# Now use the sanitized resources directory
+file(GLOB_RECURSE SanitizedResources RELATIVE ${SanitizedResourcesDir} ${SanitizedResourcesDir}/*)
+juce_add_binary_data(BinaryData SOURCES ${SanitizedResources})
+
 
 
 
