@@ -136,6 +136,8 @@ file(GLOB_RECURSE MY_BINARY_FILES RELATIVE ${CMAKE_SOURCE_DIR}/Resources ${CMAKE
 
 
 juce_add_binary_data(BinaryData SOURCES ${MY_BINARY_FILES})
+message("MY_BINARY_FILES = ${MY_BINARY_FILES}")
+
 
 
 
