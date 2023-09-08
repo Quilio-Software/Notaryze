@@ -24,7 +24,7 @@ jobs:
 
     # Cache submodules
     - name: Cache submodules
-      uses: actions/cache@v4
+      uses: actions/cache@v3
       with:
         path: .git/modules
         key: ${{ runner.os }}-submodules-${{ hashFiles('.gitmodules') }}
