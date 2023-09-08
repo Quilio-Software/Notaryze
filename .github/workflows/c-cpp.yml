@@ -1,0 +1,51 @@
+name: C/C++ CI
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        fetch-depth: 0
+
+    # Cache submodules
+    - name: Cache submodules
+      uses: actions/cache@v4
+      with:
+        path: .git/modules
+        key: ${{ runner.os }}-submodules-${{ hashFiles('.gitmodules') }}
+
+    # Cache build artifacts
+    - name: Cache build artifacts
+      uses: actions/cache@v4
+      with:
+        path: build
+        key: ${{ runner.os }}-build-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-build-
+
+    # Install necessary dependencies (if any)
+    - name: Install dependencies
+      run: brew install cmake
+
+    # Configure CMake
+    - name: Configure CMake
+      run: cmake -B build
+
+    # Build the project
+    - name: Build Project
+      run: cmake --build build --config Release
