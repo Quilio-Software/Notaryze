@@ -135,8 +135,6 @@ target_compile_definitions(Notaryze
 file(GLOB_RECURSE MY_BINARY_FILES RELATIVE ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_SOURCE_DIR}/Resources/*)
 
 
-# Quote each file path
-list(TRANSFORM MY_BINARY_FILES REPLACE "^(.*)$" "\"\\1\"")
 
 # Pass the quoted list to JUCE's binary data function
 juce_add_binary_data(MyBinaryData SOURCES ${MY_BINARY_FILES})
