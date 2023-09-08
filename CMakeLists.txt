@@ -134,9 +134,11 @@ target_compile_definitions(Notaryze
 
 file(GLOB_RECURSE MY_BINARY_FILES RELATIVE ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_SOURCE_DIR}/Resources/*)
 
+# Quote all the paths to handle spaces
+list(TRANSFORM MY_BINARY_FILES PREPEND "\"")
+list(TRANSFORM MY_BINARY_FILES APPEND "\"")
 
-
-# Pass the quoted list to JUCE's binary data function
+# Add binary data
 juce_add_binary_data(MyBinaryData SOURCES ${MY_BINARY_FILES})
 
 
