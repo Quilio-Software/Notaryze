@@ -131,12 +131,9 @@ target_compile_definitions(Notaryze
 # static library. These source files can be of any kind (wav data, images, fonts, icons etc.).
 # Conversion to binary-data will happen when the target is built.
 
-juce_add_binary_data(BinaryData 
-    SOURCES 
-        Resources/Fonts/*
-        Resources/Images/*
-        Resources/SignInScreen/*
-)
+
+file(GLOB_RECURSE MyResources RELATIVE ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_SOURCE_DIR}/Resources/*)
+juce_add_binary_data(BinaryData SOURCES ${MyResources})
 
 # `target_link_libraries` links libraries and JUCE modules to other libraries or executables. Here,
 # we're linking our executable target to the `juce::juce_core` module. Inter-module dependencies are
