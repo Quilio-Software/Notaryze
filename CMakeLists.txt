@@ -61,7 +61,7 @@ juce_add_console_app(Notaryze
 
 juce_generate_juce_header(Notaryze)
 
-target_compile_features(Notaryze PUBLIC cxx_std_17)
+target_compile_features(Notaryze PUBLIC cxx_std_20)
 
 
 # Link the Security framework for macOS
@@ -95,7 +95,6 @@ target_sources(Notaryze PRIVATE
     Source/CredentialManager/Types.h
     Source/CredentialManager/UsernamePasswordUI.h
     Source/CredentialManager/UsernamePasswordUI.cpp
-#    Source/CredentialManager/yum_CredentialManager.cpp
     Source/CredentialManager/yum_CredentialManager.h
     Source/CredentialManager/yum_CredentialManager.mm
     Source/AdvancedTable/AdvancedTableComponent.cpp
