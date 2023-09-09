@@ -55,7 +55,7 @@
     <GROUP id="{AD508036-E313-4142-9980-A421CA88CE6B}" name="Resources">
       <GROUP id="{AFD13A9A-361A-C87E-224E-690DC4C7521D}" name="Fonts">
         <GROUP id="{E0575E30-2CC2-4C66-393D-1D70565D86D8}" name="Avenir">
-          <FILE id="ygsRgo" name="Avenir Next.ttc" compile="0" resource="1" file="Resources/Fonts/Avenir/Avenir Next.ttc"/>
+          <FILE id="GWXQix" name="Avenir_Next.ttc" compile="0" resource="1" file="Resources/Fonts/Avenir/Avenir_Next.ttc"/>
         </GROUP>
         <GROUP id="{A556C0C2-23AD-315A-6234-4931A1316F56}" name="Poppins">
           <FILE id="pfGX78" name="OFL.txt" compile="0" resource="1" file="Resources/Fonts/Poppins/OFL.txt"/>
