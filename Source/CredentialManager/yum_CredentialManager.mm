@@ -15,8 +15,6 @@
 #undef Rectangle
 #undef Component
 
-#include <JuceHeader.h>
-
 
 using namespace QuilioCredentials;
 

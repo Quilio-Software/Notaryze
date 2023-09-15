@@ -1,5 +1,9 @@
 #pragma once
+
+
+#define Point Potato
 #include <JuceHeader.h>
+#undef Point
 #ifdef JUCE_MAC
 
 typedef juce::String Name;
