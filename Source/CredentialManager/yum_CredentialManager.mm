@@ -1,6 +1,9 @@
+#include "yum_CredentialManager.h"
+
+
 #if JUCE_MAC || JUCE_IOS
 
-#define Point CarbonDummyPoint
+#define juce::Point CarbonDummyPoint
 #define Rectangle CarbonDummyRect
 #define Component CarbonDummyComp
 #include <CoreFoundation/CoreFoundation.h>
@@ -8,13 +11,12 @@
 #include <Foundation/Foundation.h>
 #include <Security/Security.h>
 #include <Security/SecCode.h>
-#undef Point
+#undef juce::Point
 #undef Rectangle
 #undef Component
 
 #include <JuceHeader.h>
-#include <sstream>
-#include "yum_CredentialManager.h"
+
 
 using namespace QuilioCredentials;
 

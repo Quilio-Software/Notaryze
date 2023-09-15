@@ -13,8 +13,6 @@
               file="Source/CredentialManager/UsernamePasswordUI.cpp"/>
         <FILE id="OeZfKp" name="UsernamePasswordUI.h" compile="0" resource="0"
               file="Source/CredentialManager/UsernamePasswordUI.h"/>
-        <FILE id="rPPFWY" name="yum_CredentialManager.cpp" compile="1" resource="0"
-              file="Source/CredentialManager/yum_CredentialManager.cpp"/>
         <FILE id="Spd2pO" name="yum_CredentialManager.h" compile="0" resource="0"
               file="Source/CredentialManager/yum_CredentialManager.h"/>
         <FILE id="zMhcQ3" name="yum_CredentialManager.mm" compile="1" resource="0"
