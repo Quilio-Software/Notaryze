@@ -1,5 +1,3 @@
-#include "yum_CredentialManager.h"
-
 #if JUCE_MAC || JUCE_IOS
 
 #define Point CarbonDummyPoint
@@ -16,6 +14,7 @@
 
 #include <JuceHeader.h>
 #include <sstream>
+#include "yum_CredentialManager.h"
 
 using namespace QuilioCredentials;
 
