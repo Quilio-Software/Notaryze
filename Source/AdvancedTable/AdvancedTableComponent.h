@@ -20,7 +20,13 @@
 #include "../Helpers/Components.h"
 
 #ifdef JUCE_MAC
+#define Point CarbonDummyPoint
+#define Rectangle CarbonDummyRect
+#define Component CarbonDummyComp
     #include <Security/SecStaticCode.h>
+#undef Point
+#undef Rectangle
+#undef Component
 #endif
 
 class TrashButton : public juce::Component

@@ -1,9 +1,8 @@
 #include "yum_CredentialManager.h"
 
-
 #if JUCE_MAC || JUCE_IOS
 
-#define juce::Point CarbonDummyPoint
+#define Point CarbonDummyPoint
 #define Rectangle CarbonDummyRect
 #define Component CarbonDummyComp
 #include <CoreFoundation/CoreFoundation.h>
@@ -11,7 +10,7 @@
 #include <Foundation/Foundation.h>
 #include <Security/Security.h>
 #include <Security/SecCode.h>
-#undef juce::Point
+#undef Point
 #undef Rectangle
 #undef Component
 
