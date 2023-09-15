@@ -96,7 +96,8 @@ target_sources(Notaryze PRIVATE
     Source/CredentialManager/UsernamePasswordUI.h
     Source/CredentialManager/UsernamePasswordUI.cpp
     Source/CredentialManager/yum_CredentialManager.h
-#    Source/CredentialManager/yum_CredentialManager.mm
+
+    Source/CredentialManager/yum_CredentialManager.mm
     Source/AdvancedTable/AdvancedTableComponent.cpp
     Source/AdvancedTable/AdvancedTableComponent.h
     Source/AdvancedTable/DataModel.h
