@@ -49,3 +49,26 @@ jobs:
     # Build the project
     - name: Build Project
       run: cmake --build build --config Release
+
+    # Create GitHub Release
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.sha }}
+        release_name: Release ${{ github.sha }}
+        draft: false
+        prerelease: false
+
+    # Upload the executable to the GitHub Release
+    - name: Upload Executable to GitHub Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./build/your_executable # Change to your actual executable path
+        asset_name: your_executable         # Change to your actual executable name
+        asset_content_type: application/octet-stream
