@@ -14,7 +14,6 @@
 #undef Rectangle
 #undef Component
 
-
 using namespace QuilioCredentials;
 
 bool AppCredentials::removeEntry (const SigningDetails& concatenatedDetails)
