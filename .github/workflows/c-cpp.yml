@@ -1,7 +1,7 @@
 name: C/C++ CI
 
 permissions:
-  contents: read
+  contents: write
 
 on:
   push:
@@ -49,3 +49,34 @@ jobs:
     # Build the project
     - name: Build Project
       run: cmake --build build --config Release
+    # Set Git Tag
+    - name: Set Git Tag
+      run: git tag release-${{ github.run_number }}
+
+    # Push Git Tag
+    - name: Push Git Tag
+      run: git push origin release-${{ github.run_number }}
+
+    # Create GitHub Release
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: release-${{ github.run_number }}
+        release_name: Release ${{ github.run_number }}
+        draft: false
+        prerelease: false
+
+
+    # Upload the executable to the GitHub Release
+    - name: Upload Executable to GitHub Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./build/your_executable # Change to your actual executable path
+        asset_name: your_executable         # Change to your actual executable name
+        asset_content_type: application/octet-stream
