@@ -49,6 +49,13 @@ jobs:
     # Build the project
     - name: Build Project
       run: cmake --build build --config Release
+    # Set Git Tag
+    - name: Set Git Tag
+      run: git tag release-${{ github.run_number }}
+
+    # Push Git Tag
+    - name: Push Git Tag
+      run: git push origin release-${{ github.run_number }}
 
     # Create GitHub Release
     - name: Create GitHub Release
@@ -57,10 +64,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.sha }}
-        release_name: Release ${{ github.sha }}
+        tag_name: release-${{ github.run_number }}
+        release_name: Release ${{ github.run_number }}
         draft: false
         prerelease: false
+
 
     # Upload the executable to the GitHub Release
     - name: Upload Executable to GitHub Release
