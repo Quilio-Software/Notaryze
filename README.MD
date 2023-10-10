@@ -1,4 +1,4 @@
-![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)
+[![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)](https://cmake.org/)
 ![Discord](https://img.shields.io/discord/1133624079262421032)
 [![GitHub issues](https://img.shields.io/github/issues/Quilio-Software/Notaryze)](https://github.com/Quilio-Software/Notaryze/issues/)
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/Quilio-Software/Notaryze)](https://github.com/Quilio-Software/Notaryze/pulls/)
