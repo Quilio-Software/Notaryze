@@ -18,8 +18,6 @@ Special thanks to the following contributors for their valuable input and assist
     - Ethan Danish Joseph
     - Sagarnil Gupta
     - Matthew Baum
-- Person 5
-- Person 6
 # Features
 - Simple and intuitive user experience and interface
 - Secure sign-in credentials
