@@ -1,4 +1,4 @@
-[![General badge](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/quilio.dev/)
+![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=for-the-badge&logo=cmake&logoColor=white)
 ![Discord](https://img.shields.io/discord/1133624079262421032)
 [![GitHub issues](https://img.shields.io/github/issues/Quilio-Software/Notaryze)](https://github.com/Quilio-Software/Notaryze/issues/)
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/Quilio-Software/Notaryze)](https://github.com/Quilio-Software/Notaryze/pulls/)
@@ -37,3 +37,5 @@ You can view your profile information or sign out by clicking on the profile ico
 “Email ID”, “Developer / Team ID”, and “Password” are stored as secured keys under the dictionary reference.
 When the user signs-out explicitly, the data is removed from the keychain.
 When “Keep me signed in” is checked, the information gets stored in the keychain before you sign-in.
+
+[![General badge](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/quilio.dev/)
