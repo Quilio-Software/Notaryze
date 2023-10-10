@@ -1,5 +1,3 @@
-# README
-<img src=".\download.jpeg" width="100%" height="50%">
 [![General badge](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/quilio.dev/)
 ![Discord](https://img.shields.io/discord/1133624079262421032)
 ![GitHub issues](https://img.shields.io/github/issues/ros2/ros2)
