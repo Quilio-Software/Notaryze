@@ -1,6 +1,6 @@
 [![General badge](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/quilio.dev/)
 ![Discord](https://img.shields.io/discord/1133624079262421032)
-[![GitHub issues](https://img.shields.io/github/issues/Naereen/StrapDown.js.svg)](https://github.com/Quilio-Software/Notaryze/issues/)
+[![GitHub issues](https://img.shields.io/github/issues/Quilio-Software/Notaryze)](https://github.com/Quilio-Software/Notaryze/issues/)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/Quilio/Notaryze/)
 # **Notaryze**
 Notaryze is an open-source tool designed and developed by `Quilio Ltd` to simplify the notarization process for developers. It provides a convenient interface to code sign and product sign software, ensuring compatibility and security for macOS users.
