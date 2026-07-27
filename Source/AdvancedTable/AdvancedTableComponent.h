@@ -32,9 +32,9 @@
 class TrashButton : public juce::Component
 {
     //load in all trash icon states
-    std::unique_ptr<juce::XmlElement> svgDefaultDocument;
-    std::unique_ptr<juce::XmlElement> svgHoverDocument;
-    std::unique_ptr<juce::XmlElement> svgDisabledDocument;
+    std::unique_ptr<juce::Drawable> svgDefault;
+    std::unique_ptr<juce::Drawable> svgHover;
+    std::unique_ptr<juce::Drawable> svgDisabled;
 
     bool isHovering = false;
     bool isDisabled = false;
@@ -44,13 +44,9 @@ class TrashButton : public juce::Component
 public:
     TrashButton()
     {
-        juce::MemoryBlock svgDataDefault (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
-        juce::MemoryBlock svgDataHover (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
-        juce::MemoryBlock svgDataDisabled (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
-        
-        svgDefaultDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDefault.getData()), static_cast<size_t> (svgDataDefault.getSize())));
-        svgHoverDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataHover.getData()), static_cast<size_t> (svgDataHover.getSize())));
-        svgDisabledDocument = juce::parseXML (juce::String (reinterpret_cast<const char*> (svgDataDisabled.getData()), static_cast<size_t> (svgDataDisabled.getSize())));
+        svgDefault = juce::Drawable::createFromImageData (BinaryData::trashIcon_Default_svg, BinaryData::trashIcon_Default_svgSize);
+        svgHover = juce::Drawable::createFromImageData (BinaryData::trashIcon_Hover_svg, BinaryData::trashIcon_Hover_svgSize);
+        svgDisabled = juce::Drawable::createFromImageData (BinaryData::trashIcon_Disabled_svg, BinaryData::trashIcon_Disabled_svgSize);
         
         trashRect = juce::Rectangle<float> (25.0f, 10.0f, 9.82f, 12.0f);
     }
@@ -89,18 +85,18 @@ public:
     {
         if (isDisabled)
         {
-            auto svgDisabled = juce::Drawable::createFromSVG (*svgDisabledDocument);
-            svgDisabled->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
+            if (svgDisabled != nullptr)
+                svgDisabled->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
         }
         else if (isHovering)
         {
-            auto svgHover = juce::Drawable::createFromSVG (*svgHoverDocument);
-            svgHover->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
+            if (svgHover != nullptr)
+                svgHover->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
         }
         else
         {
-            auto svgDefault = juce::Drawable::createFromSVG (*svgDefaultDocument);
-            svgDefault->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
+            if (svgDefault != nullptr)
+                svgDefault->drawWithin (g, trashRect, juce::Justification::centred, 1.0f);
         }
     }
     
@@ -588,7 +584,7 @@ public:
             {
                 auto text = rowElement->getStringAttribute (getAttributeNameForColumnId (columnId));
 
-                widest = juce::jmax (widest, font.getStringWidth (text));
+                widest = juce::jmax (widest, juce::GlyphArrangement::getStringWidthInt (font, text));
             }
         }
 

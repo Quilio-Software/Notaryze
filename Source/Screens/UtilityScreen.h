@@ -19,8 +19,7 @@ class SVGObject
     juce::MemoryBlock svgData;
     int numBytes = 0;
     
-    juce::DrawableComposite drawable;
-    juce::DrawableImage drawableImage;
+    juce::Image image;
     
     juce::AffineTransform transform;
     
@@ -43,15 +42,15 @@ public:
     SVGObject (const char* filename)
     {
         svgData = getSvgData (filename);
-        juce::Image image = juce::ImageFileFormat::loadFrom (svgData.getData(), svgData.getSize());
-        drawableImage.setImage (image);
-        drawable.addChildComponent (drawableImage);
+        image = juce::ImageFileFormat::loadFrom (svgData.getData(), svgData.getSize());
     }
-    
+
     void draw (juce::Graphics& g, juce::Rectangle<int> bounds)
     {
-        drawable.setBounds (bounds);
-        drawable.draw (g, opacity, transform);
+        juce::ignoreUnused (transform);
+        g.setOpacity (opacity);
+        g.drawImage (image, bounds.toFloat());
+        g.setOpacity (1.0f);
     }
 };
 

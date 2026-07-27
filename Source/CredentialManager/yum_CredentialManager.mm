@@ -1,6 +1,4 @@
-#include "yum_CredentialManager.h"
-
-#if JUCE_MAC || JUCE_IOS
+#if defined (__APPLE__)
 
 #define Point CarbonDummyPoint
 #define Rectangle CarbonDummyRect
@@ -13,6 +11,12 @@
 #undef Point
 #undef Rectangle
 #undef Component
+
+#endif
+
+#include "yum_CredentialManager.h"
+
+#if JUCE_MAC || JUCE_IOS
 
 using namespace QuilioCredentials;
 

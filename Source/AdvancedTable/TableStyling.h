@@ -53,7 +53,7 @@ public:
         g.setFont (lightTypeFace);
         g.setColour (fontColour);
         juce::Font font = g.getCurrentFont();
-        int stringWidth = font.getStringWidth (tooltipMessage);
+        int stringWidth = juce::GlyphArrangement::getStringWidthInt (font, tooltipMessage);
         juce::Rectangle<int> fontRectangle (8, 4, stringWidth, 12);
 
         //set up rectangle

@@ -396,7 +396,7 @@ public:
 
         // Set up the rectangle parameters with padding
 
-        float textWidth = font.getStringWidth (text);
+        float textWidth = juce::GlyphArrangement::getStringWidth (font, text);
 
         juce::Rectangle<float> textBounds (7, 6, width - 14, 20);
 
