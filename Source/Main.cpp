@@ -7,7 +7,127 @@
 */
 
 #include <JuceHeader.h>
+#include <iostream>
 #include "MainComponent.h"
+#include "Notarization/Notarization.h"
+
+namespace NotaryzeCLI
+{
+juce::String usage()
+{
+    return "Notaryze\n"
+           "\n"
+           "GUI:\n"
+           "  Notaryze\n"
+           "\n"
+           "CLI:\n"
+           "  Notaryze --help\n"
+           "  Notaryze --list-identities\n"
+           "  Notaryze --status <path>\n"
+           "  Notaryze --verify <path>\n"
+           "  Notaryze --adhoc-sign <path>\n"
+           "  Notaryze --remove-signature <path>\n"
+           "  Notaryze --sign <path> --name <developer-name> --team-id <team-id>\n";
+}
+
+void printResult (const CommandResult& result)
+{
+    if (result.output.isNotEmpty())
+        std::cout << result.output;
+}
+
+juce::String getOptionValue (const juce::StringArray& args, const juce::String& option)
+{
+    const auto index = args.indexOf (option);
+
+    if (index < 0 || index + 1 >= args.size())
+        return {};
+
+    return args[index + 1];
+}
+
+bool hasOption (const juce::StringArray& args, const juce::String& option)
+{
+    return args.contains (option);
+}
+
+int run (const juce::String& commandLine)
+{
+    auto args = juce::StringArray::fromTokens (commandLine, true);
+
+    if (args.isEmpty() || hasOption (args, "--help") || hasOption (args, "-h"))
+    {
+        std::cout << usage();
+        return 0;
+    }
+
+    if (hasOption (args, "--list-identities"))
+    {
+        const auto result = listCodeSigningIdentities();
+        printResult (result);
+        return result.exitCode;
+    }
+
+    const auto statusPath = getOptionValue (args, "--status");
+    if (statusPath.isNotEmpty())
+    {
+        std::cout << getCodeSignatureStatus (statusPath) << "\n";
+        return 0;
+    }
+
+    const auto verifyPath = getOptionValue (args, "--verify");
+    if (verifyPath.isNotEmpty())
+    {
+        const auto result = verifyCodeSignature (verifyPath);
+        printResult (result);
+        return result.exitCode;
+    }
+
+    const auto adHocPath = getOptionValue (args, "--adhoc-sign");
+    if (adHocPath.isNotEmpty())
+    {
+        const auto result = adHocSign (adHocPath);
+        printResult (result);
+        return result.exitCode;
+    }
+
+    const auto removePath = getOptionValue (args, "--remove-signature");
+    if (removePath.isNotEmpty())
+    {
+        const auto result = removeCodeSignature (removePath);
+        printResult (result);
+        return result.exitCode;
+    }
+
+    const auto signPath = getOptionValue (args, "--sign");
+    if (signPath.isNotEmpty())
+    {
+        const auto name = getOptionValue (args, "--name");
+        const auto teamID = getOptionValue (args, "--team-id");
+
+        if (name.isEmpty() || teamID.isEmpty())
+        {
+            std::cerr << "--sign requires --name and --team-id\n";
+            return 2;
+        }
+
+        const auto result = runCommandVerboseResult ("codesign --force --sign "
+                                                     + shellQuote (developerIdApplicationIdentity (name, teamID))
+                                                     + " --verbose --deep --strict --options=runtime --timestamp "
+                                                     + shellQuote (signPath));
+        printResult (result);
+        return result.exitCode;
+    }
+
+    std::cerr << "Unknown arguments.\n\n" << usage();
+    return 2;
+}
+
+bool isCliInvocation (const juce::String& commandLine)
+{
+    return commandLine.trim().startsWithChar ('-');
+}
+}
 
 //==============================================================================
 class NotaryzeApplication  : public juce::JUCEApplication
@@ -23,7 +143,13 @@ public:
     //==============================================================================
     void initialise (const juce::String& commandLine) override
     {
-        // This method is where you should put your application's initialisation code..
+        if (NotaryzeCLI::isCliInvocation (commandLine))
+        {
+            cliExitCode = NotaryzeCLI::run (commandLine);
+            setApplicationReturnValue (cliExitCode);
+            quit();
+            return;
+        }
 
         mainWindow.reset (new MainWindow (getApplicationName()));
     }
@@ -98,6 +224,7 @@ public:
 
 private:
     std::unique_ptr<MainWindow> mainWindow;
+    int cliExitCode = 0;
 };
 
 //==============================================================================

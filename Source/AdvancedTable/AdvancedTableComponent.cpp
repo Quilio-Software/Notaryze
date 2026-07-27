@@ -43,9 +43,14 @@ void AdvancedTableComponent::addRow (juce::String newPropertyName, juce::String 
     dataList->addProperty (newPropertyName, newItem, newType, newStatus, newClear, fullPath);
     updateTable();
     
-    trashButtons.back()->onClick = [&, this]()
+    auto* buttonForRow = trashButtons.back().get();
+    trashButtons.back()->onClick = [this, buttonForRow]()
     {
-        auto it = std::find(trashButtons.begin(), trashButtons.end(), trashButtons.back());
+        auto it = std::find_if (trashButtons.begin(), trashButtons.end(),
+                                [buttonForRow] (const std::unique_ptr<TrashButton>& button)
+                                {
+                                    return button.get() == buttonForRow;
+                                });
 
         if (it != trashButtons.end())
         {

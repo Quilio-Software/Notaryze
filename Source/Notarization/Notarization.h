@@ -179,6 +179,21 @@ inline juce::String getCodeSignatureStatus (const juce::String& filename)
     return result.succeeded() ? "Signed" : "Unsigned";
 }
 
+inline CommandResult adHocSign (const juce::String& filename)
+{
+    return runCommandVerboseResult ("codesign --force --sign - --timestamp=none " + shellQuote (filename));
+}
+
+inline CommandResult removeCodeSignature (const juce::String& filename)
+{
+    return runCommandVerboseResult ("codesign --remove-signature " + shellQuote (filename));
+}
+
+inline CommandResult listCodeSigningIdentities()
+{
+    return runCommandVerboseResult ("security find-identity -v -p codesigning");
+}
+
 //TODO: Make response an object with variables: 1. Message 2. SuccessState (Pass / Fail)
 inline juce::String codesignVerbose (const juce::String& filename, const juce::String& name, const juce::String& teamID)
 {

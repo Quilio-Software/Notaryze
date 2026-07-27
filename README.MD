@@ -26,8 +26,52 @@ Special thanks to the following contributors for their valuable input and assist
 # **Installation**
 To use Notaryze, follow these steps:
 1. Clone the repository to your local machine.
-2. Build the project using a C++ compiler compatible with your system.
-3. Run the compiled executable to launch Notaryze.
+2. Initialise the JUCE submodule.
+3. Build the project with CMake.
+4. Run the compiled executable to launch Notaryze.
+
+```sh
+git submodule update --init --recursive
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+cmake --build build --target Notaryze --parallel
+./build/Notaryze_artefacts/Debug/Notaryze
+```
+
+# CLI
+Notaryze can also run without the GUI for repeatable signing checks:
+
+```sh
+./build/Notaryze_artefacts/Debug/Notaryze --help
+./build/Notaryze_artefacts/Debug/Notaryze --list-identities
+./build/Notaryze_artefacts/Debug/Notaryze --status /path/to/MyApp.app
+./build/Notaryze_artefacts/Debug/Notaryze --verify /path/to/MyApp.app
+./build/Notaryze_artefacts/Debug/Notaryze --adhoc-sign /path/to/binary
+./build/Notaryze_artefacts/Debug/Notaryze --sign /path/to/MyApp.app --name "Developer Name" --team-id TEAMID1234
+```
+
+# Tests
+The repository includes CTest tests for the practical signing flow. They compile a tiny sample executable, remove its signature, verify the unsigned state, sign it, and verify the signed state.
+
+```sh
+ctest --test-dir build --output-on-failure
+```
+
+On non-macOS systems, signing-flow tests are skipped because they require Apple's `codesign` tool.
+
+# MCP
+The `tools/notaryze_mcp.py` server exposes local signing operations over stdio MCP:
+
+```sh
+python3 tools/notaryze_mcp.py
+```
+
+Available tools:
+- `list_signing_identities`
+- `verify_signature`
+- `sign_ad_hoc`
+- `remove_signature`
+- `sign_developer_id`
+- `create_sample_executable`
 # How to use
 After opening the software, sign in using valid credentials (Developer ID or Team ID and associated Password) to start using the tool. Based on whether you want to Code Sign or Product Sign, you can click and drag the file(s) to be signed into the interface. Alternatively, you could click on "Upload" to upload files using the Finder.
 Once files have been uploaded to the tool, you will see a list that provides information about the uploaded files. This includes the name, file type, and status. As long as there is one file ready to be signed, the "Start" button will be enabled. During signing, you can stop the process before all of them time out if required.

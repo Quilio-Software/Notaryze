@@ -165,3 +165,18 @@ target_link_libraries(Notaryze
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_warning_flags)
+
+enable_testing()
+find_package(Python3 COMPONENTS Interpreter)
+
+if(Python3_Interpreter_FOUND)
+    add_test(
+        NAME notaryze_cli_signing_flow
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/test_cli_flow.py $<TARGET_FILE:Notaryze>
+    )
+
+    add_test(
+        NAME notaryze_mcp_signing_flow
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/test_mcp_flow.py ${CMAKE_SOURCE_DIR}/tools/notaryze_mcp.py
+    )
+endif()
