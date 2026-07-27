@@ -30,9 +30,9 @@ void AdvancedTableComponent::removeRow (int rowIndex)
         setTableState (NO_ITEMS);
 }
 
-void AdvancedTableComponent::addRow (juce::String newPropertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear)
+void AdvancedTableComponent::addRow (juce::String newPropertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear, juce::String fullPath)
 {
-    if (checkItemExists (newItem)) return; //To avoid adding duplicates, we check if the item already exists.
+    if (checkItemExists (fullPath.isNotEmpty() ? fullPath : newItem)) return; //To avoid adding duplicates, we check if the item already exists.
     
     //We need to add a status pill to the vector
     statusPills.push_back (std::make_unique<StatusPill>());
@@ -40,7 +40,7 @@ void AdvancedTableComponent::addRow (juce::String newPropertyName, juce::String 
     addAndMakeVisible (*trashButtons.back());
     addAndMakeVisible (*statusPills.back());
 
-    dataList->addProperty (newPropertyName, newItem, newType, newStatus, newClear);
+    dataList->addProperty (newPropertyName, newItem, newType, newStatus, newClear, fullPath);
     updateTable();
     
     trashButtons.back()->onClick = [&, this]()
@@ -78,7 +78,7 @@ void AdvancedTableComponent::filesDropped (const juce::StringArray& files, int x
         if (isInterestedInFileDrag (files))
         {
             auto file = juce::File (filePath);
-            addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
+            addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR", file.getFullPathName());
             
             if (numRows > 0)
                 setTableState (HAS_ITEMS);
@@ -104,14 +104,12 @@ void AdvancedTableComponent::browseForFileToUpload()
             if (FormatLibrary::isExecutable (file) ||
 
                 FormatLibrary::isPlugin (file))
-                addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
+                addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR", file.getFullPathName());
         }
         else if (notaryState == PRODUCTSIGN)
         {
-            if (FormatLibrary::isExecutable (file) ||
-                FormatLibrary::isInstaller (file) ||
-                FormatLibrary::isPlugin (file))
-                addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR");
+            if (FormatLibrary::isInstaller (file))
+                addRow ("lskj", file.getFileName(), removeDotAndCapitalize (file.getFileExtension()), getStatus (file), "CLEAR", file.getFullPathName());
         }
     }
 }
@@ -155,7 +153,7 @@ void AdvancedTableComponent::notarizeTable (juce::String devName, juce::String d
     int rowCount = 0;
     for (auto* rowXml : dataList->getChildIterator())
     {
-        auto filename = rowXml->getStringAttribute ("Item");
+        auto filename = getPathForRow (*rowXml);
         if (isCodeSigning)
         {
             DBG ("ATTEMPTING CODESIGN");
@@ -269,8 +267,9 @@ void AdvancedTableComponent::notarizeTableAsynchronously (juce::String devName, 
     // Queue up all the signing tasks in the thread pool
     for (auto* rowXml : dataList->getChildIterator())
     {
-        auto filename = rowXml->getStringAttribute("Item");
+        auto filename = getPathForRow (*rowXml);
         DBG("Queuing signing job for file: " + filename);
+        rowXml->setAttribute ("Status", "PROCESSING");
         threadPool.addJob(new SigningJob(rowXml, filename, devName, devID, isCodeSigning), true);
     }
 

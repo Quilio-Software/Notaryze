@@ -18,15 +18,37 @@
 #include <thread>
 #include "ErrorHandling.h"
 
+#if JUCE_MAC || JUCE_IOS
+#include <sys/wait.h>
+#endif
+
 enum NotaryState
 {
     CODESIGN,
     PRODUCTSIGN
 };
 
-inline juce::String checkIdentityFound()
+struct CommandResult
 {
-    
+    int exitCode = -1;
+    juce::String output;
+
+    bool succeeded() const noexcept { return exitCode == 0; }
+};
+
+inline juce::String shellQuote (const juce::String& value)
+{
+    return "'" + value.replace ("'", "'\\''") + "'";
+}
+
+inline juce::String developerIdApplicationIdentity (const juce::String& name, const juce::String& teamID)
+{
+    return "Developer ID Application: " + name + " (" + teamID + ")";
+}
+
+inline juce::String developerIdInstallerIdentity (const juce::String& name, const juce::String& teamID)
+{
+    return "Developer ID Installer: " + name + " (" + teamID + ")";
 }
 
 inline int notarize (const juce::File file, const juce::String& email, const juce::String& password, const juce::String& teamID)
@@ -75,17 +97,22 @@ inline int notarize (const juce::File file, const juce::String& email, const juc
     return 0;
 }
 
-inline int runCommand (const juce::String& command)
+inline int decodeProcessStatus (int status)
 {
-    int result = std::system (command.toUTF8());
-    return (result);
+#if JUCE_WINDOWS
+    return status;
+#else
+    if (WIFEXITED (status))
+        return WEXITSTATUS (status);
+
+    if (WIFSIGNALED (status))
+        return 128 + WTERMSIG (status);
+
+    return status;
+#endif
 }
 
-
-
-
-
-inline juce::String runCommandVerbose (const juce::String& command)
+inline CommandResult runCommandVerboseResult (const juce::String& command)
 {
     std::ostringstream outputStream;
 
@@ -106,50 +133,64 @@ inline juce::String runCommandVerbose (const juce::String& command)
         return {};
     }
 
-    // Redirect the pipe output to a file stream
-    FILE* output = fdopen (fileno(pipe), "r");
-    if (!output)
-    {
-    #ifdef JUCE_WINDOWS
-        _pclose (pipe);
-    #elif JUCE_MAC
-        pclose (pipe);
-    #endif
-        std::cout << "Error redirecting output for command: " << command << std::endl;
-        return {};
-    }
-
     char buffer[128];
-    while (fgets(buffer, sizeof(buffer), output) != nullptr)
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr)
     {
         outputStream << buffer;
     }
 
+    int status = -1;
     #ifdef JUCE_WINDOWS
-        _pclose (pipe);
+        status = _pclose (pipe);
     #elif JUCE_MAC
-        pclose (pipe);
+        status = pclose (pipe);
     #endif
 
-    return juce::String(outputStream.str());
+    return { decodeProcessStatus (status), juce::String (outputStream.str()) };
 }
 
+inline int runCommand (const juce::String& command)
+{
+    return runCommandVerboseResult (command).exitCode;
+}
+
+inline juce::String runCommandVerbose (const juce::String& command)
+{
+    return runCommandVerboseResult (command).output;
+}
 
 inline int codesign (const juce::String& filename, const juce::String& name, const juce::String& teamID)
 {
     // Keep in mind the " (" demarcation, necessary to maintain spacing.
-    return runCommand ("codesign --force -s 'Developer ID Application: " + name + " (" + teamID + ")" + "' -v '" + filename + "' --deep --strict --options=runtime --timestamp");
+    return runCommand ("codesign --force --sign "
+                       + shellQuote (developerIdApplicationIdentity (name, teamID))
+                       + " --verbose --deep --strict --options=runtime --timestamp "
+                       + shellQuote (filename));
 }
 
+inline CommandResult verifyCodeSignature (const juce::String& filename)
+{
+    return runCommandVerboseResult ("codesign --verify --deep --strict --verbose=4 " + shellQuote (filename));
+}
+
+inline juce::String getCodeSignatureStatus (const juce::String& filename)
+{
+    auto result = verifyCodeSignature (filename);
+    return result.succeeded() ? "Signed" : "Unsigned";
+}
 
 //TODO: Make response an object with variables: 1. Message 2. SuccessState (Pass / Fail)
 inline juce::String codesignVerbose (const juce::String& filename, const juce::String& name, const juce::String& teamID)
 {
     // Keep in mind the " (" demarcation, necessary to maintain spacing.
-    auto response =  runCommandVerbose ("codesign -dvvv --force -s 'Developer ID Application: " + name + " (" + teamID + ")" + "' -v '" + filename + "' --deep --strict --options=runtime --timestamp");
+    auto commandResult = runCommandVerboseResult ("codesign --force --sign "
+                                                 + shellQuote (developerIdApplicationIdentity (name, teamID))
+                                                 + " --verbose --deep --strict --options=runtime --timestamp "
+                                                 + shellQuote (filename));
+    auto response = commandResult.output;
     DBG ("/n");
     DBG ("Response is: " + response);
-    auto result = NotarizationErrorChecker::getResult (response);
+    auto result = commandResult.succeeded() ? "Success" : NotarizationErrorChecker::getResult (response);
     DBG ("/n");
     return result;
 }
@@ -163,8 +204,11 @@ inline juce::String productsignVerbose (const juce::File& file, const juce::Stri
     juce::String signedFileName = parentDir.getFullPathName() + "/" + fileNameWithoutExtension + " (signed)" + fileExtension;
     juce::String devName = name;
     juce::String devID = teamID;
-    auto result = runCommandVerbose ("productsign --sign 'Developer ID Installer: " + devName + " (" + devID + ")" + "' '" + unsignedFileName + "' '" + signedFileName + "'");
-    return result;
+    auto result = runCommandVerboseResult ("productsign --sign "
+                                          + shellQuote (developerIdInstallerIdentity (devName, devID))
+                                          + " " + shellQuote (unsignedFileName)
+                                          + " " + shellQuote (signedFileName));
+    return result.succeeded() ? "Success" : NotarizationErrorChecker::getResult (result.output);
 }
 
 //PRT this adds the (signed) suffix

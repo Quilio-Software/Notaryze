@@ -59,9 +59,13 @@ public:
         {
             return "The credentials are invalid";
         }
+        else if (resultCode == TIMEOUT)
+        {
+            return "Timeout";
+        }
         else
         {
-            return "Success";
+            return "Error";
         }
     }
 };

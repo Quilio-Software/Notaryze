@@ -187,34 +187,7 @@ public:
     juce::String getStatus (juce::File file)
     {
 #ifdef JUCE_MAC
-        juce::String command = "codesign -dv -- \"" + file.getFullPathName() + "\"";
-        juce::String status = "Unsigned";
-        std::string output;
-
-        FILE* pipe = popen (command.toRawUTF8(), "r");
-        if (pipe)
-        {
-            char buffer[128];
-            while (fgets (buffer, sizeof(buffer), pipe) != nullptr)
-            {
-                output += buffer;
-            }
-
-            pclose (pipe);
-
-            // Check the output for signing information
-            if (output.find ("signed") != std::string::npos)
-            {
-                status = "Signed";
-            }
-        }
-        else
-        {
-            std::cout << "Failed to run command: " << command << std::endl;
-            status = "Error";
-        }
-
-        return status;
+        return getCodeSignatureStatus (file.getFullPathName());
 #endif
         return "WINDOWS";
     }
@@ -259,6 +232,7 @@ public:
         {
             auto* childElement = new juce::XmlElement("ITEM");
             childElement->setAttribute ("Item", row.item);
+            childElement->setAttribute ("Path", row.item);
             childElement->setAttribute ("Type", row.type);
             childElement->setAttribute ("Status", row.status);
             childElement->setAttribute ("Clear", row.clear);
@@ -313,13 +287,19 @@ public:
     {
         for (auto* rowXml : dataList->getChildIterator())
         {
-            if (newItem == rowXml->getStringAttribute ("Item"))
+            if (newItem == rowXml->getStringAttribute ("Path") || newItem == rowXml->getStringAttribute ("Item"))
             {
                 //Item already exists
                 return true;
             }
         }
         return false;
+    }
+
+    juce::String getPathForRow (juce::XmlElement& rowXml) const
+    {
+        const auto path = rowXml.getStringAttribute ("Path");
+        return path.isNotEmpty() ? path : rowXml.getStringAttribute ("Item");
     }
     
     //Notarization functions
@@ -330,7 +310,7 @@ public:
     {
         DBG ("Row " + rowID + " has been set to notarize.");
         auto row = getRow (rowID);
-        auto filename = row->getStringAttribute ("Item");
+        auto filename = getPathForRow (*row);
         auto response = codesignVerbose (filename, devName, devID);
         DBG ("Response: " + response);
         row->setAttribute ("Status", "PROCESSING");
@@ -433,7 +413,7 @@ public:
     }
     
     //Table Population
-    void addRow (juce::String newPropertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear);
+    void addRow (juce::String newPropertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear, juce::String fullPath = {});
     
     int getNumRows() override { return numRows; }
 

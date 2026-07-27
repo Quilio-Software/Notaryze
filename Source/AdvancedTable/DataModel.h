@@ -46,11 +46,12 @@ public:
     {
     }
     
-    void addProperty (juce::String propertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear)
+    void addProperty (juce::String propertyName, juce::String newItem, juce::String newType, juce::String newStatus, juce::String newClear, juce::String fullPath = {})
     {
         dataElement.push_back (createNewChildElement (propertyName));
         dataElement.back()->setAttribute ("ColumnId", (int) dataElement.size());
         dataElement.back()->setAttribute ("Item", newItem);
+        dataElement.back()->setAttribute ("Path", fullPath.isNotEmpty() ? fullPath : newItem);
         dataElement.back()->setAttribute ("Type", newType);
         dataElement.back()->setAttribute ("Status", newStatus);
         dataElement.back()->setAttribute ("Clear", newClear);
